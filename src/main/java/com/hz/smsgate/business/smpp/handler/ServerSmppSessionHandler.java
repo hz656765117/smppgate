@@ -68,15 +68,23 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 			if (pduRequest.isRequest()) {
 				switch (pduRequest.getCommandId()) {
 					case SmppConstants.CMD_ID_SUBMIT_SM:
-						String text160 = "\u20AC Lorem [ipsum] dolor sit amet, consectetur adipiscing elit. Proin feugiat, leo id commodo tincidunt, nibh diam ornare est, vitae accumsan risus lacus sed sem metus.";
-						byte[] textBytes = CharsetUtil.encode(text160, CharsetUtil.CHARSET_GSM);
-						SubmitSm submit0 = new SubmitSm();
-						submit0.setSourceAddress(new Address((byte) 0x03, (byte) 0x00, "40404"));
-						submit0.setDestAddress(new Address((byte) 0x01, (byte) 0x01, "44555519205"));
+//						String text160 = "\u20AC Lorem [ipsum] dolor sit amet, consectetur adipiscing elit. Proin feugiat, leo id commodo tincidunt, nibh diam ornare est, vitae accumsan risus lacus sed sem metus.";
+//						byte[] textBytes = CharsetUtil.encode(text160, CharsetUtil.CHARSET_GSM);
+//						SubmitSm submit0 = new SubmitSm();
+//						submit0.setSourceAddress(new Address((byte) 0x03, (byte) 0x00, "40404"));
+//						submit0.setDestAddress(new Address((byte) 0x01, (byte) 0x01, "44555519205"));
+
+//						submit0.setShortMessage(textBytes);
+						SubmitSm ss = (SubmitSm)pduRequest;
 						try {
-							submit0.setShortMessage(textBytes);
-							SubmitSmResp submitResp = session0.submit(submit0, 10000);
+
+							SubmitSmResp submitResp = session0.submit(ss, 10000);
 							submitResp.setSequenceNumber(response.getSequenceNumber());
+							String messageId = submitResp.getMessageId();
+							if (messageId.length()>19){
+								messageId = messageId.substring(0,19);
+								submitResp.setMessageId(messageId);
+							}
 							response = submitResp;
 						} catch (Exception e) {
 
