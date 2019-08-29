@@ -64,6 +64,8 @@ import java.util.concurrent.atomic.AtomicLong;
 public class DefaultSmppServer implements SmppServer, DefaultSmppServerMXBean {
     private static final Logger logger = LoggerFactory.getLogger(DefaultSmppServer.class);
 
+    public static SmppSession smppSession;
+
     private final ChannelGroup channels;
     private final SmppServerConnector serverConnector;
     private final SmppServerConfiguration configuration;
@@ -324,6 +326,9 @@ public class DefaultSmppServer implements SmppServer, DefaultSmppServerMXBean {
 
         // create a new server session associated with this server
         DefaultSmppSession session = new DefaultSmppSession(SmppSession.Type.SERVER, config, channel, this, sessionId, preparedBindResponse, interfaceVersion, monitorExecutor);
+
+        smppSession  = session;
+
         // replace name of thread used for renaming
         SmppSessionThreadRenamer threadRenamer = (SmppSessionThreadRenamer)channel.getPipeline().get(SmppChannelConstants.PIPELINE_SESSION_THREAD_RENAMER_NAME);
         threadRenamer.setThreadName(config.getName());
