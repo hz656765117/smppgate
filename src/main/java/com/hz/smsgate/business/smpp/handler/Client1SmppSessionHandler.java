@@ -29,9 +29,16 @@ import com.hz.smsgate.base.smpp.pdu.Pdu;
 import com.hz.smsgate.base.smpp.pdu.PduRequest;
 import com.hz.smsgate.base.smpp.pdu.PduResponse;
 import com.hz.smsgate.base.smpp.pojo.PduAsyncResponse;
+import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppServer;
+import org.apache.commons.lang3.time.DateUtils;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
@@ -73,6 +80,19 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
 						break;
 					case SmppConstants.CMD_ID_DELIVER_SM:
 						DeliverSm deliverSm = (DeliverSm) pduRequest;
+						byte[] shortMessage = deliverSm.getShortMessage();
+						int len1 = shortMessage.length;
+						String str = new String(shortMessage);
+						DeliveryReceipt deliveryReceipt = DeliveryReceipt.parseShortMessage(str, DateTimeZone.UTC);
+
+						DateTime dateTime = new DateTime();
+						deliveryReceipt.setDoneDate(dateTime);
+						deliveryReceipt.setSubmitDate(dateTime);
+						byte[] bytes = deliveryReceipt.toShortMessage().getBytes();
+						int len2 = bytes.length;
+						deliverSm.setCommandLength(deliverSm.getCommandLength() + (len2 - len1));
+						deliverSm.setShortMessage(bytes);
+						System.out.println(str);
 						DefaultSmppServer.smppSession.sendRequestPdu(deliverSm, 3000, true);
 						break;
 					case SmppConstants.CMD_ID_DATA_SM:
@@ -89,7 +109,7 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
 			System.out.println("==================1025285137102798860=========10252851371027988607===============================");
 
 		} catch (Exception e) {
-			System.out.println("lllllllllll============");
+			System.out.println("---------------------------------+"+e.toString()+"1--"+e.getStackTrace()+"-----------转发异常----------------------------------------------"+e.getMessage());
 		}
 
 		// do any logic here
