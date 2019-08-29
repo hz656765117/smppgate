@@ -82,35 +82,35 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
 						break;
 					case SmppConstants.CMD_ID_DELIVER_SM:
 						DeliverSm deliverSm = (DeliverSm) pduRequest;
-						if (deliverSm.getEsmClass()!=0){
-							byte[] shortMessage = deliverSm.getShortMessage();
-							int len1 = shortMessage.length;
-							String str = new String(shortMessage);
-							DeliveryReceipt deliveryReceipt = DeliveryReceipt.parseShortMessage(str, DateTimeZone.UTC);
-
-							DateTime dateTime = new DateTime();
-							deliveryReceipt.setDoneDate(dateTime);
-							deliveryReceipt.setSubmitDate(dateTime);
-
-							String messageId = deliveryReceipt.getMessageId();
-							System.out.println("-------- deliveryReceipt messageId为" + messageId);
-							int msgLen = messageId.length();
-							if (msgLen > 19) {
-								messageId = messageId.substring(0, 19);
-								deliveryReceipt.setMessageId(messageId);
-								System.out.println("--------deliveryReceipt messageId为" + messageId);
-							}
-
-
-							byte[] bytes = deliveryReceipt.toShortMessage().getBytes();
-							int len2 = bytes.length;
-							deliverSm.setCommandLength(deliverSm.getCommandLength() + (len2 - len1));
-							deliverSm.setShortMessage(bytes);
-
-
-
-							System.out.println(str);
-						}
+//						if (deliverSm.getEsmClass()!=0){
+//							byte[] shortMessage = deliverSm.getShortMessage();
+//							int len1 = shortMessage.length;
+//							String str = new String(shortMessage);
+//							DeliveryReceipt deliveryReceipt = DeliveryReceipt.parseShortMessage(str, DateTimeZone.UTC);
+//
+//							DateTime dateTime = new DateTime();
+//							deliveryReceipt.setDoneDate(dateTime);
+//							deliveryReceipt.setSubmitDate(dateTime);
+//
+//							String messageId = deliveryReceipt.getMessageId();
+//							System.out.println("-------- deliveryReceipt messageId为" + messageId);
+////							int msgLen = messageId.length();
+////							if (msgLen > 19) {
+////								messageId = messageId.substring(0, 19);
+////								deliveryReceipt.setMessageId(messageId);
+////								System.out.println("--------deliveryReceipt messageId为" + messageId);
+////							}
+//
+//
+//							byte[] bytes = deliveryReceipt.toShortMessage().getBytes();
+//							int len2 = bytes.length;
+//							deliverSm.setCommandLength(deliverSm.getCommandLength() + (len2 - len1));
+//							deliverSm.setShortMessage(bytes);
+//
+//
+//
+//							System.out.println(str);
+//						}
 
 						try {
 							BlockingQueue<Object> queue = BDBStoredMapFactoryImpl.INS.getQueue("rptrvok", "rptrvok");

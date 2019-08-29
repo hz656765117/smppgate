@@ -245,14 +245,14 @@ public class DeliveryReceipt {
 		if (this.submitDate == null) {
 			buf.append("000000000000");
 		} else {
-			buf.append(dateFormatTemplateWithFullYear.print(this.submitDate));
+			buf.append(dateFormatTemplateWithFullYearAndSeconds.print(this.submitDate));
 		}
 		buf.append(" ");
 		buf.append(FIELD_DONE_DATE);
 		if (this.doneDate == null) {
 			buf.append("000000000000");
 		} else {
-			buf.append(dateFormatTemplateWithFullYear.print(this.doneDate));
+			buf.append(dateFormatTemplateWithFullYearAndSeconds.print(this.doneDate));
 		}
 		buf.append(" ");
 		buf.append(FIELD_STAT);

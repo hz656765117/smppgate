@@ -82,13 +82,13 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 							submitResp.setSequenceNumber(response.getSequenceNumber());
 							String messageId = submitResp.getMessageId();
 							System.out.println("--------messageId为" + messageId);
-							int msgLen = messageId.length();
-							if (msgLen > 19) {
-								messageId = messageId.substring(0, 19);
-								submitResp.setMessageId(messageId);
-								System.out.println("--------messageId为" + messageId);
-								submitResp.setCommandLength(submitResp.getCommandLength() - (msgLen - 19));
-							}
+//							int msgLen = messageId.length();
+//							if (msgLen > 19) {
+//								messageId = messageId.substring(0, 19);
+//								submitResp.setMessageId(messageId);
+//								System.out.println("--------messageId为" + messageId);
+//								submitResp.setCommandLength(submitResp.getCommandLength() - (msgLen - 19));
+//							}
 							response = submitResp;
 						} catch (Exception e) {
 
