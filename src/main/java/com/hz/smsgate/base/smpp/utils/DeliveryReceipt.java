@@ -59,6 +59,9 @@ public class DeliveryReceipt {
 	private static final DateTimeFormatter dateFormatTemplateWithFullYearAndSeconds = DateTimeFormat
 			.forPattern("yyyyMMddHHmmss");
 
+	private static final DateTimeFormatter dateFormatTemplateWithFullYear = DateTimeFormat
+			.forPattern("yyyyMMddHHmm");
+
 	// the "err" field cannot be longer than 3 chars
 	public static final int FIELD_ERR_MAX_LEN = 3;
 
@@ -240,16 +243,16 @@ public class DeliveryReceipt {
 		buf.append(" ");
 		buf.append(FIELD_SUBMIT_DATE);
 		if (this.submitDate == null) {
-			buf.append("0000000000");
+			buf.append("000000000000");
 		} else {
-			buf.append(dateFormatTemplate.print(this.submitDate));
+			buf.append(dateFormatTemplateWithFullYear.print(this.submitDate));
 		}
 		buf.append(" ");
 		buf.append(FIELD_DONE_DATE);
 		if (this.doneDate == null) {
-			buf.append("0000000000");
+			buf.append("000000000000");
 		} else {
-			buf.append(dateFormatTemplate.print(this.doneDate));
+			buf.append(dateFormatTemplateWithFullYear.print(this.doneDate));
 		}
 		buf.append(" ");
 		buf.append(FIELD_STAT);
@@ -266,6 +269,7 @@ public class DeliveryReceipt {
 				buf.append(this.text);
 			}
 		}
+		System.out.println(buf.toString());
 		return buf.toString();
 	}
 
@@ -487,15 +491,18 @@ public class DeliveryReceipt {
 				throw new DeliveryReceiptException(
 						"Unable to find [dlvrd] field or empty value in delivery receipt message");
 			}
-
+			DateTime dateTime = new DateTime();
 			if (dlr.submitDate == null) {
-				throw new DeliveryReceiptException(
-						"Unable to find [submit date] field or empty value in delivery receipt message");
+
+				dlr.setSubmitDate(dateTime);
+//				throw new DeliveryReceiptException(
+//						"Unable to find [submit date] field or empty value in delivery receipt message");
 			}
 
 			if (dlr.doneDate == null) {
-				throw new DeliveryReceiptException(
-						"Unable to find [done date] field or empty value in delivery receipt message");
+				dlr.setDoneDate(dateTime);
+//				throw new DeliveryReceiptException(
+//						"Unable to find [done date] field or empty value in delivery receipt message");
 			}
 
 			if (dlr.state < 0) {
