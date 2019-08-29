@@ -3,6 +3,7 @@ package com.hz.smsgate.business.listener;
 import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.pojo.SmppBindType;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
+import com.hz.smsgate.base.utils.ThreadPoolHelper;
 import com.hz.smsgate.business.smpp.handler.Client1SmppSessionHandler;
 import com.hz.smsgate.business.smpp.handler.DefaultSmppSessionHandler;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppClient;
@@ -108,6 +109,15 @@ public class ClientInit {
 
 		} catch (Exception e) {
 			logger.error("", e);
+		}
+
+
+
+
+		RptConsumer rptConsumer = new RptConsumer();
+		//多线程消费
+		for (int i = 0; i < 1; i++) {
+			ThreadPoolHelper.executeTask(rptConsumer);
 		}
 
 	}
