@@ -30,6 +30,8 @@ import com.hz.smsgate.base.smpp.utils.ChannelBufferUtil;
 import com.hz.smsgate.base.smpp.utils.PduUtil;
 import org.jboss.netty.buffer.ChannelBuffer;
 
+import java.io.Serializable;
+
 /**
  * Base "short message" PDU as a super class for submit_sm, deliver_sm, and
  * data_sm.  Having a common base class they all inherit from makes it easier
@@ -38,7 +40,7 @@ import org.jboss.netty.buffer.ChannelBuffer;
  * 
  * @author joelauer (twitter: @jjlauer or <a href="http://twitter.com/jjlauer" target=window>http://twitter.com/jjlauer</a>) 
  */
-public abstract class BaseSm<R extends PduResponse> extends PduRequest<R> {
+public abstract class BaseSm<R extends PduResponse> extends PduRequest<R> implements Serializable {
 
     protected String serviceType;
     protected Address sourceAddress;

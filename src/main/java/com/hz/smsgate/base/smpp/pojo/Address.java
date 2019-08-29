@@ -28,12 +28,14 @@ import com.hz.smsgate.base.smpp.utils.ChannelBufferUtil;
 import com.hz.smsgate.base.smpp.utils.PduUtil;
 import org.jboss.netty.buffer.ChannelBuffer;
 
+import java.io.Serializable;
+
 /**
  * Simple representation of an Address in SMPP.
  * 
  * @author joelauer (twitter: @jjlauer or <a href="http://twitter.com/jjlauer" target=window>http://twitter.com/jjlauer</a>)
  */
-public class Address {
+public class Address implements Serializable  {
 
     private byte ton;
     private byte npi;

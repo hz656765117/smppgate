@@ -23,7 +23,9 @@ package com.hz.smsgate.base.smpp.pdu;
 
 import com.hz.smsgate.base.smpp.constants.SmppConstants;
 
-public class DeliverSm extends BaseSm<DeliverSmResp> {
+import java.io.Serializable;
+
+public class DeliverSm extends BaseSm<DeliverSmResp> implements Serializable {
 
     public DeliverSm() {
         super(SmppConstants.CMD_ID_DELIVER_SM, "deliver_sm");

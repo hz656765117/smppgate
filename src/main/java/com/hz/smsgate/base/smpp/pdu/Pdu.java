@@ -29,9 +29,10 @@ import com.hz.smsgate.base.smpp.transcoder.PduTranscoderContext;
 import com.hz.smsgate.base.smpp.utils.ChannelBufferUtil;
 import org.jboss.netty.buffer.ChannelBuffer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public abstract class Pdu {
+public abstract class Pdu implements Serializable {
     
     private final String name;
     private final boolean isRequest;

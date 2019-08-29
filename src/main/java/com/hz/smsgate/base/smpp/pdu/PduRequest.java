@@ -20,7 +20,9 @@ package com.hz.smsgate.base.smpp.pdu;
  * #L%
  */
 
-public abstract class PduRequest<R extends PduResponse> extends Pdu {
+import java.io.Serializable;
+
+public abstract class PduRequest<R extends PduResponse> extends Pdu implements Serializable {
 
     public PduRequest(int commandId, String name) {
         super(commandId, name, true);
