@@ -58,7 +58,7 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 		if (session0 == null) {
 			try {
 				session0 = ClientInit.clientBootstrap.bind(ClientInit.config0, ClientInit.sessionHandler);
-			}catch (Exception e){
+			} catch (Exception e) {
 
 			}
 
@@ -75,15 +75,17 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 //						submit0.setDestAddress(new Address((byte) 0x01, (byte) 0x01, "44555519205"));
 
 //						submit0.setShortMessage(textBytes);
-						SubmitSm ss = (SubmitSm)pduRequest;
+ 						SubmitSm submitSm = (SubmitSm) pduRequest;
 						try {
 
-							SubmitSmResp submitResp = session0.submit(ss, 10000);
+							SubmitSmResp submitResp = session0.submit(submitSm, 10000);
 							submitResp.setSequenceNumber(response.getSequenceNumber());
 							String messageId = submitResp.getMessageId();
-							if (messageId.length()>19){
-								messageId = messageId.substring(0,19);
+							int msgLen = messageId.length();
+							if (msgLen> 19) {
+								messageId = messageId.substring(0, 19);
 								submitResp.setMessageId(messageId);
+								submitResp.setCommandLength(submitResp.getCommandLength() - (msgLen - 19));
 							}
 							response = submitResp;
 						} catch (Exception e) {
