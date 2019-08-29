@@ -82,7 +82,7 @@ public class ClientInit {
 		//
 		sessionHandler = new Client1SmppSessionHandler();
 
-		SmppSessionConfiguration config0 = new SmppSessionConfiguration();
+		config0 = new SmppSessionConfiguration();
 		config0.setWindowSize(1);
 		config0.setName("Tester.Session.0");
 		config0.setType(SmppBindType.TRANSCEIVER);
