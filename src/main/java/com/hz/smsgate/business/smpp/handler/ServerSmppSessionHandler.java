@@ -1,17 +1,17 @@
 package com.hz.smsgate.business.smpp.handler;
 
-import com.cloudhopper.commons.charset.CharsetUtil;
+import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
 import com.hz.smsgate.base.smpp.constants.SmppConstants;
 import com.hz.smsgate.base.smpp.exception.RecoverablePduException;
 import com.hz.smsgate.base.smpp.exception.UnrecoverablePduException;
 import com.hz.smsgate.base.smpp.pdu.*;
-import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.PduAsyncResponse;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.business.listener.ClientInit;
 import org.slf4j.Logger;
 
 import java.lang.ref.WeakReference;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * @Auther: huangzhuo
@@ -52,7 +52,6 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 
 	@Override
 	public PduResponse firePduRequestReceived(PduRequest pduRequest) {
-		SmppSession session = sessionRef.get();
 		PduResponse response = pduRequest.createResponse();
 		SmppSession session0 = ClientInit.session0;
 		if (session0 == null) {
@@ -61,63 +60,57 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 			} catch (Exception e) {
 
 			}
-
 		}
+		SubmitSmResp submitResp = null;
 		// mimic how long processing could take on a slower smsc
 		try {
 			if (pduRequest.isRequest()) {
-				switch (pduRequest.getCommandId()) {
-					case SmppConstants.CMD_ID_SUBMIT_SM:
-//						String text160 = "\u20AC Lorem [ipsum] dolor sit amet, consectetur adipiscing elit. Proin feugiat, leo id commodo tincidunt, nibh diam ornare est, vitae accumsan risus lacus sed sem metus.";
-//						byte[] textBytes = CharsetUtil.encode(text160, CharsetUtil.CHARSET_GSM);
-//						SubmitSm submit0 = new SubmitSm();
-//						submit0.setSourceAddress(new Address((byte) 0x03, (byte) 0x00, "40404"));
-//						submit0.setDestAddress(new Address((byte) 0x01, (byte) 0x01, "44555519205"));
+				if (pduRequest.getCommandId() == SmppConstants.CMD_ID_SUBMIT_SM) {
+					SubmitSm submitSm = (SubmitSm) pduRequest;
 
-//						submit0.setShortMessage(textBytes);
-						SubmitSm submitSm = (SubmitSm) pduRequest;
+					try {
+						BlockingQueue<Object> queue = BDBStoredMapFactoryImpl.INS.getQueue("submitSm", "submitSm");
+						queue.put(submitSm);
+					} catch (Exception e) {
+						System.out.println("--------------------短信下行接收，加入队列异常。------------------------------------------------------");
+					}
+
+					while (true) {
+						BlockingQueue<Object> submitRespQueue = null;
 						try {
-
-							SubmitSmResp submitResp = session0.submit(submitSm, 10000);
-							submitResp.setSequenceNumber(response.getSequenceNumber());
-							String messageId = submitResp.getMessageId();
-							System.out.println("--------messageId为" + messageId);
-//							int msgLen = messageId.length();
-//							if (msgLen > 19) {
-//								messageId = messageId.substring(0, 19);
-//								submitResp.setMessageId(messageId);
-//								System.out.println("--------messageId为" + messageId);
-//								submitResp.setCommandLength(submitResp.getCommandLength() - (msgLen - 19));
-//							}
-							response = submitResp;
+							submitRespQueue = BDBStoredMapFactoryImpl.INS.getQueue("submitResp", "submitResp");
+							if (submitRespQueue != null) {
+								Object obj = submitRespQueue.poll();
+								if (obj != null) {
+									SubmitSmResp submitSmResp = (SubmitSmResp) obj;
+									System.out.println("响应成功啦啦啦啦啦啦");
+									return submitSmResp;
+								}
+							}
 						} catch (Exception e) {
-
+							System.out.println("lllsssssssssssssssssslllllllll");
 						}
-						System.out.println(pduRequest.getCommandId());
-
-						break;
-					case SmppConstants.CMD_ID_DELIVER_SM:
-						System.out.println(pduRequest.getCommandId());
-						break;
-					case SmppConstants.CMD_ID_DATA_SM:
-						System.out.println(pduRequest.getCommandId());
-						break;
-					case SmppConstants.CMD_ID_ENQUIRE_LINK:
-						EnquireLinkResp enquireLinkResp = session0.enquireLink(new EnquireLink(), 10000);
-						enquireLinkResp.setSequenceNumber(response.getSequenceNumber());
-						response = enquireLinkResp;
-						System.out.println(pduRequest.getCommandId());
-						break;
-					default:
-						System.out.println("llllllllll");
+					}
+				} else if (pduRequest.getCommandId() == SmppConstants.CMD_ID_DELIVER_SM) {
+					System.out.println(pduRequest.getCommandId());
+					return submitResp;
+				} else if (pduRequest.getCommandId() == SmppConstants.CMD_ID_ENQUIRE_LINK) {
+					EnquireLinkResp enquireLinkResp = session0.enquireLink(new EnquireLink(), 10000);
+					return enquireLinkResp;
+				} else {
+					return submitResp;
 				}
-			}
-			//Thread.sleep(50);
-		} catch (Exception e) {
-		}
+			} else {
+				if (pduRequest.getCommandId() == SmppConstants.CMD_ID_SUBMIT_SM_RESP) {
+					return response;
+				} else {
+					return response;
+				}
 
-		return response;
-//		return super.firePduRequestReceived(pduRequest);
+			}
+		} catch (Exception e) {
+			return response;
+		}
 	}
 
 	@Override

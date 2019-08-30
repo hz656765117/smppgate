@@ -92,8 +92,8 @@ public class ClientInit {
 		config0.setHost("192.168.1.222");
 		config0.setPort(8895);
 		config0.setConnectTimeout(10000);
-		config0.setSystemId("1234567890");
-		config0.setPassword("password");
+		config0.setSystemId("901782");
+		config0.setPassword("ICP666");
 		config0.getLoggingOptions().setLogBytes(true);
 		// to enable monitoring (request expiration)
 		config0.setRequestExpiryTimeout(30000);
@@ -115,9 +115,11 @@ public class ClientInit {
 
 
 		RptConsumer rptConsumer = new RptConsumer();
+		MtConsumer mtConsumer = new MtConsumer();
 		//多线程消费
 		for (int i = 0; i < 1; i++) {
 			ThreadPoolHelper.executeTask(rptConsumer);
+			ThreadPoolHelper.executeTask(mtConsumer);
 		}
 
 	}

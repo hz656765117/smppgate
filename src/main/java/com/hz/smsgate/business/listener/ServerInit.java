@@ -52,7 +52,7 @@ public class ServerInit {
 		configuration.setNonBlockingSocketsEnabled(true);
 		configuration.setDefaultRequestExpiryTimeout(30000);
 		configuration.setDefaultWindowMonitorInterval(15000);
-		configuration.setDefaultWindowSize(5);
+		configuration.setDefaultWindowSize(50);
 		configuration.setDefaultWindowWaitTimeout(configuration.getDefaultRequestExpiryTimeout());
 		configuration.setDefaultSessionCountersEnabled(true);
 		configuration.setJmxEnabled(true);
