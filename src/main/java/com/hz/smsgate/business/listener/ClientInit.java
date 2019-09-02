@@ -1,8 +1,11 @@
 package com.hz.smsgate.business.listener;
 
+import com.hz.smsgate.base.constants.StaticValue;
+import com.hz.smsgate.base.constants.SystemGlobals;
 import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.pojo.SmppBindType;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
+import com.hz.smsgate.base.utils.PropertiesLoader;
 import com.hz.smsgate.base.utils.ThreadPoolHelper;
 import com.hz.smsgate.business.smpp.handler.Client1SmppSessionHandler;
 import com.hz.smsgate.business.smpp.handler.DefaultSmppSessionHandler;
@@ -12,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
+import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
@@ -39,7 +43,8 @@ public class ClientInit {
 
 	@PostConstruct
 	public void postConstruct() throws Exception {
-		System.out.println("lll");
+
+		initSystemGlobals();
 
 		//
 		// setup 3 things required for any session we plan on creating
@@ -87,13 +92,11 @@ public class ClientInit {
 		config0.setWindowSize(1);
 		config0.setName("Tester.Session.0");
 		config0.setType(SmppBindType.TRANSCEIVER);
-//        config0.setHost("39.108.216.43");
-//        config0.setPort(2776);
-		config0.setHost("192.168.1.222");
-		config0.setPort(8895);
+		config0.setHost(StaticValue.CLIENT_HOST);
+		config0.setPort(StaticValue.CLIENT_PORT);
 		config0.setConnectTimeout(10000);
-		config0.setSystemId("901782");
-		config0.setPassword("ICP666");
+		config0.setSystemId(StaticValue.CLIENT_SYSTEMID);
+		config0.setPassword(StaticValue.CLIENT_PASSWORD);
 		config0.getLoggingOptions().setLogBytes(true);
 		// to enable monitoring (request expiration)
 		config0.setRequestExpiryTimeout(30000);
@@ -105,10 +108,10 @@ public class ClientInit {
 			// create session a session by having the bootstrap connect a
 			// socket, send the bind request, and wait for a bind response
 			session0 = clientBootstrap.bind(config0, sessionHandler);
-
+			logger.info("-----连接资源(host:{} porr:{})成功------",StaticValue.CLIENT_HOST,StaticValue.CLIENT_PORT);
 
 		} catch (Exception e) {
-			logger.error("", e);
+			logger.error("连接资源失败", e);
 		}
 
 
@@ -123,6 +126,21 @@ public class ClientInit {
 		}
 
 	}
+
+
+	/**
+	 * 初始化读取配置文件信息
+	 */
+	private void initSystemGlobals() {
+		try {
+			PropertiesLoader propertiesLoader = new PropertiesLoader();
+			Properties properties = propertiesLoader.getProperties(SystemGlobals.SYSTEM_GLOBALS_NAME);
+			SystemGlobals.setProperties(properties);
+		} catch (Exception e) {
+			logger.error("系统启动，初始化读取配置文件信息失败", e);
+		}
+	}
+
 
 
 }

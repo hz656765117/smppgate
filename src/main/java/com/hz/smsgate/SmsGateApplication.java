@@ -12,8 +12,5 @@ public class SmsGateApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SmsGateApplication.class, args);
-
-
-
 	}
 }
