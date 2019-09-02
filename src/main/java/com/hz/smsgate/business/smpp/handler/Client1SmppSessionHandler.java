@@ -82,61 +82,24 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
 						break;
 					case SmppConstants.CMD_ID_DELIVER_SM:
 						DeliverSm deliverSm = (DeliverSm) pduRequest;
-//						if (deliverSm.getEsmClass()!=0){
-//							byte[] shortMessage = deliverSm.getShortMessage();
-//							int len1 = shortMessage.length;
-//							String str = new String(shortMessage);
-//							DeliveryReceipt deliveryReceipt = DeliveryReceipt.parseShortMessage(str, DateTimeZone.UTC);
-//
-//							DateTime dateTime = new DateTime();
-//							deliveryReceipt.setDoneDate(dateTime);
-//							deliveryReceipt.setSubmitDate(dateTime);
-//
-//							String messageId = deliveryReceipt.getMessageId();
-//							System.out.println("-------- deliveryReceipt messageId为" + messageId);
-////							int msgLen = messageId.length();
-////							if (msgLen > 19) {
-////								messageId = messageId.substring(0, 19);
-////								deliveryReceipt.setMessageId(messageId);
-////								System.out.println("--------deliveryReceipt messageId为" + messageId);
-////							}
-//
-//
-//							byte[] bytes = deliveryReceipt.toShortMessage().getBytes();
-//							int len2 = bytes.length;
-//							deliverSm.setCommandLength(deliverSm.getCommandLength() + (len2 - len1));
-//							deliverSm.setShortMessage(bytes);
-//
-//
-//
-//							System.out.println(str);
-//						}
-
 						try {
 							BlockingQueue<Object> queue = BDBStoredMapFactoryImpl.INS.getQueue("rptrvok", "rptrvok");
 							queue.put(deliverSm);
 						} catch (Exception e) {
-							System.out.println("--------------------状态报告接收，加入队列异常。------------------------------------------------------");
+							logger.error("----------状态报告接收，加入队列异常。---------------",e);
 						}
-
-
-//						DefaultSmppServer.smppSession.sendRequestPdu(deliverSm, 3000, true);
 						break;
 					case SmppConstants.CMD_ID_DATA_SM:
-						DefaultSmppServer.smppSession.sendRequestPdu(pduRequest, 3000, true);
 						break;
 					case SmppConstants.CMD_ID_ENQUIRE_LINK:
-						DefaultSmppServer.smppSession.sendRequestPdu(pduRequest, 3000, true);
 						break;
 					default:
-						DefaultSmppServer.smppSession.sendRequestPdu(pduRequest, 3000, true);
 						System.out.println("llllllllll");
 				}
 			}
-			System.out.println("==================1025285137102798860=========10252851371027988607===============================");
 
 		} catch (Exception e) {
-			System.out.println("---------------------------------+"+e.toString()+"1--"+e.getStackTrace()+"-----------转发异常----------------------------------------------"+e.getMessage());
+			logger.error("--------客户端处理异常---------",e);
 		}
 
 		// do any logic here

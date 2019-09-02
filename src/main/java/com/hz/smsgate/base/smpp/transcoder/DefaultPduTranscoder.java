@@ -29,8 +29,11 @@ import com.hz.smsgate.base.smpp.exception.UnrecoverablePduException;
 import com.hz.smsgate.base.smpp.pdu.*;
 import com.hz.smsgate.base.smpp.utils.PduUtil;
 import com.hz.smsgate.base.smpp.utils.SequenceNumber;
+import com.hz.smsgate.business.controller.TestController;
 import org.jboss.netty.buffer.BigEndianHeapChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.jboss.netty.buffer.ChannelBuffers.hexDump;
 
@@ -38,6 +41,7 @@ import static org.jboss.netty.buffer.ChannelBuffers.hexDump;
  * @author joelauer (twitter: @jjlauer or <a href="http://twitter.com/jjlauer" target=window>http://twitter.com/jjlauer</a>)
  */
 public class DefaultPduTranscoder implements PduTranscoder {
+	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPduTranscoder.class);
 
 	private final PduTranscoderContext context;
 
@@ -86,15 +90,13 @@ public class DefaultPduTranscoder implements PduTranscoder {
 		if (pdu.getCommandId() == SmppConstants.CMD_ID_DELIVER_SM) {
 			ChannelBuffer copy = buffer.copy();
 			String s = hexDump(copy);
-
-			System.out.println("状态报告 上行------------ "+s);
+			LOGGER.info("------------状态报告 上行------------  {}",s);
 		}
 
 		if (pdu.getCommandId() == SmppConstants.CMD_ID_SUBMIT_SM_RESP) {
 			ChannelBuffer copy = buffer.copy();
 			String s = hexDump(copy);
-
-			System.out.println("下行响应------------ "+s);
+			LOGGER.info("------------下行响应------------  {}",s);
 		}
 
 		return buffer;
@@ -154,7 +156,7 @@ public class DefaultPduTranscoder implements PduTranscoder {
 			if (commandId == SmppConstants.CMD_ID_ENQUIRE_LINK) {
 				pdu = new EnquireLink();
 			} else if (commandId == SmppConstants.CMD_ID_DELIVER_SM) {
-				System.out.println("状态报告 接收------------ "+hex);
+				LOGGER.info("------------状态报告 接收------------  {}",hex);
 				pdu = new DeliverSm();
 			} else if (commandId == SmppConstants.CMD_ID_SUBMIT_SM) {
 				pdu = new SubmitSm();
@@ -181,7 +183,7 @@ public class DefaultPduTranscoder implements PduTranscoder {
 			}
 		} else {
 			if (commandId == SmppConstants.CMD_ID_SUBMIT_SM_RESP) {
-				System.out.println("短信下行  接收------------ "+hex);
+				LOGGER.info("------------短信下行  接收------------ {}",hex);
 				pdu = new SubmitSmResp();
 			} else if (commandId == SmppConstants.CMD_ID_DELIVER_SM_RESP) {
 				pdu = new DeliverSmResp();

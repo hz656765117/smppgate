@@ -9,6 +9,7 @@ import com.hz.smsgate.base.smpp.pojo.PduAsyncResponse;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.business.listener.ClientInit;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.BlockingQueue;
@@ -20,6 +21,7 @@ import java.util.concurrent.BlockingQueue;
  */
 public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 
+	private static final Logger logger = LoggerFactory.getLogger(ServerSmppSessionHandler.class);
 
 	private WeakReference<SmppSession> sessionRef;
 
@@ -72,7 +74,7 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 						BlockingQueue<Object> queue = BDBStoredMapFactoryImpl.INS.getQueue("submitSm", "submitSm");
 						queue.put(submitSm);
 					} catch (Exception e) {
-						System.out.println("--------------------短信下行接收，加入队列异常。------------------------------------------------------");
+						logger.error("-----------短信下行接收，加入队列异常。------------- {}",e);
 					}
 
 					while (true) {
@@ -83,16 +85,14 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 								Object obj = submitRespQueue.poll();
 								if (obj != null) {
 									SubmitSmResp submitSmResp = (SubmitSmResp) obj;
-									System.out.println("响应成功啦啦啦啦啦啦");
 									return submitSmResp;
 								}
 							}
 						} catch (Exception e) {
-							System.out.println("lllsssssssssssssssssslllllllll");
+							logger.error("短信下行响应异常 {}",e);
 						}
 					}
 				} else if (pduRequest.getCommandId() == SmppConstants.CMD_ID_DELIVER_SM) {
-					System.out.println(pduRequest.getCommandId());
 					return submitResp;
 				} else if (pduRequest.getCommandId() == SmppConstants.CMD_ID_ENQUIRE_LINK) {
 					EnquireLinkResp enquireLinkResp = session0.enquireLink(new EnquireLink(), 10000);

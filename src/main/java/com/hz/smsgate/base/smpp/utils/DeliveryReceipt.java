@@ -269,7 +269,6 @@ public class DeliveryReceipt {
 				buf.append(this.text);
 			}
 		}
-		System.out.println(buf.toString());
 		return buf.toString();
 	}
 

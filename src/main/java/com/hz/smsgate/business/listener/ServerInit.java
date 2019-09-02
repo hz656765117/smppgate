@@ -27,7 +27,6 @@ public class ServerInit {
 
 	@PostConstruct
 	public void postConstruct() throws  Exception{
-		System.out.println("system started, triggered by postConstruct.");
 
 
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();

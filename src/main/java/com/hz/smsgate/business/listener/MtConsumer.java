@@ -48,8 +48,6 @@ public class MtConsumer implements Runnable {
 						SubmitSmResp submitResp = session0.submit(submitSm, 10000);
 						BlockingQueue<Object> submitRespQueue = BDBStoredMapFactoryImpl.INS.getQueue("submitResp", "submitResp");
 						submitRespQueue.put(submitResp);
-//						DefaultSmppServer.smppSession.sendRequestPdu(submitResp, 3000, true);
-						System.out.println("lllllllllll");
 					} else {
 						Thread.sleep(1000);
 					}
