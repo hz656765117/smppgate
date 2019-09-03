@@ -22,6 +22,7 @@ package com.hz.smsgate.base.smpp.utils;
 
 import com.cloudhopper.commons.util.StringUtil;
 import com.hz.smsgate.base.smpp.constants.SmppConstants;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -233,7 +234,12 @@ public class DeliveryReceipt {
 	public String toShortMessage() {
 		StringBuilder buf = new StringBuilder(200);
 		buf.append(FIELD_ID);
-		buf.append(this.messageId);
+		if(this.messageId.length()>19){
+			buf.append(this.messageId.substring(this.messageId.length()-19,this.messageId.length()));
+		}else {
+			buf.append(this.messageId);
+		}
+
 		buf.append(" ");
 		buf.append(FIELD_SUB);
 		buf.append(String.format("%03d", this.submitCount));
@@ -243,16 +249,16 @@ public class DeliveryReceipt {
 		buf.append(" ");
 		buf.append(FIELD_SUBMIT_DATE);
 		if (this.submitDate == null) {
-			buf.append("000000000000");
+			buf.append("          ");
 		} else {
-			buf.append(dateFormatTemplateWithFullYearAndSeconds.print(this.submitDate));
+			buf.append(dateFormatTemplate.print(this.submitDate));
 		}
 		buf.append(" ");
 		buf.append(FIELD_DONE_DATE);
 		if (this.doneDate == null) {
-			buf.append("000000000000");
+			buf.append("          ");
 		} else {
-			buf.append(dateFormatTemplateWithFullYearAndSeconds.print(this.doneDate));
+			buf.append(dateFormatTemplate.print(this.doneDate));
 		}
 		buf.append(" ");
 		buf.append(FIELD_STAT);
@@ -482,24 +488,26 @@ public class DeliveryReceipt {
 			}
 
 			if (dlr.submitCount < 0) {
-				throw new DeliveryReceiptException(
-						"Unable to find [sub] field or empty value in delivery receipt message");
+//				throw new DeliveryReceiptException(
+//						"Unable to find [sub] field or empty value in delivery receipt message");
+				dlr.setSubmitCount(001);
 			}
 
 			if (dlr.deliveredCount < 0) {
-				throw new DeliveryReceiptException(
-						"Unable to find [dlvrd] field or empty value in delivery receipt message");
+				dlr.setDeliveredCount(001);
+//				throw new DeliveryReceiptException(
+//						"Unable to find [dlvrd] field or empty value in delivery receipt message");
 			}
 			DateTime dateTime = new DateTime();
 			if (dlr.submitDate == null) {
 
-				dlr.setSubmitDate(dateTime);
+//				dlr.setSubmitDate(dateTime);
 //				throw new DeliveryReceiptException(
 //						"Unable to find [submit date] field or empty value in delivery receipt message");
 			}
 
 			if (dlr.doneDate == null) {
-				dlr.setDoneDate(dateTime);
+//				dlr.setDoneDate(dateTime);
 //				throw new DeliveryReceiptException(
 //						"Unable to find [done date] field or empty value in delivery receipt message");
 			}
@@ -509,10 +517,19 @@ public class DeliveryReceipt {
 						"Unable to find [stat] field or empty value in delivery receipt message");
 			}
 
+			dlr.setErrorCode(000);
+			dlr.setRawErrorCode("000");
 			if (StringUtil.isEmpty(dlr.rawErrorCode) && dlr.errorCode < 0) {
-				throw new DeliveryReceiptException(
-						"Unable to find [err] field or empty value in delivery receipt message");
+				dlr.setErrorCode(000);
+//				throw new DeliveryReceiptException(
+//						"Unable to find [err] field or empty value in delivery receipt message");
 			}
+
+
+			if (StringUtils.isBlank(dlr.text)){
+				dlr.setText("000");
+			}
+
 		}
 
 		return dlr;

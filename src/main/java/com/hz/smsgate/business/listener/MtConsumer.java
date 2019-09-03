@@ -46,6 +46,15 @@ public class MtConsumer implements Runnable {
 						}
 						LOGGER.info("{}-读取到状态报告信息{}", Thread.currentThread().getName(), submitSm.toString());
 						SubmitSmResp submitResp = session0.submit(submitSm, 10000);
+
+						String messageId = submitResp.getMessageId();
+						int msgLen = messageId.length();
+						if (msgLen> 19) {
+							messageId = messageId.substring(msgLen-19, msgLen);
+							submitResp.setMessageId(messageId);
+							submitResp.setCommandLength(submitResp.getCommandLength() - (msgLen - 19));
+						}
+
 						BlockingQueue<Object> submitRespQueue = BDBStoredMapFactoryImpl.INS.getQueue("submitResp", "submitResp");
 						submitRespQueue.put(submitResp);
 					} else {
