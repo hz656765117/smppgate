@@ -1,0 +1,209 @@
+package com.hz.smsgate.business.listener;
+
+import com.cloudhopper.commons.charset.CharsetUtil;
+import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
+import com.hz.smsgate.base.smpp.pdu.SubmitSm;
+import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
+import com.hz.smsgate.base.smpp.pojo.SmppSession;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+
+
+/**
+ * @author huangzhuo
+ * @date 2019/7/2 15:53
+ */
+public class LongMtConsumer implements Runnable {
+	private static Logger LOGGER = LoggerFactory.getLogger(LongMtConsumer.class);
+
+	public static final Map<String, SubmitSm> CACHE_MAP = new LinkedHashMap<>();
+
+//	public static final List<SubmitSm> sendlist = new LinkedList<>();
+
+	@Override
+	public void run() {
+		SubmitSm submitSm;
+
+
+		while (true) {
+
+			BlockingQueue<Object> queue = null;
+			try {
+				queue = BDBStoredMapFactoryImpl.INS.getQueue("longSubmitSm", "longSubmitSm");
+			} catch (Exception e) {
+				LOGGER.error("{}-获取je队列异常", Thread.currentThread().getName(), e);
+			}
+
+			try {
+				if (queue != null) {
+					Object obj = queue.poll();
+					if (obj != null) {
+						submitSm = (SubmitSm) obj;
+						validateMt(submitSm);
+						mergeSt();
+					} else {
+						Thread.sleep(1000);
+					}
+				} else {
+					Thread.sleep(1000);
+				}
+			} catch (Exception e) {
+				LOGGER.error("{}-处理短信状态报告转发异常", Thread.currentThread().getName(), e);
+			}
+
+		}
+
+	}
+
+
+	public void validateMt(SubmitSm submitSm) throws Exception {
+		String key = getKeyBySm(submitSm);
+		byte[] shortMessage = submitSm.getShortMessage();
+		if (shortMessage[0] == 5 && shortMessage[1] == 0 && shortMessage[2] == 3) {
+			System.out.println("这是拆分短信");
+		}
+		byte[] test = new byte[6];
+		byte[] realmsg = new byte[shortMessage.length - 6];
+		System.arraycopy(shortMessage, 0, test, 0, 6);
+		System.arraycopy(shortMessage, 6, realmsg, 0, shortMessage.length - 6);
+		submitSm.setShortMessage(realmsg);
+		submitSm.setCommandLength(submitSm.getCommandLength() - (shortMessage.length - realmsg.length));
+
+
+
+		CACHE_MAP.put(key, submitSm);
+	}
+
+
+	public static String getKeyBySm(SubmitSm submitSm) {
+		byte[] shortMessage = submitSm.getShortMessage();
+		StringBuilder key = new StringBuilder();
+		key.append(submitSm.getSourceAddress().getAddress());
+		key.append("-");
+		key.append(submitSm.getDestAddress().getAddress());
+		key.append("-");
+		key.append(shortMessage[4]);
+		key.append("-");
+		key.append(shortMessage[5]);
+		return key.toString();
+	}
+
+
+	public void mergeSt() throws Exception {
+
+		if (CACHE_MAP.size() <= 0) {
+			return;
+		}
+
+		Map<String, SubmitSm> tempMap = new LinkedHashMap<>();
+		Map<String, SubmitSm> completeMap = new LinkedHashMap<>();
+		boolean flag = true;
+		String tempKey = "";
+		for (Map.Entry<String, SubmitSm> entry : CACHE_MAP.entrySet()) {
+			String key = entry.getKey();
+			if ("1".equals(key.substring(key.length() - 1)) && flag) {
+				tempKey = key;
+				flag = false;
+				completeMap.put(entry.getKey(), entry.getValue());
+			} else {
+				if (!StringUtils.isBlank(tempKey) && key.substring(0, key.length() - 1).equals(tempKey.substring(0, tempKey.length() - 1))) {
+					completeMap.put(entry.getKey(), entry.getValue());
+					String[] split = key.split("-");
+					String msgCount = split[split.length - 2];
+
+					if (completeMap.size() == Integer.valueOf(msgCount)) {
+						SubmitSm submitSm = mergeSubmitSm(completeMap);
+						if (submitSm != null) {
+							tempKey = "";
+							flag = true;
+							try {
+								BlockingQueue<Object> queue = BDBStoredMapFactoryImpl.INS.getQueue("longSubmitSmSend", "longSubmitSmSend");
+								queue.put(submitSm);
+							} catch (Exception e) {
+								LOGGER.error("-----------后短信下行（长短信合并），加入队列异常。------------- {}", e);
+							}
+							completeMap.clear();
+						} else {
+							//如果合并失败则把各条短信放到临时map中，下次再合并
+							tempMap.putAll(completeMap);
+						}
+					}
+
+
+				} else {
+					tempMap.put(entry.getKey(), entry.getValue());
+				}
+			}
+		}
+
+
+		CACHE_MAP.clear();
+		CACHE_MAP.putAll(tempMap);
+		if (completeMap.size() > 0) {
+			CACHE_MAP.putAll(completeMap);
+			//排序CACHE_MAP
+		}
+
+
+	}
+
+
+	public SubmitSm mergeSubmitSm(Map<String, SubmitSm> tempMap1) throws Exception {
+		SubmitSm mt = null;
+		String tempKey = "";
+		for (Map.Entry<String, SubmitSm> entry : tempMap1.entrySet()) {
+			String key = entry.getKey();
+			if ("1".equals(key.substring(key.length() - 1))) {
+				mt = entry.getValue();
+				tempKey = key;
+			}
+		}
+
+		if (mt != null) {
+//			byte[] firstShortMessage = mt.getShortMessage();
+//			System.arraycopy(firstShortMessage, 0, sm, 0, firstShortMessage.length);
+//			startIndex += firstShortMessage.length;
+
+			String[] split = tempKey.split("-");
+			String preKey = tempKey.substring(0, tempKey.length() - 1);
+			int msgCount = Integer.valueOf(split[split.length - 2]);
+
+
+			int shortMessageLen = 0;
+			for (int i = 1; i <= msgCount; i++) {
+				String key = preKey + i;
+				SubmitSm submitSm = tempMap1.get(key);
+				byte[] shortMessage = submitSm.getShortMessage();
+				shortMessageLen += shortMessage.length;
+			}
+			byte[] sm = new byte[shortMessageLen];
+
+
+			int startIndex = 0;
+			for (int i = 1; i <= msgCount; i++) {
+				String key = preKey + i;
+				SubmitSm submitSm = tempMap1.get(key);
+				byte[] shortMessage = submitSm.getShortMessage();
+				System.arraycopy(shortMessage, 0, sm, startIndex, shortMessage.length);
+				startIndex += shortMessage.length;
+			}
+			String content = new String(sm);
+			LOGGER.info("合并后的内容为{}",content);
+			byte[] textBytes = CharsetUtil.encode(content, CharsetUtil.CHARSET_GSM);
+
+			LOGGER.info("合并后且编码后的内容为{}", new String(textBytes));
+
+			mt.setCommandLength(mt.getCommandLength() - mt.getShortMessage().length + textBytes.length);
+			mt.setShortMessage(textBytes);
+		}
+		return mt;
+	}
+
+}

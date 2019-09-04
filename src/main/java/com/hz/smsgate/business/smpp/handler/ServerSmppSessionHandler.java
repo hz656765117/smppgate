@@ -8,6 +8,7 @@ import com.hz.smsgate.base.smpp.pdu.*;
 import com.hz.smsgate.base.smpp.pojo.PduAsyncResponse;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.business.listener.ClientInit;
+import com.hz.smsgate.business.listener.LongMtConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,28 +71,51 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 				if (pduRequest.getCommandId() == SmppConstants.CMD_ID_SUBMIT_SM) {
 					SubmitSm submitSm = (SubmitSm) pduRequest;
 
-					try {
-						BlockingQueue<Object> queue = BDBStoredMapFactoryImpl.INS.getQueue("submitSm", "submitSm");
-						queue.put(submitSm);
-					} catch (Exception e) {
-						logger.error("-----------短信下行接收，加入队列异常。------------- {}",e);
+					byte[] shortMessage = submitSm.getShortMessage();
+					if (shortMessage[0] == 5 && shortMessage[1] == 0 && shortMessage[2] == 3) {
+						logger.info("这是拆分短信{}", LongMtConsumer.getKeyBySm(submitSm));
+						try {
+							BlockingQueue<Object> queue = BDBStoredMapFactoryImpl.INS.getQueue("longSubmitSm", "longSubmitSm");
+							queue.put(submitSm);
+						} catch (Exception e) {
+							logger.error("-----------长短信下行接收，加入队列异常。------------- {}",e);
+						}
+
+						return response;
+					}else {
+						try {
+							BlockingQueue<Object> queue = BDBStoredMapFactoryImpl.INS.getQueue("submitSm", "submitSm");
+							queue.put(submitSm);
+						} catch (Exception e) {
+							logger.error("-----------短短信下行接收，加入队列异常。------------- {}",e);
+						}
+						return response;
+//						while (true) {
+//							BlockingQueue<Object> submitRespQueue = null;
+//							try {
+//								submitRespQueue = BDBStoredMapFactoryImpl.INS.getQueue("submitResp", "submitResp");
+//								if (submitRespQueue != null) {
+//									Object obj = submitRespQueue.poll();
+//									if (obj != null) {
+//										SubmitSmResp submitSmResp = (SubmitSmResp) obj;
+//										return submitSmResp;
+//									}
+//								}
+//							} catch (Exception e) {
+//								logger.error("短信下行响应异常 {}", e);
+//							}
+//						}
+
 					}
 
-					while (true) {
-						BlockingQueue<Object> submitRespQueue = null;
-						try {
-							submitRespQueue = BDBStoredMapFactoryImpl.INS.getQueue("submitResp", "submitResp");
-							if (submitRespQueue != null) {
-								Object obj = submitRespQueue.poll();
-								if (obj != null) {
-									SubmitSmResp submitSmResp = (SubmitSmResp) obj;
-									return submitSmResp;
-								}
-							}
-						} catch (Exception e) {
-							logger.error("短信下行响应异常 {}",e);
-						}
-					}
+
+
+
+
+
+
+
+
 				} else if (pduRequest.getCommandId() == SmppConstants.CMD_ID_DELIVER_SM) {
 					return submitResp;
 				} else if (pduRequest.getCommandId() == SmppConstants.CMD_ID_ENQUIRE_LINK) {

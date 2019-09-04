@@ -119,10 +119,14 @@ public class ClientInit {
 
 		RptConsumer rptConsumer = new RptConsumer();
 		MtConsumer mtConsumer = new MtConsumer();
+		LongMtConsumer longMtConsumer = new LongMtConsumer();
+		LongMtSendConsumer longMtSendConsumer = new LongMtSendConsumer();
 		//多线程消费
 		for (int i = 0; i < 1; i++) {
 			ThreadPoolHelper.executeTask(rptConsumer);
 			ThreadPoolHelper.executeTask(mtConsumer);
+			ThreadPoolHelper.executeTask(longMtConsumer);
+			ThreadPoolHelper.executeTask(longMtSendConsumer);
 		}
 
 	}

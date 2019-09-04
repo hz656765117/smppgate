@@ -1,15 +1,17 @@
 package com.hz.smsgate.business.listener;
 
-import com.cloudhopper.commons.charset.CharsetUtil;
 import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
-import com.hz.smsgate.base.smpp.pdu.DeliverSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
-import com.hz.smsgate.business.smpp.impl.DefaultSmppServer;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 
@@ -17,8 +19,12 @@ import java.util.concurrent.BlockingQueue;
  * @author huangzhuo
  * @date 2019/7/2 15:53
  */
-public class MtConsumer implements Runnable {
-	private static Logger LOGGER = LoggerFactory.getLogger(MtConsumer.class);
+public class LongMtSendConsumer implements Runnable {
+	private static Logger LOGGER = LoggerFactory.getLogger(LongMtSendConsumer.class);
+
+	public static final Map<String, SubmitSm> CACHE_MAP = new LinkedHashMap<>();
+
+	public static final List<SubmitSm> sendlist = new LinkedList<>();
 
 	@Override
 	public void run() {
@@ -29,7 +35,7 @@ public class MtConsumer implements Runnable {
 
 			BlockingQueue<Object> queue = null;
 			try {
-				queue = BDBStoredMapFactoryImpl.INS.getQueue("submitSm", "submitSm");
+				queue = BDBStoredMapFactoryImpl.INS.getQueue("longSubmitSmSend", "longSubmitSmSend");
 			} catch (Exception e) {
 				LOGGER.error("{}-获取je队列异常", Thread.currentThread().getName(), e);
 			}
@@ -39,15 +45,6 @@ public class MtConsumer implements Runnable {
 					Object obj = queue.poll();
 					if (obj != null) {
 						submitSm = (SubmitSm) obj;
-						byte[] shortMessage = submitSm.getShortMessage();
-						String content = new String(shortMessage);
-						LOGGER.info("短短信的内容为{}",content);
-						byte[] textBytes = CharsetUtil.encode(content, CharsetUtil.CHARSET_GSM);
-						LOGGER.info("短短信编码后的内容为{}", new String(textBytes));
-						submitSm.setCommandLength(submitSm.getCommandLength() - submitSm.getShortMessage().length + textBytes.length);
-						submitSm.setShortMessage(textBytes);
-
-
 
 						SmppSession session0 = ClientInit.session0;
 						if (session0 == null) {
@@ -59,8 +56,8 @@ public class MtConsumer implements Runnable {
 
 						String messageId = submitResp.getMessageId();
 						int msgLen = messageId.length();
-						if (msgLen> 19) {
-							messageId = messageId.substring(msgLen-19, msgLen);
+						if (msgLen > 19) {
+							messageId = messageId.substring(msgLen - 19, msgLen);
 							submitResp.setMessageId(messageId);
 							submitResp.setCommandLength(submitResp.getCommandLength() - (msgLen - 19));
 						}
@@ -82,9 +79,5 @@ public class MtConsumer implements Runnable {
 	}
 
 
-	public void  validateMt(SubmitSm submitSm){
-		byte[] shortMessage = submitSm.getShortMessage();
-
-	}
 
 }
