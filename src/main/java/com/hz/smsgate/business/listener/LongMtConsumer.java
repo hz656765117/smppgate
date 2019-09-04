@@ -9,10 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 
 
@@ -75,7 +72,6 @@ public class LongMtConsumer implements Runnable {
 		System.arraycopy(shortMessage, 6, realmsg, 0, shortMessage.length - 6);
 		submitSm.setShortMessage(realmsg);
 		submitSm.setCommandLength(submitSm.getCommandLength() - (shortMessage.length - realmsg.length));
-
 
 
 		CACHE_MAP.put(key, submitSm);
@@ -145,10 +141,23 @@ public class LongMtConsumer implements Runnable {
 
 
 		CACHE_MAP.clear();
-		CACHE_MAP.putAll(tempMap);
 		if (completeMap.size() > 0) {
-			CACHE_MAP.putAll(completeMap);
-			//排序CACHE_MAP
+			tempMap.putAll(completeMap);
+		}
+
+		if (tempMap != null && tempMap.size() > 0) {
+			List<Map.Entry<String, SubmitSm>> hashList = new ArrayList<Map.Entry<String, SubmitSm>>(tempMap.entrySet());
+			Collections.sort(hashList, new Comparator<Map.Entry<String, SubmitSm>>() {
+				// 升序排序
+				public int compare(Map.Entry<String, SubmitSm> o1, Map.Entry<String, SubmitSm> o2) {
+					return o1.getKey().compareTo(o2.getKey());
+				}
+			});
+			// 排序后输出
+			for (Map.Entry<String, SubmitSm> m : hashList) {
+				CACHE_MAP.put(m.getKey(), m.getValue());
+				System.out.println("Key=" + m.getKey() + ", Value=" + m.getValue());
+			}
 		}
 
 
@@ -195,9 +204,8 @@ public class LongMtConsumer implements Runnable {
 				startIndex += shortMessage.length;
 			}
 			String content = new String(sm);
-			LOGGER.info("合并后的内容为{}",content);
+			LOGGER.info("合并后的内容为{}", content);
 			byte[] textBytes = CharsetUtil.encode(content, CharsetUtil.CHARSET_GSM);
-
 			LOGGER.info("合并后且编码后的内容为{}", new String(textBytes));
 
 			mt.setCommandLength(mt.getCommandLength() - mt.getShortMessage().length + textBytes.length);

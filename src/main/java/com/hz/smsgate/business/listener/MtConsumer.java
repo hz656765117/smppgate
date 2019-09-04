@@ -5,7 +5,9 @@ import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
 import com.hz.smsgate.base.smpp.pdu.DeliverSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
+import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
+import com.hz.smsgate.base.smpp.utils.PduUtil;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,15 +41,8 @@ public class MtConsumer implements Runnable {
 					Object obj = queue.poll();
 					if (obj != null) {
 						submitSm = (SubmitSm) obj;
-						byte[] shortMessage = submitSm.getShortMessage();
-						String content = new String(shortMessage);
-						LOGGER.info("短短信的内容为{}",content);
-						byte[] textBytes = CharsetUtil.encode(content, CharsetUtil.CHARSET_GSM);
-						LOGGER.info("短短信编码后的内容为{}", new String(textBytes));
-						submitSm.setCommandLength(submitSm.getCommandLength() - submitSm.getShortMessage().length + textBytes.length);
-						submitSm.setShortMessage(textBytes);
 
-
+						submitSm = rewriteSubmitSm(submitSm);
 
 						SmppSession session0 = ClientInit.session0;
 						if (session0 == null) {
@@ -59,8 +54,8 @@ public class MtConsumer implements Runnable {
 
 						String messageId = submitResp.getMessageId();
 						int msgLen = messageId.length();
-						if (msgLen> 19) {
-							messageId = messageId.substring(msgLen-19, msgLen);
+						if (msgLen > 19) {
+							messageId = messageId.substring(msgLen - 19, msgLen);
 							submitResp.setMessageId(messageId);
 							submitResp.setCommandLength(submitResp.getCommandLength() - (msgLen - 19));
 						}
@@ -82,9 +77,29 @@ public class MtConsumer implements Runnable {
 	}
 
 
-	public void  validateMt(SubmitSm submitSm){
-		byte[] shortMessage = submitSm.getShortMessage();
 
+	/**
+	 * 重写下行对象，将通道更改为正确的 将短信内容编码   TODO
+	 * @param sm
+	 * @return
+	 * @throws Exception
+	 */
+	public static SubmitSm rewriteSubmitSm(SubmitSm sm) throws Exception {
+		byte[] shortMessage = sm.getShortMessage();
+		String content = new String(shortMessage);
+		LOGGER.info("短短信的内容为{}", content);
+		byte[] textBytes = CharsetUtil.encode(content, CharsetUtil.CHARSET_GSM);
+		LOGGER.info("短短信编码后的内容为{}", new String(textBytes));
+		sm.setCommandLength(sm.getCommandLength() - sm.getShortMessage().length + textBytes.length);
+		sm.setShortMessage(textBytes);
+
+
+		Address sourceAddress = sm.getSourceAddress();
+		int beforeLen = PduUtil.calculateByteSizeOfAddress(sourceAddress);
+		sourceAddress.setAddress("CMK");
+		int afterLen = PduUtil.calculateByteSizeOfAddress(sourceAddress);
+		sm.setCommandLength(sm.getCommandLength() - beforeLen + afterLen);
+		sm.setSourceAddress(sourceAddress);
+		return sm;
 	}
-
 }

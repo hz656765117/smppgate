@@ -3,7 +3,9 @@ package com.hz.smsgate.business.listener;
 import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
+import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
+import com.hz.smsgate.base.smpp.utils.PduUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +48,10 @@ public class LongMtSendConsumer implements Runnable {
 					if (obj != null) {
 						submitSm = (SubmitSm) obj;
 
+
+						submitSm = rewriteSubmitSm(submitSm);
+
+
 						SmppSession session0 = ClientInit.session0;
 						if (session0 == null) {
 							session0 = ClientInit.clientBootstrap.bind(ClientInit.config0, ClientInit.sessionHandler);
@@ -61,9 +67,9 @@ public class LongMtSendConsumer implements Runnable {
 							submitResp.setMessageId(messageId);
 							submitResp.setCommandLength(submitResp.getCommandLength() - (msgLen - 19));
 						}
-
-						BlockingQueue<Object> submitRespQueue = BDBStoredMapFactoryImpl.INS.getQueue("submitResp", "submitResp");
-						submitRespQueue.put(submitResp);
+//
+//						BlockingQueue<Object> submitRespQueue = BDBStoredMapFactoryImpl.INS.getQueue("submitResp", "submitResp");
+//						submitRespQueue.put(submitResp);
 					} else {
 						Thread.sleep(1000);
 					}
@@ -78,6 +84,16 @@ public class LongMtSendConsumer implements Runnable {
 
 	}
 
+	//重写下行对象，将通道更改为正确的   TODO
+	public static SubmitSm rewriteSubmitSm(SubmitSm sm) {
+		Address sourceAddress = sm.getSourceAddress();
+		int beforeLen = PduUtil.calculateByteSizeOfAddress(sourceAddress);
+		sourceAddress.setAddress("CMK");
+		int afterLen = PduUtil.calculateByteSizeOfAddress(sourceAddress);
+		sm.setCommandLength(sm.getCommandLength() - beforeLen + afterLen);
+		sm.setSourceAddress(sourceAddress);
+		return sm;
+	}
 
 
 }

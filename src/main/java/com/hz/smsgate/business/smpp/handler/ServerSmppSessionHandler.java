@@ -89,22 +89,21 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 						} catch (Exception e) {
 							logger.error("-----------短短信下行接收，加入队列异常。------------- {}",e);
 						}
-						return response;
-//						while (true) {
-//							BlockingQueue<Object> submitRespQueue = null;
-//							try {
-//								submitRespQueue = BDBStoredMapFactoryImpl.INS.getQueue("submitResp", "submitResp");
-//								if (submitRespQueue != null) {
-//									Object obj = submitRespQueue.poll();
-//									if (obj != null) {
-//										SubmitSmResp submitSmResp = (SubmitSmResp) obj;
-//										return submitSmResp;
-//									}
-//								}
-//							} catch (Exception e) {
-//								logger.error("短信下行响应异常 {}", e);
-//							}
-//						}
+						while (true) {
+							BlockingQueue<Object> submitRespQueue = null;
+							try {
+								submitRespQueue = BDBStoredMapFactoryImpl.INS.getQueue("submitResp", "submitResp");
+								if (submitRespQueue != null) {
+									Object obj = submitRespQueue.poll();
+									if (obj != null) {
+										SubmitSmResp submitSmResp = (SubmitSmResp) obj;
+										return submitSmResp;
+									}
+								}
+							} catch (Exception e) {
+								logger.error("短信下行响应异常 {}", e);
+							}
+						}
 
 					}
 
