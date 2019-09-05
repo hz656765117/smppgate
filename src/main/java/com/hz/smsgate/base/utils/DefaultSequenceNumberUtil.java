@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zx.sms.common.util;
+package com.hz.smsgate.base.utils;
 
 import java.nio.ByteBuffer;
 import java.text.ParseException;
@@ -82,5 +82,5 @@ public class DefaultSequenceNumberUtil {
 	}
 
 	private final static long Limited = 0x7fffffffffff0000L;
-	private final static AtomicLong sequenceId = new AtomicLong(Math.abs(RandomUtils.nextInt()));
+	private final static AtomicLong sequenceId = new AtomicLong(Math.abs(RandomUtils.nextInt(0,999999999)));
 }

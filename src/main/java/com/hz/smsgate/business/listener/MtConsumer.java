@@ -94,12 +94,6 @@ public class MtConsumer implements Runnable {
 		sm.setShortMessage(textBytes);
 
 
-		Address sourceAddress = sm.getSourceAddress();
-		int beforeLen = PduUtil.calculateByteSizeOfAddress(sourceAddress);
-		sourceAddress.setAddress("CMK");
-		int afterLen = PduUtil.calculateByteSizeOfAddress(sourceAddress);
-		sm.setCommandLength(sm.getCommandLength() - beforeLen + afterLen);
-		sm.setSourceAddress(sourceAddress);
 		return sm;
 	}
 }

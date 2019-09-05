@@ -1,4 +1,4 @@
-package pdu;
+package com.hz.smsgate.base.smpp.utils;
 
 /*
  * #%L

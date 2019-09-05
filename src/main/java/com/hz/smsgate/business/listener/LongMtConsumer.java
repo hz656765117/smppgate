@@ -3,8 +3,7 @@ package com.hz.smsgate.business.listener;
 import com.cloudhopper.commons.charset.CharsetUtil;
 import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
-import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
-import com.hz.smsgate.base.smpp.pojo.SmppSession;
+import com.hz.smsgate.base.utils.MsgId;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +60,6 @@ public class LongMtConsumer implements Runnable {
 
 
 	public void validateMt(SubmitSm submitSm) throws Exception {
-		String key = getKeyBySm(submitSm);
 		byte[] shortMessage = submitSm.getShortMessage();
 		if (shortMessage[0] == 5 && shortMessage[1] == 0 && shortMessage[2] == 3) {
 			System.out.println("这是拆分短信");
@@ -74,12 +72,6 @@ public class LongMtConsumer implements Runnable {
 		submitSm.setCommandLength(submitSm.getCommandLength() - (shortMessage.length - realmsg.length));
 
 
-		CACHE_MAP.put(key, submitSm);
-	}
-
-
-	public static String getKeyBySm(SubmitSm submitSm) {
-		byte[] shortMessage = submitSm.getShortMessage();
 		StringBuilder key = new StringBuilder();
 		key.append(submitSm.getSourceAddress().getAddress());
 		key.append("-");
@@ -88,6 +80,32 @@ public class LongMtConsumer implements Runnable {
 		key.append(shortMessage[4]);
 		key.append("-");
 		key.append(shortMessage[5]);
+
+		CACHE_MAP.put(key.toString(), submitSm);
+	}
+
+	public static String getMsgId() {
+		String str = new MsgId().toString().substring(4);
+		if (str.startsWith("0")) {
+			str = "1" + str.substring(1);
+		}
+		return str;
+	}
+
+	public static String getSuffixKeyBySm(SubmitSm submitSm) {
+		byte[] shortMessage = submitSm.getShortMessage();
+		StringBuilder key = new StringBuilder();
+
+		if (shortMessage != null && shortMessage.length >= 6) {
+			key.append("-");
+			key.append(shortMessage[4]);
+			key.append("-");
+			key.append(shortMessage[5]);
+		}
+
+		key.append("-");
+		key.append(submitSm.getSequenceNumber());
+
 		return key.toString();
 	}
 
@@ -149,6 +167,7 @@ public class LongMtConsumer implements Runnable {
 			List<Map.Entry<String, SubmitSm>> hashList = new ArrayList<Map.Entry<String, SubmitSm>>(tempMap.entrySet());
 			Collections.sort(hashList, new Comparator<Map.Entry<String, SubmitSm>>() {
 				// 升序排序
+				@Override
 				public int compare(Map.Entry<String, SubmitSm> o1, Map.Entry<String, SubmitSm> o2) {
 					return o1.getKey().compareTo(o2.getKey());
 				}
@@ -176,14 +195,9 @@ public class LongMtConsumer implements Runnable {
 		}
 
 		if (mt != null) {
-//			byte[] firstShortMessage = mt.getShortMessage();
-//			System.arraycopy(firstShortMessage, 0, sm, 0, firstShortMessage.length);
-//			startIndex += firstShortMessage.length;
-
 			String[] split = tempKey.split("-");
 			String preKey = tempKey.substring(0, tempKey.length() - 1);
 			int msgCount = Integer.valueOf(split[split.length - 2]);
-
 
 			int shortMessageLen = 0;
 			for (int i = 1; i <= msgCount; i++) {
@@ -194,6 +208,7 @@ public class LongMtConsumer implements Runnable {
 			}
 			byte[] sm = new byte[shortMessageLen];
 
+			String tempMsgIds = "";
 
 			int startIndex = 0;
 			for (int i = 1; i <= msgCount; i++) {
@@ -202,6 +217,7 @@ public class LongMtConsumer implements Runnable {
 				byte[] shortMessage = submitSm.getShortMessage();
 				System.arraycopy(shortMessage, 0, sm, startIndex, shortMessage.length);
 				startIndex += shortMessage.length;
+				tempMsgIds += submitSm.getTempMsgId() + "|";
 			}
 			String content = new String(sm);
 			LOGGER.info("合并后的内容为{}", content);
@@ -210,6 +226,7 @@ public class LongMtConsumer implements Runnable {
 
 			mt.setCommandLength(mt.getCommandLength() - mt.getShortMessage().length + textBytes.length);
 			mt.setShortMessage(textBytes);
+			mt.setTempMsgId(tempMsgIds.substring(0, tempMsgIds.length() - 1));
 		}
 		return mt;
 	}

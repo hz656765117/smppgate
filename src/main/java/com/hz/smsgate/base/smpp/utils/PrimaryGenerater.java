@@ -1,4 +1,4 @@
-package demo;
+package com.hz.smsgate.base.smpp.utils;
 
 import java.util.UUID;
 
@@ -39,13 +39,13 @@ public class PrimaryGenerater {
 		String id = null;
 		UUID uuid = UUID.randomUUID();
 		String str = uuid.toString().replaceAll("-", "");
-		String uuidStr = str.substring(str.length() - 17, str.length());
+		String uuidStr = str.substring(str.length() - 19 + sno.length(), str.length());
 		id = uuidStr + sno;
 		return id;
 	}
 
 	public static void main(String[] args) {
-		String s = PrimaryGenerater.getInstance().generaterNextNumber("53");
+		String s = PrimaryGenerater.getInstance().generaterNextNumber("53-12345");
 		System.out.println(s);
 
 	}

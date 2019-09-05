@@ -82,17 +82,6 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
 						break;
 					case SmppConstants.CMD_ID_DELIVER_SM:
 						DeliverSm deliverSm = (DeliverSm) pduRequest;
-
-						byte[] shortMessage = deliverSm.getShortMessage();
-						int len1 = shortMessage.length;
-						String str = new String(shortMessage);
-						DeliveryReceipt deliveryReceipt = DeliveryReceipt.parseShortMessage(str, DateTimeZone.UTC);
-
-						byte[] bytes = deliveryReceipt.toShortMessage().getBytes();
-						int len2 = bytes.length;
-						deliverSm.setCommandLength(deliverSm.getCommandLength() + (len2 - len1));
-						deliverSm.setShortMessage(bytes);
-
 						try {
 							BlockingQueue<Object> queue = BDBStoredMapFactoryImpl.INS.getQueue("rptrvok", "rptrvok");
 							queue.put(deliverSm);

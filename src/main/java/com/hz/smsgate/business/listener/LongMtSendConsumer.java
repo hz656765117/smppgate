@@ -24,7 +24,6 @@ import java.util.concurrent.BlockingQueue;
 public class LongMtSendConsumer implements Runnable {
 	private static Logger LOGGER = LoggerFactory.getLogger(LongMtSendConsumer.class);
 
-	public static final Map<String, SubmitSm> CACHE_MAP = new LinkedHashMap<>();
 
 	public static final List<SubmitSm> sendlist = new LinkedList<>();
 
@@ -49,27 +48,23 @@ public class LongMtSendConsumer implements Runnable {
 						submitSm = (SubmitSm) obj;
 
 
-						submitSm = rewriteSubmitSm(submitSm);
-
+						String[] tempMsgIds = submitSm.getTempMsgId().split("\\|");
 
 						SmppSession session0 = ClientInit.session0;
 						if (session0 == null) {
 							session0 = ClientInit.clientBootstrap.bind(ClientInit.config0, ClientInit.sessionHandler);
 							ClientInit.session0 = session0;
 						}
-						LOGGER.info("{}-读取到状态报告信息{}", Thread.currentThread().getName(), submitSm.toString());
+						LOGGER.info("{}-读取到长短信下行信息{}", Thread.currentThread().getName(), submitSm.toString());
 						SubmitSmResp submitResp = session0.submit(submitSm, 10000);
 
 						String messageId = submitResp.getMessageId();
-						int msgLen = messageId.length();
-						if (msgLen > 19) {
-							messageId = messageId.substring(msgLen - 19, msgLen);
-							submitResp.setMessageId(messageId);
-							submitResp.setCommandLength(submitResp.getCommandLength() - (msgLen - 19));
+
+						//更新缓存中的value
+						for (String key : tempMsgIds) {
+							RptConsumer.CACHE_MAP.put(key, messageId);
 						}
-//
-//						BlockingQueue<Object> submitRespQueue = BDBStoredMapFactoryImpl.INS.getQueue("submitResp", "submitResp");
-//						submitRespQueue.put(submitResp);
+
 					} else {
 						Thread.sleep(1000);
 					}
@@ -82,17 +77,6 @@ public class LongMtSendConsumer implements Runnable {
 
 		}
 
-	}
-
-	//重写下行对象，将通道更改为正确的   TODO
-	public static SubmitSm rewriteSubmitSm(SubmitSm sm) {
-		Address sourceAddress = sm.getSourceAddress();
-		int beforeLen = PduUtil.calculateByteSizeOfAddress(sourceAddress);
-		sourceAddress.setAddress("CMK");
-		int afterLen = PduUtil.calculateByteSizeOfAddress(sourceAddress);
-		sm.setCommandLength(sm.getCommandLength() - beforeLen + afterLen);
-		sm.setSourceAddress(sourceAddress);
-		return sm;
 	}
 
 

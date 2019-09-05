@@ -31,6 +31,7 @@ import com.hz.smsgate.base.smpp.utils.PduUtil;
 import org.jboss.netty.buffer.ChannelBuffer;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Base "short message" PDU as a super class for submit_sm, deliver_sm, and
@@ -54,7 +55,11 @@ public abstract class BaseSm<R extends PduResponse> extends PduRequest<R> implem
     private byte replaceIfPresent;              // not present in data_sm
     protected byte dataCoding;
     private byte defaultMsgId;                  // not present in data_sm, not used in deliver_sm
-    private byte[] shortMessage;                // not present in data_sm         
+    private byte[] shortMessage;                // not present in data_sm
+
+    public String tempMsgId;
+
+
 
     public BaseSm(int commandId, String name) {
         super(commandId, name);
@@ -170,6 +175,16 @@ public abstract class BaseSm<R extends PduResponse> extends PduRequest<R> implem
     public void setDestAddress(Address value) {
         this.destAddress = value;
     }
+
+    public String getTempMsgId() {
+        return tempMsgId;
+    }
+
+    public void setTempMsgId(String tempMsgId) {
+        this.tempMsgId = tempMsgId;
+    }
+
+
 
     @Override
     public void readBody(ChannelBuffer buffer) throws UnrecoverablePduException, RecoverablePduException {

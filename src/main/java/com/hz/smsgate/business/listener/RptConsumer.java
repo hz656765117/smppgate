@@ -1,11 +1,19 @@
 package com.hz.smsgate.business.listener;
 
+import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
 import com.hz.smsgate.base.smpp.pdu.DeliverSm;
+import com.hz.smsgate.base.smpp.pdu.SubmitSm;
+import com.hz.smsgate.base.smpp.pojo.Address;
+import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppServer;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 
@@ -15,6 +23,9 @@ import java.util.concurrent.BlockingQueue;
  */
 public class RptConsumer implements Runnable {
 	private static Logger LOGGER = LoggerFactory.getLogger(RptConsumer.class);
+
+	//key为 msgid + 后缀     value 为 运营商的真实msgid
+	public static final Map<String, String> CACHE_MAP = new LinkedHashMap<>();
 
 	@Override
 	public void run() {
@@ -30,22 +41,12 @@ public class RptConsumer implements Runnable {
 			}
 
 			try {
-				;
-//				if (ClientInit.list != null && ClientInit.list.size() > 0) {
-//					DeliverSm deliverSm1 = ClientInit.list.get(0);
-//					deliverSm1.setSequenceNumber(DefaultSmppSession.sequenceNumber.next());
-//											DefaultSmppServer.smppSession.sendRequestPdu(deliverSm1, 3000, true);
-//					ClientInit.list.remove(0);
-//				}else {
-//					Thread.sleep(1000);
-//				}
-
 				if (queue != null) {
 					Object obj = queue.poll();
 					if (obj != null) {
 						deliverSm = (DeliverSm) obj;
 						LOGGER.info("{}-读取到状态报告信息{}", Thread.currentThread().getName(), deliverSm.toString());
-						DefaultSmppServer.smppSession.sendRequestPdu(deliverSm, 3000, true);
+						sendDeliverSm(deliverSm);
 					} else {
 						Thread.sleep(1000);
 					}
@@ -57,7 +58,156 @@ public class RptConsumer implements Runnable {
 			}
 
 		}
+	}
+
+	//获取原通道
+	public String getRealChannel(String gwChannel) {
+		if (StringUtils.isBlank(gwChannel)) {
+			return gwChannel;
+		}
+		for (Map.Entry<String, String> entry : StaticValue.CHANNL_REL.entrySet()) {
+			if (gwChannel.equals(entry.getValue())) {
+				return entry.getKey();
+			}
+		}
+		return gwChannel;
+	}
+
+	/**
+	 * 替换真实通道
+	 *
+	 * @param deliverSm
+	 * @return
+	 */
+	public DeliverSm reWriteDeliverSm(DeliverSm deliverSm) {
+		Address destAddress = deliverSm.getDestAddress();
+		String realChannel = getRealChannel(destAddress.getAddress());
+		destAddress.setAddress(realChannel);
+		deliverSm.setDestAddress(destAddress);
+		deliverSm.calculateAndSetCommandLength();
+		return deliverSm;
+	}
+
+
+	public void sendDeliverSm(DeliverSm deliverSm) {
+		Map<String, String> removeMap = new LinkedHashMap<>();
+
+		deliverSm = reWriteDeliverSm(deliverSm);
+
+
+		String str = new String(deliverSm.getShortMessage());
+		DeliveryReceipt deliveryReceipt = null;
+		String messageId = "";
+		try {
+			deliveryReceipt = DeliveryReceipt.parseShortMessage(str, DateTimeZone.UTC);
+			messageId = deliveryReceipt.getMessageId();
+		} catch (Exception e) {
+			LOGGER.error("{}-处理长短信状态报告内容解析异常", Thread.currentThread().getName(), e);
+			return;
+		}
+
+
+		for (Map.Entry<String, String> entry : CACHE_MAP.entrySet()) {
+			String address = entry.getValue();
+			String msgId = entry.getKey();
+
+			try {
+
+				LOGGER.info("状态报告响应msgid为{}，缓存中key为{}，value为{}", messageId, entry.getKey(), entry.getValue());
+				if (address.equals(messageId)) {
+
+					String[] split = msgId.split("-");
+					//替换sequenceNumber
+					deliverSm.setSequenceNumber(Integer.valueOf(split[3]));
+
+					//替换messageId
+					deliveryReceipt.setMessageId(split[0]);
+					byte[] bytes = deliveryReceipt.toShortMessage().getBytes();
+					deliverSm.setShortMessage(bytes);
+					deliverSm.calculateAndSetCommandLength();
+
+					removeMap.put(entry.getKey(), entry.getValue());
+					DefaultSmppServer.smppSession.sendRequestPdu(deliverSm, 3000, true);
+				}
+			} catch (Exception e) {
+				LOGGER.error("{}-处理长短信状态报告转发异常", Thread.currentThread().getName(), e);
+			}
+
+		}
+
+
+		if (removeMap != null && removeMap.size() > 0) {
+			for (Map.Entry<String, String> entry : removeMap.entrySet()) {
+				CACHE_MAP.remove(entry.getKey());
+			}
+		} else {
+			try {
+
+				byte[] bytes = deliveryReceipt.toShortMessage().getBytes();
+				deliverSm.setShortMessage(bytes);
+				deliverSm.calculateAndSetCommandLength();
+
+				DefaultSmppServer.smppSession.sendRequestPdu(deliverSm, 3000, true);
+			} catch (Exception e) {
+				LOGGER.error("{}-处理短短信状态报告转发异常", Thread.currentThread().getName(), e);
+			}
+		}
 
 
 	}
+
+//	/**
+//	 * @param deliverSm
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	public DeliverSm reWriteDeliverSm(DeliverSm deliverSm) {
+////		Map<String, String> tempMap = new LinkedHashMap<>();
+//		Map<String, String> removeMap = new LinkedHashMap<>();
+//
+//		StringBuilder preKey = new StringBuilder();
+//		preKey.append(deliverSm.getSourceAddress().getAddress());
+//		preKey.append("-");
+//		preKey.append(deliverSm.getDestAddress().getAddress());
+//		for (Map.Entry<String, String> entry : CACHE_MAP.entrySet()) {
+//			String address = entry.getValue();
+//			String msgId = entry.getKey();
+//			if (address.contains(preKey)) {
+//				String[] split = msgId.split("-");
+//				//替换sequenceNumber
+//				deliverSm.setSequenceNumber(Integer.valueOf(split[3]));
+//
+//				String str = new String(deliverSm.getShortMessage());
+//				try {
+//					DeliveryReceipt deliveryReceipt = DeliveryReceipt.parseShortMessage(str, DateTimeZone.UTC);
+//					//替换messageId
+//					deliveryReceipt.setMessageId(msgId);
+//					byte[] bytes = deliveryReceipt.toShortMessage().getBytes();
+//					deliverSm.setShortMessage(bytes);
+//					deliverSm.calculateAndSetCommandLength();
+//					removeMap.put(entry.getKey(), entry.getValue());
+//					DefaultSmppServer.smppSession.sendRequestPdu(deliverSm, 3000, true);
+//				} catch (Exception e) {
+//					LOGGER.error("{}-处理短信状态报告转发异常", Thread.currentThread().getName(), e);
+//				}
+//
+//
+//			} else if (address.equals(preKey)) {
+//
+//			}
+//
+//		}
+//
+//
+//		if (removeMap != null && removeMap.size() > 0) {
+//			for (Map.Entry<String, String> entry : removeMap.entrySet()) {
+//				CACHE_MAP.remove(entry.getKey());
+//			}
+//		}
+//
+//
+//		return deliverSm;
+//	}
+
+
 }

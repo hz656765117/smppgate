@@ -7,8 +7,11 @@ import com.hz.smsgate.base.smpp.exception.UnrecoverablePduException;
 import com.hz.smsgate.base.smpp.pdu.*;
 import com.hz.smsgate.base.smpp.pojo.PduAsyncResponse;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
+import com.hz.smsgate.base.smpp.utils.PduUtil;
+import com.hz.smsgate.base.smpp.utils.PrimaryGenerater;
 import com.hz.smsgate.business.listener.ClientInit;
 import com.hz.smsgate.business.listener.LongMtConsumer;
+import com.hz.smsgate.business.listener.RptConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +59,7 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 	@Override
 	public PduResponse firePduRequestReceived(PduRequest pduRequest) {
 		PduResponse response = pduRequest.createResponse();
+
 		SmppSession session0 = ClientInit.session0;
 		if (session0 == null) {
 			try {
@@ -64,30 +68,43 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 
 			}
 		}
-		SubmitSmResp submitResp = null;
+
 		// mimic how long processing could take on a slower smsc
 		try {
 			if (pduRequest.isRequest()) {
 				if (pduRequest.getCommandId() == SmppConstants.CMD_ID_SUBMIT_SM) {
+					SubmitSmResp submitResp = (SubmitSmResp) response;
 					SubmitSm submitSm = (SubmitSm) pduRequest;
+					//通道替换
+					submitSm = PduUtil.rewriteSmSourceAddress(submitSm);
+
 
 					byte[] shortMessage = submitSm.getShortMessage();
 					if (shortMessage[0] == 5 && shortMessage[1] == 0 && shortMessage[2] == 3) {
-						logger.info("这是拆分短信{}", LongMtConsumer.getKeyBySm(submitSm));
+						String msgid = LongMtConsumer.getMsgId();
+						logger.info("这是拆分短信,msgid{},后缀为{}", msgid, LongMtConsumer.getSuffixKeyBySm(submitSm));
+						submitResp.setMessageId(msgid);
+
+						//临时流水id
+						String tempMsgId = submitResp.getMessageId() + LongMtConsumer.getSuffixKeyBySm(submitSm);
+
+						RptConsumer.CACHE_MAP.put(tempMsgId, tempMsgId);
+
+						submitSm.setTempMsgId(tempMsgId);
 						try {
 							BlockingQueue<Object> queue = BDBStoredMapFactoryImpl.INS.getQueue("longSubmitSm", "longSubmitSm");
 							queue.put(submitSm);
 						} catch (Exception e) {
-							logger.error("-----------长短信下行接收，加入队列异常。------------- {}",e);
+							logger.error("-----------长短信下行接收，加入队列异常。------------- {}", e);
 						}
 
-						return response;
-					}else {
+						return submitResp;
+					} else {
 						try {
 							BlockingQueue<Object> queue = BDBStoredMapFactoryImpl.INS.getQueue("submitSm", "submitSm");
 							queue.put(submitSm);
 						} catch (Exception e) {
-							logger.error("-----------短短信下行接收，加入队列异常。------------- {}",e);
+							logger.error("-----------短短信下行接收，加入队列异常。------------- {}", e);
 						}
 						while (true) {
 							BlockingQueue<Object> submitRespQueue = null;
@@ -97,6 +114,10 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 									Object obj = submitRespQueue.poll();
 									if (obj != null) {
 										SubmitSmResp submitSmResp = (SubmitSmResp) obj;
+
+//										RptConsumer.CACHE_MAP.put(submitResp.getMessageId(), LongMtConsumer.getKeyBySm(submitSm));
+
+
 										return submitSmResp;
 									}
 								}
@@ -108,20 +129,13 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 					}
 
 
-
-
-
-
-
-
-
 				} else if (pduRequest.getCommandId() == SmppConstants.CMD_ID_DELIVER_SM) {
-					return submitResp;
+					return response;
 				} else if (pduRequest.getCommandId() == SmppConstants.CMD_ID_ENQUIRE_LINK) {
 					EnquireLinkResp enquireLinkResp = session0.enquireLink(new EnquireLink(), 10000);
 					return enquireLinkResp;
 				} else {
-					return submitResp;
+					return response;
 				}
 			} else {
 				if (pduRequest.getCommandId() == SmppConstants.CMD_ID_SUBMIT_SM_RESP) {
