@@ -126,10 +126,8 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 									if (obj != null) {
 										SubmitSmResp submitSmResp = (SubmitSmResp) obj;
 										String msgId16 = new BigInteger(msgid,10).toString(16);
-										submitResp.setMessageId(msgId16);
-
-
-
+										submitSmResp.setMessageId(msgId16);
+										submitSmResp.calculateAndSetCommandLength();
 										return submitSmResp;
 									}
 								}
