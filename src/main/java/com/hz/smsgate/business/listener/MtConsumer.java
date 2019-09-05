@@ -53,6 +53,12 @@ public class MtConsumer implements Runnable {
 						SubmitSmResp submitResp = session0.submit(submitSm, 10000);
 
 						String messageId = submitResp.getMessageId();
+
+
+						//更新缓存中的value
+						RptConsumer.CACHE_MAP.put(submitSm.getTempMsgId(), messageId);
+
+
 						int msgLen = messageId.length();
 						if (msgLen > 19) {
 							messageId = messageId.substring(msgLen - 19, msgLen);
@@ -77,9 +83,9 @@ public class MtConsumer implements Runnable {
 	}
 
 
-
 	/**
 	 * 重写下行对象，将通道更改为正确的 将短信内容编码   TODO
+	 *
 	 * @param sm
 	 * @return
 	 * @throws Exception

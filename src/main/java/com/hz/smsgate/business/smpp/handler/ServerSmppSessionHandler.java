@@ -100,6 +100,13 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 
 						return submitResp;
 					} else {
+
+
+						String msgid = LongMtConsumer.getMsgId();
+						submitSm.setTempMsgId(msgid);
+						logger.info("这是短短信,msgid为:{},后缀为{}", msgid);
+						RptConsumer.CACHE_MAP.put(msgid, msgid);
+
 						try {
 							BlockingQueue<Object> queue = BDBStoredMapFactoryImpl.INS.getQueue("submitSm", "submitSm");
 							queue.put(submitSm);
@@ -114,8 +121,8 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 									Object obj = submitRespQueue.poll();
 									if (obj != null) {
 										SubmitSmResp submitSmResp = (SubmitSmResp) obj;
+										submitResp.setMessageId(msgid);
 
-//										RptConsumer.CACHE_MAP.put(submitResp.getMessageId(), LongMtConsumer.getKeyBySm(submitSm));
 
 
 										return submitSmResp;

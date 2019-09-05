@@ -85,7 +85,7 @@ public class LongMtConsumer implements Runnable {
 	}
 
 	public static String getMsgId() {
-		String str = new MsgId().toString().substring(4);
+		String str = new MsgId().toString().substring(3);
 		if (str.startsWith("0")) {
 			str = "1" + str.substring(1);
 		}

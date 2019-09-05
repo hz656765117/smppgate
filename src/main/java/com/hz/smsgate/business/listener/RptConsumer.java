@@ -74,16 +74,28 @@ public class RptConsumer implements Runnable {
 	}
 
 	/**
-	 * 替换真实通道
-	 *
 	 * @param deliverSm
 	 * @return
 	 */
 	public DeliverSm reWriteDeliverSm(DeliverSm deliverSm) {
+		//替换真实通道
 		Address destAddress = deliverSm.getDestAddress();
 		String realChannel = getRealChannel(destAddress.getAddress());
 		destAddress.setAddress(realChannel);
 		deliverSm.setDestAddress(destAddress);
+
+
+		//补齐号码
+		Address sourceAddress = deliverSm.getSourceAddress();
+		String address1 = sourceAddress.getAddress();
+		if (!address1.startsWith("0")) {
+			address1 = "00" + address1;
+			sourceAddress.setAddress(address1);
+			deliverSm.setSourceAddress(sourceAddress);
+
+		}
+
+
 		deliverSm.calculateAndSetCommandLength();
 		return deliverSm;
 	}
@@ -117,8 +129,11 @@ public class RptConsumer implements Runnable {
 				if (address.equals(messageId)) {
 
 					String[] split = msgId.split("-");
-					//替换sequenceNumber
-					deliverSm.setSequenceNumber(Integer.valueOf(split[3]));
+					if (split != null && split.length > 3) {
+						//替换sequenceNumber
+						deliverSm.setSequenceNumber(Integer.valueOf(split[3]));
+					}
+
 
 					//替换messageId
 					deliveryReceipt.setMessageId(split[0]);
