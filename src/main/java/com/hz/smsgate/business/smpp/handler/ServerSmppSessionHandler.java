@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.ref.WeakReference;
+import java.math.BigInteger;
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -98,6 +99,9 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 							logger.error("-----------长短信下行接收，加入队列异常。------------- {}", e);
 						}
 
+
+						String msgId16 = new BigInteger(msgid,10).toString(16);
+						submitResp.setMessageId(msgId16);
 						return submitResp;
 					} else {
 
@@ -121,7 +125,8 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 									Object obj = submitRespQueue.poll();
 									if (obj != null) {
 										SubmitSmResp submitSmResp = (SubmitSmResp) obj;
-										submitResp.setMessageId(msgid);
+										String msgId16 = new BigInteger(msgid,10).toString(16);
+										submitResp.setMessageId(msgId16);
 
 
 
