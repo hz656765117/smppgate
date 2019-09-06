@@ -46,7 +46,7 @@ public class ServerInit {
 
 		// create a server configuration
 		SmppServerConfiguration configuration = new SmppServerConfiguration();
-		configuration.setPort(2776);
+		configuration.setPort(2777);
 		configuration.setMaxConnectionSize(10);
 		configuration.setNonBlockingSocketsEnabled(true);
 		configuration.setDefaultRequestExpiryTimeout(30000);
