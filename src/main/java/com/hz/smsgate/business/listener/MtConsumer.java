@@ -93,13 +93,25 @@ public class MtConsumer implements Runnable {
 	public static SubmitSm rewriteSubmitSm(SubmitSm sm) throws Exception {
 		byte[] shortMessage = sm.getShortMessage();
 		String content = new String(shortMessage);
-		LOGGER.info("短短信的内容为{}", content);
+		LOGGER.info("短短信的内容为{},下行号码为{}，通道为{}", content, sm.getDestAddress().getAddress(), sm.getSourceAddress().getAddress());
 		byte[] textBytes = CharsetUtil.encode(content, CharsetUtil.CHARSET_GSM);
-		LOGGER.info("短短信编码后的内容为{}", new String(textBytes));
-		sm.setCommandLength(sm.getCommandLength() - sm.getShortMessage().length + textBytes.length);
+
 		sm.setShortMessage(textBytes);
 
+		if (sm.getSourceAddress().getAddress().equals("555")) {
+			Address destAddress = sm.getDestAddress();
+			if (destAddress.getAddress().startsWith("00")) {
+				String address = destAddress.getAddress().substring(2);
+				destAddress.setAddress(address);
+				sm.setDestAddress(destAddress);
+			}
+		}
 
+		LOGGER.info("短短信编码后的内容为{},下行号码为{}，通道为{}", new String(textBytes), sm.getDestAddress().getAddress(), sm.getSourceAddress().getAddress());
+
+		sm.calculateAndSetCommandLength();
 		return sm;
 	}
+
+
 }
