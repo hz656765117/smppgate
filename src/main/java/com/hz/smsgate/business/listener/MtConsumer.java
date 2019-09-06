@@ -8,6 +8,7 @@ import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
 import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.utils.PduUtil;
+import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,14 +99,7 @@ public class MtConsumer implements Runnable {
 
 		sm.setShortMessage(textBytes);
 
-		if (sm.getSourceAddress().getAddress().equals("555")) {
-			Address destAddress = sm.getDestAddress();
-			if (destAddress.getAddress().startsWith("00")) {
-				String address = destAddress.getAddress().substring(2);
-				destAddress.setAddress(address);
-				sm.setDestAddress(destAddress);
-			}
-		}
+		sm = PduUtils.removeZero(sm);
 
 		LOGGER.info("短短信编码后的内容为{},下行号码为{}，通道为{}", new String(textBytes), sm.getDestAddress().getAddress(), sm.getSourceAddress().getAddress());
 
