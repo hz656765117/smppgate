@@ -1,5 +1,6 @@
 package com.hz.smsgate.base.utils;
 
+import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pojo.Address;
 
@@ -18,7 +19,7 @@ public class PduUtils {
 	 * @return
 	 */
 	public static SubmitSm removeZero(SubmitSm sm) {
-		if (sm.getSourceAddress().getAddress().equals("555")) {
+		if (sm.getSourceAddress().getAddress().equals(StaticValue.CHANNL_REL.get("555")) || sm.getSourceAddress().getAddress().equals("555")) {
 			Address destAddress = sm.getDestAddress();
 			if (destAddress.getAddress().startsWith("00")) {
 				String address = destAddress.getAddress().substring(2);
