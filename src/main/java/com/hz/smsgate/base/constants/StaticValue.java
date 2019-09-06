@@ -27,7 +27,7 @@ public class StaticValue {
 		CLIENT_PASSWORD = SystemGlobals.getValue("client.password") ;
 
 		CHANNL_REL = new LinkedHashMap<>(1);
-		CHANNL_REL.put("999","CMK");
+		CHANNL_REL.put("882","CMK");
 
 
 	}
