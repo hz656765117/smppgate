@@ -28,6 +28,7 @@ public class StaticValue {
 
 		CHANNL_REL = new LinkedHashMap<>(1);
 		CHANNL_REL.put("882","CMK");
+		CHANNL_REL.put("555","JSITGS");
 
 
 	}
