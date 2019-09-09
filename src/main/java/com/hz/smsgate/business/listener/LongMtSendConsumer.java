@@ -49,15 +49,16 @@ public class LongMtSendConsumer implements Runnable {
 					if (obj != null) {
 						submitSm = (SubmitSm) obj;
 
-						submitSm = PduUtils.removeZero(submitSm);
+						//重组下行对象
+						submitSm = PduUtils.rewriteSubmitSm(submitSm);
 
 						String[] tempMsgIds = submitSm.getTempMsgId().split("\\|");
 
-						SmppSession session0 = ClientInit.session0;
-						if (session0 == null) {
-							session0 = ClientInit.clientBootstrap.bind(ClientInit.config0, ClientInit.sessionHandler);
-							ClientInit.session0 = session0;
-						}
+
+						//获取客户端session
+						SmppSession session0 = PduUtils.getSmppSession(submitSm);
+
+
 						LOGGER.info("{}-读取到长短信下行信息{}", Thread.currentThread().getName(), submitSm.toString());
 						SubmitSmResp submitResp = session0.submit(submitSm, 10000);
 

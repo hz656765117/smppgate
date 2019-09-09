@@ -16,6 +16,10 @@ public class StaticValue {
 	public static String CLIENT_SYSTEMID = "";
 	public static String CLIENT_PASSWORD = "";
 
+	public static String CHANNEL_1 = "555";
+	public static String CHANNEL_2 = "882";
+
+
 
 	public static Map<String ,String> CHANNL_REL = null;
 
@@ -27,8 +31,8 @@ public class StaticValue {
 		CLIENT_PASSWORD = SystemGlobals.getValue("client.password") ;
 
 		CHANNL_REL = new LinkedHashMap<>(1);
-		CHANNL_REL.put("882","CMK");
-		CHANNL_REL.put("555","JSITGS");
+		CHANNL_REL.put(CHANNEL_2,"CMK");
+		CHANNL_REL.put(CHANNEL_1,"BYTDNC");
 
 
 	}

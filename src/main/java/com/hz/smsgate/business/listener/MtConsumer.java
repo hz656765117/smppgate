@@ -43,13 +43,12 @@ public class MtConsumer implements Runnable {
 					if (obj != null) {
 						submitSm = (SubmitSm) obj;
 
-						submitSm = rewriteSubmitSm(submitSm);
+						//重组下行对象
+						submitSm = PduUtils.rewriteSubmitSm(submitSm);
 
-						SmppSession session0 = ClientInit.session0;
-						if (session0 == null) {
-							session0 = ClientInit.clientBootstrap.bind(ClientInit.config0, ClientInit.sessionHandler);
-							ClientInit.session0 = session0;
-						}
+						//获取客户端session
+						SmppSession session0 = PduUtils.getSmppSession(submitSm);
+
 						LOGGER.info("{}-读取到状态报告信息{}", Thread.currentThread().getName(), submitSm.toString());
 						SubmitSmResp submitResp = session0.submit(submitSm, 10000);
 
@@ -84,28 +83,6 @@ public class MtConsumer implements Runnable {
 	}
 
 
-	/**
-	 * 重写下行对象，将通道更改为正确的 将短信内容编码   TODO
-	 *
-	 * @param sm
-	 * @return
-	 * @throws Exception
-	 */
-	public static SubmitSm rewriteSubmitSm(SubmitSm sm) throws Exception {
-		byte[] shortMessage = sm.getShortMessage();
-		String content = new String(shortMessage);
-		LOGGER.info("短短信的内容为{},下行号码为{}，通道为{}", content, sm.getDestAddress().getAddress(), sm.getSourceAddress().getAddress());
-		byte[] textBytes = CharsetUtil.encode(content, CharsetUtil.CHARSET_GSM);
-
-		sm.setShortMessage(textBytes);
-
-		sm = PduUtils.removeZero(sm);
-
-		LOGGER.info("短短信编码后的内容为{},下行号码为{}，通道为{}", new String(textBytes), sm.getDestAddress().getAddress(), sm.getSourceAddress().getAddress());
-
-		sm.calculateAndSetCommandLength();
-		return sm;
-	}
 
 
 }

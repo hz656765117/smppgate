@@ -199,6 +199,8 @@ public class LongMtConsumer implements Runnable {
 			String preKey = tempKey.substring(0, tempKey.length() - 1);
 			int msgCount = Integer.valueOf(split[split.length - 2]);
 
+
+			//计算短信内容长度
 			int shortMessageLen = 0;
 			for (int i = 1; i <= msgCount; i++) {
 				String key = preKey + i;
@@ -210,6 +212,7 @@ public class LongMtConsumer implements Runnable {
 
 			String tempMsgIds = "";
 
+			//拼接短信内容
 			int startIndex = 0;
 			for (int i = 1; i <= msgCount; i++) {
 				String key = preKey + i;
@@ -219,14 +222,13 @@ public class LongMtConsumer implements Runnable {
 				startIndex += shortMessage.length;
 				tempMsgIds += submitSm.getTempMsgId() + "|";
 			}
-			String content = new String(sm);
-			LOGGER.info("合并后的内容为{}", content);
-			byte[] textBytes = CharsetUtil.encode(content, CharsetUtil.CHARSET_GSM);
-			LOGGER.info("合并后且编码后的内容为{}", new String(textBytes));
+			LOGGER.info("合并后的内容为{}", new String(sm));
 
-			mt.setCommandLength(mt.getCommandLength() - mt.getShortMessage().length + textBytes.length);
-			mt.setShortMessage(textBytes);
+			mt.setShortMessage(sm);
+			mt.calculateAndSetCommandLength();
+
 			mt.setTempMsgId(tempMsgIds.substring(0, tempMsgIds.length() - 1));
+
 		}
 		return mt;
 	}
