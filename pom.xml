@@ -22,6 +22,7 @@
         <ch-commons-util.version>6.0.2</ch-commons-util.version>
         <ch-commons-charset.version>3.0.2</ch-commons-charset.version>
         <ch-commons-gsm.version>3.0.0</ch-commons-gsm.version>
+        <netty.version>4.1.33.Final</netty.version>
     </properties>
 
 
@@ -226,6 +227,55 @@
             <scope>system</scope>
             <systemPath>${basedir}/lib/netty-3.9.6.Final.jar</systemPath>
         </dependency>
+
+        <dependency>
+            <groupId>com.sleepycat</groupId>
+            <artifactId>je</artifactId>
+            <version>5.0.73</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/je-5.0.73.jar</systemPath>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>16.0</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.11</version>
+        </dependency>
+
+
+<!--        <dependency>
+            <groupId>com.sleepycat</groupId>
+            <artifactId>je</artifactId>
+            <version>5.0.73</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler-proxy</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+            <version>${netty.version}</version>
+        </dependency>-->
 
     </dependencies>
 
