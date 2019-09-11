@@ -1,5 +1,6 @@
 package com.hz.smsgate.business.listener;
 
+import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.smpp.config.SmppServerConfiguration;
 import com.hz.smsgate.business.smpp.handler.DefaultSmppServerHandler;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppServer;
@@ -26,7 +27,7 @@ public class ServerInit {
 	private static final Logger logger = LoggerFactory.getLogger(ServerInit.class);
 
 	@PostConstruct
-	public void postConstruct() throws  Exception{
+	public void postConstruct() throws Exception {
 
 
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
@@ -36,6 +37,7 @@ public class ServerInit {
 		// is probably a thread pool that can be shared with between all client bootstraps
 		ScheduledThreadPoolExecutor monitorExecutor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(1, new ThreadFactory() {
 			private AtomicInteger sequence = new AtomicInteger(0);
+
 			@Override
 			public Thread newThread(Runnable r) {
 				Thread t = new Thread(r);
@@ -46,7 +48,7 @@ public class ServerInit {
 
 		// create a server configuration
 		SmppServerConfiguration configuration = new SmppServerConfiguration();
-		configuration.setPort(2777);
+		configuration.setPort(StaticValue.SERVER_PORT);
 		configuration.setMaxConnectionSize(10);
 		configuration.setNonBlockingSocketsEnabled(true);
 		configuration.setDefaultRequestExpiryTimeout(30000);
@@ -59,14 +61,12 @@ public class ServerInit {
 		// create a server, start it up
 		DefaultSmppServer smppServer = new DefaultSmppServer(configuration, new DefaultSmppServerHandler(), executor, monitorExecutor);
 
-		logger.info("Starting SMPP server...");
+		logger.info("Starting SMPP server...  port is {}", StaticValue.SERVER_PORT);
 		smppServer.start();
 		logger.info("SMPP server started");
 
 
 	}
-
-
 
 
 }

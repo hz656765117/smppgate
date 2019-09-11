@@ -16,6 +16,8 @@ public class StaticValue {
 	public static String CLIENT_SYSTEMID = "";
 	public static String CLIENT_PASSWORD = "";
 
+	public static int SERVER_PORT = 2776;
+
 	public static String CHANNEL_1 = "555";
 	public static String CHANNEL_2 = "882";
 
@@ -29,6 +31,9 @@ public class StaticValue {
 		CLIENT_PORT = SystemGlobals.getIntValue("client.port") ;
 		CLIENT_SYSTEMID = SystemGlobals.getValue("client.systemId") ;
 		CLIENT_PASSWORD = SystemGlobals.getValue("client.password") ;
+
+
+		SERVER_PORT = SystemGlobals.getIntValue("server.port" ,2776) ;
 
 		CHANNL_REL = new LinkedHashMap<>(1);
 		CHANNL_REL.put(CHANNEL_2,"CMK");
