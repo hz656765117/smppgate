@@ -9,6 +9,8 @@ import com.hz.smsgate.business.listener.ClientInit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 /**
  * @Auther: huangzhuo
  * @Date: 2019/9/6 15:10
@@ -81,16 +83,24 @@ public class PduUtils {
 
 	/**
 	 * 根据下行通道获取对应的客户端session  TODO  暂时不支持多个客户端获取
+	 *
 	 * @param sm
 	 * @return
 	 */
 	public static SmppSession getSmppSession(SubmitSm sm) {
-		SmppSession session0 = ClientInit.session0;
+		String sendId = sm.getSourceAddress().getAddress();
+		SmppSession session0 = null;
+		Map<String, SmppSession> sessionMap = ClientInit.sessionMap;
+		if (sessionMap != null && sessionMap.size() > 0) {
+			session0 = sessionMap.get(sendId);
+		}
+
+
 		if (session0 == null) {
-			try{
-				session0 = ClientInit.clientBootstrap.bind(ClientInit.config0, ClientInit.sessionHandler);
-				ClientInit.session0 = session0;
-			}catch (Exception e){
+			try {
+				session0 = ClientInit.clientBootstrapMap.get(sendId).bind(ClientInit.configMap.get(sendId), ClientInit.sessionHandlerMap.get(sendId));
+				ClientInit.sessionMap.put(sendId, session0);
+			} catch (Exception e) {
 				LOGGER.error("获取客户端连接异常", e);
 			}
 		}

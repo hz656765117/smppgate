@@ -36,12 +36,13 @@ public class MtConsumer implements Runnable {
 			} catch (Exception e) {
 				LOGGER.error("{}-获取je队列异常", Thread.currentThread().getName(), e);
 			}
-
+			String sendId = "";
 			try {
 				if (queue != null) {
 					Object obj = queue.poll();
 					if (obj != null) {
 						submitSm = (SubmitSm) obj;
+						sendId = submitSm.getSourceAddress().getAddress();
 
 						//重组下行对象
 						submitSm = PduUtils.rewriteSubmitSm(submitSm);
@@ -75,14 +76,12 @@ public class MtConsumer implements Runnable {
 					Thread.sleep(1000);
 				}
 			} catch (Exception e) {
-				LOGGER.error("{}-处理短信状态报告转发异常", Thread.currentThread().getName(), e);
+				LOGGER.error("{}-{}处理短信状态报告转发异常", Thread.currentThread().getName(),sendId, e);
 			}
 
 		}
 
 	}
-
-
 
 
 }

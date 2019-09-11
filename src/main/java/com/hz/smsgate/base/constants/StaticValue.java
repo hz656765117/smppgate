@@ -18,6 +18,9 @@ public class StaticValue {
 
 	public static int SERVER_PORT = 2776;
 
+
+	public static int  ENQUIRE_LINK_TIME = 5000;
+
 	public static String CHANNEL_1 = "555";
 	public static String CHANNEL_2 = "882";
 
@@ -34,6 +37,8 @@ public class StaticValue {
 
 
 		SERVER_PORT = SystemGlobals.getIntValue("server.port" ,2776) ;
+
+		ENQUIRE_LINK_TIME = SystemGlobals.getIntValue("enquire.link.time" ,20000) ;
 
 		CHANNL_REL = new LinkedHashMap<>(1);
 		CHANNL_REL.put(CHANNEL_2,"CMK");
