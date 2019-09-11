@@ -1,6 +1,7 @@
 package com.hz.smsgate.business.listener;
 
 import com.hz.smsgate.base.constants.StaticValue;
+import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.pdu.EnquireLink;
 import com.hz.smsgate.base.smpp.pdu.EnquireLinkResp;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
@@ -31,6 +32,13 @@ public class EnquireLinkConsumer implements Runnable {
 						try {
 							EnquireLinkResp enquireLinkResp = session0.enquireLink(new EnquireLink(), 10000);
 						} catch (Exception e) {
+							//如果心跳失败，则重新绑定一次，绑定失败 则移除该session
+							SmppSessionConfiguration smppSessionConfiguration = ClientInit.configMap.get(entry.getKey());
+							boolean flag = ClientInit.createClient(smppSessionConfiguration);
+							if (!flag){
+								sessionMap.remove(entry.getKey());
+							}
+
 							LOGGER.error("{}-{}心跳异常异常", Thread.currentThread().getName(), entry.getKey(), e);
 						}
 

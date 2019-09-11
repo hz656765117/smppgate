@@ -45,7 +45,7 @@ public class ClientInit {
 
 	@PostConstruct
 	public void postConstruct() throws Exception {
-
+		//初始化配置文件
 		initSystemGlobals();
 
 
@@ -54,91 +54,26 @@ public class ClientInit {
 		clientBootstrapMap = new LinkedHashMap<>();
 		sessionHandlerMap = new LinkedHashMap<>();
 
+
+		//初始化客户端配置
 		intConfigMap();
 
-		SmppSession session0 = null;
-//		SmppSessionConfiguration config0 = null;
-		//
-		// setup 3 things required for any session we plan on creating
-		//
 
-		// for monitoring thread use, it's preferable to create your own instance
-		// of an executor with Executors.newCachedThreadPool() and cast it to ThreadPoolExecutor
-		// this permits exposing thinks like executor.getActiveCount() via JMX possible
-		// no point renaming the threads in a factory since underlying Netty
-		// framework does not easily allow you to customize your thread names
-		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
-
-		// to enable automatic expiration of requests, a second scheduled executor
-		// is required which is what a monitor task will be executed with - this
-		// is probably a thread pool that can be shared with between all client bootstraps
-
-
-		// a single instance of a client bootstrap can technically be shared
-		// between any sessions that are created (a session can go to any different
-		// number of SMSCs) - each session created under
-		// a client bootstrap will use the executor and monitorExecutor set
-		// in its constructor - just be *very* careful with the "expectedSessions"
-		// value to make sure it matches the actual number of total concurrent
-		// open sessions you plan on handling - the underlying netty library
-		// used for NIO sockets essentially uses this value as the max number of
-		// threads it will ever use, despite the "max pool size", etc. set on
-		// the executor passed in here
-
-		//
-		// setup configuration for a client session
-		//
-
-
-//		config0 = new SmppSessionConfiguration();
-//		config0.setWindowSize(1);
-//		config0.setName("Tester.Session.0");
-//		config0.setConnectTimeout(10000);
-//		config0.setRequestExpiryTimeout(30000);
-//		config0.setWindowMonitorInterval(15000);
-//		config0.setCountersEnabled(true);
-//		config0.getLoggingOptions().setLogBytes(true);
-//		config0.setType(SmppBindType.TRANSCEIVER);
-//		config0.setHost(StaticValue.CLIENT_HOST);
-//		config0.setPort(StaticValue.CLIENT_PORT);
-//		config0.setSystemId(StaticValue.CLIENT_SYSTEMID);
-//		config0.setPassword(StaticValue.CLIENT_PASSWORD);
-//		config0.setAddressRange(new Address((byte) 0, (byte) 0, "10086"));
-
+		//启动客户端
 		if (configMap != null && configMap.size() > 0) {
-
 			for (Map.Entry<String, SmppSessionConfiguration> entry : configMap.entrySet()) {
-
-				ScheduledThreadPoolExecutor monitorExecutor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(1, new ThreadFactory() {
-					private AtomicInteger sequence = new AtomicInteger(0);
-
-					@Override
-					public Thread newThread(Runnable r) {
-						Thread t = new Thread(r);
-						t.setName("SmppClientSessionWindowMonitorPool-" + sequence.getAndIncrement());
-						return t;
-					}
-				});
-				SmppSessionConfiguration config = entry.getValue();
-
-				DefaultSmppClient clientBootstrap = new DefaultSmppClient(Executors.newCachedThreadPool(), 1, monitorExecutor);
-				DefaultSmppSessionHandler sessionHandler = new Client1SmppSessionHandler();
-
-				clientBootstrapMap.put(config.getAddressRange().getAddress(),clientBootstrap);
-				sessionHandlerMap.put(config.getAddressRange().getAddress(),sessionHandler);
-
-				try {
-					session0 = clientBootstrap.bind(config, sessionHandler);
-					logger.info("-----连接资源(host:{} port:{} sendId:{})成功------", config.getHost(), config.getPort(), config.getAddressRange().getAddress());
-					sessionMap.put(config.getAddressRange().getAddress(), session0);
-				} catch (Exception e) {
-					logger.error("连接资源失败", e);
-				}
+				createClient(entry.getValue());
 			}
-
 		}
 
 
+		//启动相关线程
+		initMutiThread();
+
+	}
+
+
+	private static void initMutiThread(){
 		RptConsumer rptConsumer = new RptConsumer();
 		MtConsumer mtConsumer = new MtConsumer();
 		LongMtConsumer longMtConsumer = new LongMtConsumer();
@@ -152,7 +87,37 @@ public class ClientInit {
 			ThreadPoolHelper.executeTask(longMtSendConsumer);
 			ThreadPoolHelper.executeTask(enquireLinkConsumer);
 		}
+	}
 
+
+	public static boolean  createClient(SmppSessionConfiguration config){
+		boolean flag = false;
+		ScheduledThreadPoolExecutor monitorExecutor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(1, new ThreadFactory() {
+			private AtomicInteger sequence = new AtomicInteger(0);
+
+			@Override
+			public Thread newThread(Runnable r) {
+				Thread t = new Thread(r);
+				t.setName("SmppClientSessionWindowMonitorPool-" + sequence.getAndIncrement());
+				return t;
+			}
+		});
+
+		DefaultSmppClient clientBootstrap = new DefaultSmppClient(Executors.newCachedThreadPool(), 1, monitorExecutor);
+		DefaultSmppSessionHandler sessionHandler = new Client1SmppSessionHandler();
+
+		clientBootstrapMap.put(config.getAddressRange().getAddress(),clientBootstrap);
+		sessionHandlerMap.put(config.getAddressRange().getAddress(),sessionHandler);
+		SmppSession session0 = null;
+		try {
+			session0 = clientBootstrap.bind(config, sessionHandler);
+			logger.info("-----连接资源(host:{} port:{} sendId:{})成功------", config.getHost(), config.getPort(), config.getAddressRange().getAddress());
+			sessionMap.put(config.getAddressRange().getAddress(), session0);
+			flag = true;
+		} catch (Exception e) {
+			logger.error("连接资源失败", e);
+		}
+		return flag;
 	}
 
 
