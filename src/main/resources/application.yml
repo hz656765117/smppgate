@@ -1,5 +1,5 @@
 server:
-  port: ${port:8812}
+  port: ${port:8813}
 #  use-forward-headers: true
 #  tomcat:
 #    protocol-header: X-FORWARDED-PROTO

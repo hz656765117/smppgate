@@ -6,6 +6,7 @@ import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.SmppBindType;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
+import com.hz.smsgate.base.utils.FileUtils;
 import com.hz.smsgate.base.utils.PropertiesLoader;
 import com.hz.smsgate.base.utils.ThreadPoolHelper;
 import com.hz.smsgate.business.smpp.handler.Client1SmppSessionHandler;
@@ -56,7 +57,7 @@ public class ClientInit {
 
 
 		//初始化客户端配置
-		intConfigMap();
+		configMap = FileUtils.getConfigs(StaticValue.RESOURCE_HOME);
 
 
 		//启动客户端
@@ -73,7 +74,7 @@ public class ClientInit {
 	}
 
 
-	private static void initMutiThread(){
+	private static void initMutiThread() {
 		RptConsumer rptConsumer = new RptConsumer();
 		MtConsumer mtConsumer = new MtConsumer();
 		LongMtConsumer longMtConsumer = new LongMtConsumer();
@@ -90,7 +91,7 @@ public class ClientInit {
 	}
 
 
-	public static boolean  createClient(SmppSessionConfiguration config){
+	public static boolean createClient(SmppSessionConfiguration config) {
 		boolean flag = false;
 		ScheduledThreadPoolExecutor monitorExecutor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(1, new ThreadFactory() {
 			private AtomicInteger sequence = new AtomicInteger(0);
@@ -106,8 +107,8 @@ public class ClientInit {
 		DefaultSmppClient clientBootstrap = new DefaultSmppClient(Executors.newCachedThreadPool(), 1, monitorExecutor);
 		DefaultSmppSessionHandler sessionHandler = new Client1SmppSessionHandler();
 
-		clientBootstrapMap.put(config.getAddressRange().getAddress(),clientBootstrap);
-		sessionHandlerMap.put(config.getAddressRange().getAddress(),sessionHandler);
+		clientBootstrapMap.put(config.getAddressRange().getAddress(), clientBootstrap);
+		sessionHandlerMap.put(config.getAddressRange().getAddress(), sessionHandler);
 		SmppSession session0 = null;
 		try {
 			session0 = clientBootstrap.bind(config, sessionHandler);
@@ -115,7 +116,7 @@ public class ClientInit {
 			sessionMap.put(config.getAddressRange().getAddress(), session0);
 			flag = true;
 		} catch (Exception e) {
-			logger.error("连接资源失败", e);
+			logger.error("连接资源(host:{} port:{} sendId:{})失败", config.getHost(), config.getPort(), config.getAddressRange().getAddress(), e);
 		}
 		return flag;
 	}
@@ -132,46 +133,6 @@ public class ClientInit {
 		} catch (Exception e) {
 			logger.error("系统启动，初始化读取配置文件信息失败", e);
 		}
-	}
-
-	public static void intConfigMap() {
-		SmppSessionConfiguration config0 = new SmppSessionConfiguration();
-		config0.setWindowSize(1);
-		config0.setConnectTimeout(10000);
-		config0.setRequestExpiryTimeout(30000);
-		config0.setWindowMonitorInterval(15000);
-		config0.setCountersEnabled(true);
-		config0.getLoggingOptions().setLogBytes(true);
-		config0.setType(SmppBindType.TRANSCEIVER);
-
-
-		config0.setName("Tester.Session.0");
-		config0.setHost(StaticValue.CLIENT_HOST);
-		config0.setPort(StaticValue.CLIENT_PORT);
-		config0.setSystemId(StaticValue.CLIENT_SYSTEMID);
-		config0.setPassword(StaticValue.CLIENT_PASSWORD);
-		config0.setAddressRange(new Address((byte) 0, (byte) 0, "10086"));
-
-
-		configMap.put(config0.getAddressRange().getAddress(), config0);
-
-		SmppSessionConfiguration config1 = new SmppSessionConfiguration();
-		config1.setWindowSize(1);
-		config1.setConnectTimeout(10000);
-		config1.setRequestExpiryTimeout(30000);
-		config1.setWindowMonitorInterval(15000);
-		config1.setCountersEnabled(true);
-		config1.getLoggingOptions().setLogBytes(true);
-		config1.setType(SmppBindType.TRANSCEIVER);
-		config1.setName("Tester.Session.1");
-		config1.setHost("192.169.1.42");
-		config1.setPort(8895);
-		config1.setSystemId("123456");
-		config1.setPassword("654321");
-		config1.setAddressRange(new Address((byte) 0, (byte) 0, "10010"));
-
-		configMap.put(config1.getAddressRange().getAddress(), config1);
-
 	}
 
 

@@ -10,16 +10,15 @@ import java.util.Map;
  */
 public class StaticValue {
 
+	//资源文件地址
+	public static String RESOURCE_HOME = "";
 
-	public static String CLIENT_HOST = "";
-	public static int CLIENT_PORT = 0000;
-	public static String CLIENT_SYSTEMID = "";
-	public static String CLIENT_PASSWORD = "";
-
+	//服务端 端口
 	public static int SERVER_PORT = 2776;
 
+	//心跳频率
+	public static int  ENQUIRE_LINK_TIME = 20000;
 
-	public static int  ENQUIRE_LINK_TIME = 5000;
 
 	public static String CHANNEL_1 = "555";
 	public static String CHANNEL_2 = "882";
@@ -30,11 +29,8 @@ public class StaticValue {
 
 
 	static {
-		CLIENT_HOST = SystemGlobals.getValue("client.host") ;
-		CLIENT_PORT = SystemGlobals.getIntValue("client.port") ;
-		CLIENT_SYSTEMID = SystemGlobals.getValue("client.systemId") ;
-		CLIENT_PASSWORD = SystemGlobals.getValue("client.password") ;
 
+		RESOURCE_HOME = SystemGlobals.getValue("resource.home");
 
 		SERVER_PORT = SystemGlobals.getIntValue("server.port" ,2776) ;
 
