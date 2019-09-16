@@ -57,7 +57,7 @@ public class ClientInit {
 
 
 		//初始化客户端配置
-		configMap = FileUtils.getConfigs(StaticValue.RESOURCE_HOME);
+		initConfigs();
 
 
 		//启动客户端
@@ -71,6 +71,11 @@ public class ClientInit {
 		//启动相关线程
 		initMutiThread();
 
+	}
+
+
+	public static void initConfigs(){
+		configMap = FileUtils.getConfigs(StaticValue.RESOURCE_HOME);
 	}
 
 
@@ -93,6 +98,9 @@ public class ClientInit {
 
 	public static boolean createClient(SmppSessionConfiguration config) {
 		boolean flag = false;
+		if (config == null) {
+			return flag;
+		}
 		ScheduledThreadPoolExecutor monitorExecutor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(1, new ThreadFactory() {
 			private AtomicInteger sequence = new AtomicInteger(0);
 
