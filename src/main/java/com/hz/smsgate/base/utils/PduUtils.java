@@ -20,13 +20,13 @@ public class PduUtils {
 	private static Logger LOGGER = LoggerFactory.getLogger(PduUtils.class);
 
 	/**
-	 * 通道555的短信去掉前面两个00
+	 * 通道555，778的短信去掉前面两个00
 	 *
 	 * @param sm
 	 * @return
 	 */
 	public static SubmitSm removeZero(SubmitSm sm) {
-		if (sm.getSourceAddress().getAddress().equals(StaticValue.CHANNL_REL.get(StaticValue.CHANNEL_1)) || sm.getSourceAddress().getAddress().equals(StaticValue.CHANNEL_1)) {
+		if (sm.getSourceAddress().getAddress().equals(StaticValue.CHANNL_REL.get(StaticValue.CHANNEL_1)) || sm.getSourceAddress().getAddress().equals(StaticValue.CHANNEL_1) || sm.getSourceAddress().getAddress().equals(StaticValue.CHANNEL_3)) {
 			Address destAddress = sm.getDestAddress();
 			if (destAddress.getAddress().startsWith("00")) {
 				String address = destAddress.getAddress().substring(2);

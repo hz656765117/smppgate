@@ -23,6 +23,8 @@ public class StaticValue {
 	public static String CHANNEL_1 = "555";
 	public static String CHANNEL_2 = "882";
 
+	public static String CHANNEL_3 = "778";
+
 
 
 	public static Map<String ,String> CHANNL_REL = null;

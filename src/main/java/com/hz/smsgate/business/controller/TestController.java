@@ -158,7 +158,11 @@ public class TestController {
 
 	public void closeClientConnect(String key) {
 		LOGGER.info("关闭客户端连接，key={}", key);
-		ClientInit.sessionMap.get(key).close();
+		SmppSession smppSession = ClientInit.sessionMap.get(key);
+		if (smppSession != null) {
+			smppSession.close();
+		}
+
 		ClientInit.sessionMap.remove(key);
 	}
 
