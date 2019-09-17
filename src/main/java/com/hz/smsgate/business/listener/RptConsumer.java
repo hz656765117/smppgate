@@ -2,6 +2,7 @@ package com.hz.smsgate.business.listener;
 
 import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
+import com.hz.smsgate.base.smpp.constants.SmppConstants;
 import com.hz.smsgate.base.smpp.pdu.DeliverSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pojo.Address;
@@ -118,6 +119,14 @@ public class RptConsumer implements Runnable {
 			return;
 		}
 
+		//这个通道的运营商会返回两个状态报告 忽略掉accepted  只处理Delivered
+		if (deliverSm.getDestAddress().getAddress().equals(StaticValue.CHANNEL_3)) {
+			if (deliveryReceipt.getState() == SmppConstants.STATE_ACCEPTED) {
+				LOGGER.info("渠道为：{}的状态报告，状态为：{}的丢弃,状态报告信息为：{}", deliverSm.getDestAddress().getAddress(), deliveryReceipt.getState(), deliveryReceipt.toString());
+				return;
+			}
+		}
+
 
 		for (Map.Entry<String, String> entry : CACHE_MAP.entrySet()) {
 			String address = entry.getValue();
@@ -133,7 +142,6 @@ public class RptConsumer implements Runnable {
 						//替换sequenceNumber
 						deliverSm.setSequenceNumber(Integer.valueOf(split[3]));
 					}
-
 
 					//替换messageId
 					deliveryReceipt.setMessageId(split[0]);
