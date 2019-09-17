@@ -74,7 +74,7 @@ public class ClientInit {
 	}
 
 
-	public static void initConfigs(){
+	public static void initConfigs() {
 		configMap = FileUtils.getConfigs(StaticValue.RESOURCE_HOME);
 	}
 
@@ -85,13 +85,19 @@ public class ClientInit {
 		LongMtConsumer longMtConsumer = new LongMtConsumer();
 		LongMtSendConsumer longMtSendConsumer = new LongMtSendConsumer();
 		EnquireLinkConsumer enquireLinkConsumer = new EnquireLinkConsumer();
+
+
+		ThreadPoolHelper.executeTask(longMtConsumer);
+		ThreadPoolHelper.executeTask(longMtSendConsumer);
+		ThreadPoolHelper.executeTask(enquireLinkConsumer);
+
 		//多线程消费
 		for (int i = 0; i < 1; i++) {
 			ThreadPoolHelper.executeTask(rptConsumer);
+		}
+
+		for (int i = 0; i <= 5; i++) {
 			ThreadPoolHelper.executeTask(mtConsumer);
-			ThreadPoolHelper.executeTask(longMtConsumer);
-			ThreadPoolHelper.executeTask(longMtSendConsumer);
-			ThreadPoolHelper.executeTask(enquireLinkConsumer);
 		}
 	}
 
