@@ -134,8 +134,8 @@ public class RptConsumer implements Runnable {
 
 			try {
 
-				LOGGER.info("状态报告响应msgid为{}，缓存中key为{}，value为{}", messageId, entry.getKey(), entry.getValue());
 				if (address.equals(messageId)) {
+					LOGGER.info("状态报告响应msgid为{}，缓存中key为{}，value为{}", messageId, entry.getKey(), entry.getValue());
 
 					String[] split = msgId.split("-");
 					if (split != null && split.length > 3) {
@@ -150,7 +150,7 @@ public class RptConsumer implements Runnable {
 					deliverSm.calculateAndSetCommandLength();
 
 					removeMap.put(entry.getKey(), entry.getValue());
-					DefaultSmppServer.smppSession.sendRequestPdu(deliverSm, 3000, true);
+					DefaultSmppServer.smppSession.sendRequestPdu(deliverSm, 10000, true);
 				}
 			} catch (Exception e) {
 				LOGGER.error("{}-处理长短信状态报告转发异常", Thread.currentThread().getName(), e);
