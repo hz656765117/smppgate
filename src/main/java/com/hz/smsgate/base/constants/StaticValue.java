@@ -25,7 +25,11 @@ public class StaticValue {
 
 	public static String CHANNEL_3 = "778";
 
+	//马来西亚区号
+	public static String  AREA_CODE_MALAYSIA = "60";
 
+	//越南区号
+	public static String  AREA_CODE_VIETNAM = "84";
 
 	public static Map<String ,String> CHANNL_REL = null;
 

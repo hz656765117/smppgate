@@ -7,6 +7,7 @@ import com.hz.smsgate.base.smpp.pdu.DeliverSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
+import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppServer;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTimeZone;
@@ -121,10 +122,20 @@ public class RptConsumer implements Runnable {
 
 		//这个通道的运营商会返回两个状态报告 忽略掉accepted  只处理Delivered
 		if (deliverSm.getDestAddress().getAddress().equals(StaticValue.CHANNEL_3)) {
-			if (deliveryReceipt.getState() == SmppConstants.STATE_ACCEPTED) {
-				LOGGER.info("渠道为：{}的状态报告，状态为：{}的丢弃,状态报告信息为：{}", deliverSm.getDestAddress().getAddress(), deliveryReceipt.getState(), deliveryReceipt.toString());
-				return;
+			String mbl = deliverSm.getSourceAddress().getAddress();
+			String areaCode = PduUtils.getAreaCode(mbl);
+			//马来西亚和越南 只有accepted
+			if (StaticValue.AREA_CODE_MALAYSIA.equals(areaCode) || StaticValue.AREA_CODE_VIETNAM.equals(areaCode)) {
+				if (deliveryReceipt.getState() == SmppConstants.STATE_ACCEPTED) {
+					deliveryReceipt.setState(SmppConstants.STATE_DELIVERED);
+				}
+			} else {
+				if (deliveryReceipt.getState() == SmppConstants.STATE_ACCEPTED) {
+					LOGGER.info("渠道为：{}的状态报告，状态为：{}的丢弃,状态报告信息为：{}", deliverSm.getDestAddress().getAddress(), deliveryReceipt.getState(), deliveryReceipt.toString());
+					return;
+				}
 			}
+
 		}
 
 

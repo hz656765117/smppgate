@@ -6,6 +6,7 @@ import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.business.listener.ClientInit;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +38,29 @@ public class PduUtils {
 		}
 		return sm;
 	}
+
+	/**
+	 * 获取区号
+	 *
+	 * @param mbl
+	 * @return
+	 */
+	public static String getAreaCode(String mbl) {
+		String areaCode = "";
+		if (StringUtils.isBlank(mbl)) {
+			return areaCode;
+		}
+
+		if (mbl.startsWith("00")) {
+			areaCode = mbl.substring(2, 4);
+		} else {
+			areaCode = mbl.substring(0,2);
+		}
+
+		return areaCode;
+	}
+
+
 
 	/**
 	 * 短信内容GSM编码
