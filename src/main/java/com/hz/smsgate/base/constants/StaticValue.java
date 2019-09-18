@@ -21,7 +21,15 @@ public class StaticValue {
 
 
 	public static String CHANNEL_1 = "555";
-	public static String CHANNEL_2 = "882";
+	public static String CHANNEL_CM_1 = "882";
+	public static String CHANNEL_CM_2 = "883";
+	public static String CHANNEL_CM_3 = "884";
+	public static String CHANNEL_CM_4 = "885";
+	public static String CHANNEL_CM_5 = "886";
+
+
+	public static String SYSTEMID_CM = "HaloPushingLtd";
+
 
 	public static String CHANNEL_3 = "778";
 
@@ -50,7 +58,13 @@ public class StaticValue {
 		ENQUIRE_LINK_TIME = SystemGlobals.getIntValue("enquire.link.time", 20000);
 
 		CHANNL_REL = new LinkedHashMap<>(1);
-		CHANNL_REL.put(CHANNEL_2, "CMK");
+		CHANNL_REL.put(CHANNEL_CM_1, "CMK");
+		CHANNL_REL.put(CHANNEL_CM_2, "HAALOO");
+		CHANNL_REL.put(CHANNEL_CM_3, "HALLOO");
+		CHANNL_REL.put(CHANNEL_CM_4, "FINLNX");
+		CHANNL_REL.put(CHANNEL_CM_5, "INLINX");
+
+
 		CHANNL_REL.put(CHANNEL_1, "BYTDNC");
 
 		WEB_GATE = SystemGlobals.getValue("montnets.webgate");

@@ -52,24 +52,7 @@ public class TestController {
 	}
 
 
-	@RequestMapping("test2")
-	public String getSomething2() {
-		LOGGER.debug("aaaaaaaaaaadebugdebugdebugtest1111123434");
-		LOGGER.info("aaaaaaaaaaaaaaaaaaainfoinfoinfotest1111123434");
-		Map<String, SmppSession> sessionMap = ClientInit.sessionMap;
 
-		sessionMap.remove("10086");
-
-		//如果心跳失败，则重新绑定一次，绑定失败 则移除该session
-		SmppSessionConfiguration smppSessionConfiguration = ClientInit.configMap.get("10086");
-		boolean flag = ClientInit.createClient(smppSessionConfiguration);
-		if (!flag) {
-			sessionMap.remove("10086");
-		}
-
-
-		return "test111";
-	}
 
 	@CrossOrigin
 	@RequestMapping("getResource")

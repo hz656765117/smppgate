@@ -1,5 +1,6 @@
 package com.hz.smsgate.base.utils;
 
+import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.SmppBindType;
@@ -29,7 +30,7 @@ public class FileUtils {
 			String tempString = null;
 			// 一次读入一行，直到读入null为文件结束
 			while ((tempString = br.readLine()) != null) {
-				if(StringUtils.isNotBlank(tempString)){
+				if (StringUtils.isNotBlank(tempString)) {
 					//将读取到的数据添加到stringBuffer
 					list.add(tempString.trim());
 				}
@@ -52,6 +53,10 @@ public class FileUtils {
 		return list;
 	}
 
+	public static void main(String[] args) {
+		getConfigs("C:/Users/Administrator.SC-201812271516/Desktop/resource.txt");
+	}
+
 	public static Map<String, SmppSessionConfiguration> getConfigs(String fileName) {
 		List<String> strings = readFileByLines(fileName);
 		Map<String, SmppSessionConfiguration> configMap = new LinkedHashMap<>(strings.size());
@@ -63,21 +68,30 @@ public class FileUtils {
 			String[] split = str.split("\\|");
 			try {
 				if (split != null && split.length > 0) {
-					SmppSessionConfiguration config0 = new SmppSessionConfiguration();
-					config0.setWindowSize(1);
-					config0.setConnectTimeout(10000);
-					config0.setRequestExpiryTimeout(30000);
-					config0.setWindowMonitorInterval(15000);
-					config0.setCountersEnabled(true);
-					config0.getLoggingOptions().setLogBytes(true);
-					config0.setType(SmppBindType.TRANSCEIVER);
-					config0.setName("Tester.Session." + i);
-					config0.setHost(split[0].trim());
-					config0.setPort(Integer.parseInt(split[1].trim()));
-					config0.setSystemId(split[2].trim());
-					config0.setPassword(split[3].trim());
-					config0.setAddressRange(new Address((byte) 0, (byte) 0, split[4].trim()));
-					configMap.put(config0.getAddressRange().getAddress(), config0);
+					String channels = split[4].trim();
+					String[] split1 = channels.split(",");
+
+					if (split1 != null && split1.length > 0) {
+						for (int j = 0; j < split1.length; j++) {
+							SmppSessionConfiguration config0 = new SmppSessionConfiguration();
+							config0.setWindowSize(1);
+							config0.setConnectTimeout(10000);
+							config0.setRequestExpiryTimeout(30000);
+							config0.setWindowMonitorInterval(15000);
+							config0.setCountersEnabled(true);
+							config0.getLoggingOptions().setLogBytes(true);
+							config0.setType(SmppBindType.TRANSCEIVER);
+							config0.setName("Tester.Session." + i);
+							config0.setHost(split[0].trim());
+							config0.setPort(Integer.parseInt(split[1].trim()));
+							config0.setSystemId(split[2].trim());
+							config0.setPassword(split[3].trim());
+
+							String channel = split1[j];
+							config0.setAddressRange(new Address((byte) 0, (byte) 0, channel));
+							configMap.put(config0.getAddressRange().getAddress(), config0);
+						}
+					}
 
 				}
 			} catch (Exception e) {

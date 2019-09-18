@@ -67,14 +67,22 @@ public class PduUtils {
 
 
 	/**
-	 * 短信内容GSM编码
+	 * 短信内容GSM编码  cm运营商的需要编码
 	 *
 	 * @param sm
 	 * @return
 	 */
 	public static SubmitSm encodeGsm(SubmitSm sm) {
+		String sendId = sm.getSourceAddress().getAddress();
+		SmppSessionConfiguration smppSessionConfiguration = ClientInit.configMap.get(sendId);
+		if (smppSessionConfiguration == null) {
+			String key = getKey(sendId);
+			smppSessionConfiguration = ClientInit.configMap.get(key);
+		}
 
-		if (sm.getSourceAddress().getAddress().equals(StaticValue.CHANNL_REL.get(StaticValue.CHANNEL_2)) || sm.getSourceAddress().getAddress().equals(StaticValue.CHANNEL_2)) {
+		String systemId = smppSessionConfiguration.getSystemId();
+
+		if (StaticValue.SYSTEMID_CM.equals(systemId)) {
 			byte[] shortMessage = sm.getShortMessage();
 			String content = new String(shortMessage);
 			LOGGER.info("短短信的内容为{},下行号码为{}，通道为{}", content, sm.getDestAddress().getAddress(), sm.getSourceAddress().getAddress());

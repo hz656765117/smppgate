@@ -59,11 +59,23 @@ public class ClientInit {
 		//初始化客户端配置
 		initConfigs();
 
-
+		List<String> existSystemIds = new LinkedList<>();
+		Map<String, SmppSession> existSystemId1s = new LinkedHashMap<>();
 		//启动客户端
 		if (configMap != null && configMap.size() > 0) {
 			for (Map.Entry<String, SmppSessionConfiguration> entry : configMap.entrySet()) {
-				createClient(entry.getValue());
+				String systemId = entry.getValue().getSystemId();
+				String host = entry.getValue().getHost();
+				String address = entry.getValue().getAddressRange().getAddress();
+				String key = host + "|" + systemId;
+				//同一个账号，不同通道 只建立一个客户端
+				if (existSystemId1s.get(key) != null) {
+					sessionMap.put(address, existSystemId1s.get(key));
+					continue;
+				}
+
+				SmppSession client = createClient(entry.getValue());
+				existSystemId1s.put(key, client);
 			}
 		}
 
@@ -103,10 +115,10 @@ public class ClientInit {
 	}
 
 
-	public static boolean createClient(SmppSessionConfiguration config) {
+	public static SmppSession createClient(SmppSessionConfiguration config) {
 		boolean flag = false;
 		if (config == null) {
-			return flag;
+			return null;
 		}
 		ScheduledThreadPoolExecutor monitorExecutor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(1, new ThreadFactory() {
 			private AtomicInteger sequence = new AtomicInteger(0);
@@ -133,7 +145,7 @@ public class ClientInit {
 		} catch (Exception e) {
 			logger.error("连接资源(host:{} port:{} sendId:{})失败", config.getHost(), config.getPort(), config.getAddressRange().getAddress(), e);
 		}
-		return flag;
+		return session0;
 	}
 
 
