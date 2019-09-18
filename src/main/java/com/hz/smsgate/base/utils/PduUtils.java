@@ -2,10 +2,13 @@ package com.hz.smsgate.base.utils;
 
 import com.cloudhopper.commons.charset.CharsetUtil;
 import com.hz.smsgate.base.constants.StaticValue;
+import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.business.listener.ClientInit;
+import com.hz.smsgate.business.smpp.handler.DefaultSmppSessionHandler;
+import com.hz.smsgate.business.smpp.impl.DefaultSmppClient;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,6 +117,44 @@ public class PduUtils {
 	 */
 	public static SmppSession getSmppSession(SubmitSm sm) {
 		String sendId = sm.getSourceAddress().getAddress();
+		String key = getKey(sendId);
+
+		SmppSession session0 = null;
+		Map<String, SmppSession> sessionMap = ClientInit.sessionMap;
+		if (sessionMap != null && sessionMap.size() > 0) {
+			session0 = sessionMap.get(sendId);
+			if (session0 == null) {
+				session0 = sessionMap.get(key);
+			}
+		}
+
+
+		if (session0 == null) {
+			try {
+				DefaultSmppClient defaultSmppClient = ClientInit.clientBootstrapMap.get(sendId);
+				if (defaultSmppClient == null) {
+					defaultSmppClient = ClientInit.clientBootstrapMap.get(key);
+				}
+
+				SmppSessionConfiguration smppSessionConfiguration = ClientInit.configMap.get(sendId);
+				if (smppSessionConfiguration == null) {
+					smppSessionConfiguration = ClientInit.configMap.get(key);
+				}
+				DefaultSmppSessionHandler defaultSmppSessionHandler = ClientInit.sessionHandlerMap.get(sendId);
+				if (defaultSmppSessionHandler == null) {
+					defaultSmppSessionHandler = ClientInit.sessionHandlerMap.get(key);
+				}
+
+				session0 = defaultSmppClient.bind(smppSessionConfiguration, defaultSmppSessionHandler);
+				ClientInit.sessionMap.put(sendId, session0);
+			} catch (Exception e) {
+				LOGGER.error("获取客户端连接异常", e);
+			}
+		}
+		return session0;
+	}
+
+	public static String getKey(String sendId) {
 		Map<String, String> channlRel = StaticValue.CHANNL_REL;
 
 		for (Map.Entry<String, String> entry : channlRel.entrySet()) {
@@ -122,24 +163,7 @@ public class PduUtils {
 				break;
 			}
 		}
-
-
-		SmppSession session0 = null;
-		Map<String, SmppSession> sessionMap = ClientInit.sessionMap;
-		if (sessionMap != null && sessionMap.size() > 0) {
-			session0 = sessionMap.get(sendId);
-		}
-
-
-		if (session0 == null) {
-			try {
-				session0 = ClientInit.clientBootstrapMap.get(sendId).bind(ClientInit.configMap.get(sendId), ClientInit.sessionHandlerMap.get(sendId));
-				ClientInit.sessionMap.put(sendId, session0);
-			} catch (Exception e) {
-				LOGGER.error("获取客户端连接异常", e);
-			}
-		}
-		return session0;
+		return sendId;
 	}
 
 
