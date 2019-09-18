@@ -65,14 +65,13 @@ public class LongMtSendConsumer implements Runnable {
 						SubmitSmResp submitResp = session0.submit(submitSm, 10000);
 
 						String sendId = submitSm.getSourceAddress().getAddress();
-						//将882的添加到
-						if(sendId.equals(StaticValue.CHANNEL_CM_1)||sendId.equals(StaticValue.CHANNL_REL.get(StaticValue.CHANNEL_CM_1))){
+						WGParams wgParams = StaticValue.CHANNL_SP_REL.get(sendId);
+						if (wgParams != null) {
 							BlockingQueue<Object> syncSubmitQueue = BDBStoredMapFactoryImpl.INS.getQueue("syncSubmit", "syncSubmit");
-							WGParams params = new WGParams();
-							params.setDas(submitSm.getDestAddress().getAddress());
+							wgParams.setDas(submitSm.getDestAddress().getAddress());
 							String sm = new String(submitSm.getShortMessage());
-							params.setSm(sm);
-							syncSubmitQueue.put(params);
+							wgParams.setSm(sm);
+							syncSubmitQueue.put(wgParams);
 						}
 
 

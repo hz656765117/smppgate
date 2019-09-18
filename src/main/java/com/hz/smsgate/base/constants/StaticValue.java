@@ -1,6 +1,8 @@
 package com.hz.smsgate.base.constants;
 
 
+import com.hz.smsgate.base.emp.pojo.WGParams;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -41,6 +43,8 @@ public class StaticValue {
 
 	public static Map<String, String> CHANNL_REL = null;
 
+	public static Map<String, WGParams> CHANNL_SP_REL = null;
+
 
 	public static String WEB_GATE = "";
 
@@ -57,15 +61,16 @@ public class StaticValue {
 
 		ENQUIRE_LINK_TIME = SystemGlobals.getIntValue("enquire.link.time", 20000);
 
-		CHANNL_REL = new LinkedHashMap<>(1);
+		CHANNL_REL = new LinkedHashMap<>();
 		CHANNL_REL.put(CHANNEL_CM_1, "CMK");
 		CHANNL_REL.put(CHANNEL_CM_2, "HAALOO");
 		CHANNL_REL.put(CHANNEL_CM_3, "HALLOO");
 		CHANNL_REL.put(CHANNEL_CM_4, "FINLNX");
 		CHANNL_REL.put(CHANNEL_CM_5, "INLINX");
 
-
 		CHANNL_REL.put(CHANNEL_1, "BYTDNC");
+
+		CHANNL_SP_REL = new LinkedHashMap<>();
 
 		WEB_GATE = SystemGlobals.getValue("montnets.webgate");
 		SP_ID = SystemGlobals.getValue("montnets.spid");
