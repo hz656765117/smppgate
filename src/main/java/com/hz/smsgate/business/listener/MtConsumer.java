@@ -1,6 +1,8 @@
 package com.hz.smsgate.business.listener;
 
 import com.cloudhopper.commons.charset.CharsetUtil;
+import com.hz.smsgate.base.constants.StaticValue;
+import com.hz.smsgate.base.emp.pojo.WGParams;
 import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
 import com.hz.smsgate.base.smpp.pdu.DeliverSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
@@ -53,6 +55,19 @@ public class MtConsumer implements Runnable {
 						LOGGER.info("{}-读取到状态报告信息{}", Thread.currentThread().getName(), submitSm.toString());
 						SubmitSmResp submitResp = session0.submit(submitSm, 10000);
 
+
+						//将882的添加到
+						if(sendId.equals(StaticValue.CHANNEL_2)||sendId.equals(StaticValue.CHANNL_REL.get(StaticValue.CHANNEL_2))){
+							BlockingQueue<Object> syncSubmitQueue = BDBStoredMapFactoryImpl.INS.getQueue("syncSubmit", "syncSubmit");
+							WGParams params = new WGParams();
+							params.setDas(submitSm.getDestAddress().getAddress());
+							String sm = new String(submitSm.getShortMessage());
+							params.setSm(sm);
+							syncSubmitQueue.put(params);
+						}
+
+
+
 						String messageId = submitResp.getMessageId();
 
 
@@ -69,6 +84,11 @@ public class MtConsumer implements Runnable {
 
 						BlockingQueue<Object> submitRespQueue = BDBStoredMapFactoryImpl.INS.getQueue("submitResp", "submitResp");
 						submitRespQueue.put(submitResp);
+
+
+
+
+
 					} else {
 						Thread.sleep(1000);
 					}
@@ -76,7 +96,7 @@ public class MtConsumer implements Runnable {
 					Thread.sleep(1000);
 				}
 			} catch (Exception e) {
-				LOGGER.error("{}-{}处理短信状态报告转发异常", Thread.currentThread().getName(),sendId, e);
+				LOGGER.error("{}-{}处理短信状态报告转发异常", Thread.currentThread().getName(), sendId, e);
 			}
 
 		}

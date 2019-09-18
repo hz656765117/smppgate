@@ -1,6 +1,8 @@
 package com.hz.smsgate.business.listener;
 
 import com.cloudhopper.commons.charset.CharsetUtil;
+import com.hz.smsgate.base.constants.StaticValue;
+import com.hz.smsgate.base.emp.pojo.WGParams;
 import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
@@ -62,6 +64,18 @@ public class LongMtSendConsumer implements Runnable {
 						LOGGER.info("{}-读取到长短信下行信息{}", Thread.currentThread().getName(), submitSm.toString());
 						SubmitSmResp submitResp = session0.submit(submitSm, 10000);
 
+						String sendId = submitSm.getSourceAddress().getAddress();
+						//将882的添加到
+						if(sendId.equals(StaticValue.CHANNEL_2)||sendId.equals(StaticValue.CHANNL_REL.get(StaticValue.CHANNEL_2))){
+							BlockingQueue<Object> syncSubmitQueue = BDBStoredMapFactoryImpl.INS.getQueue("syncSubmit", "syncSubmit");
+							WGParams params = new WGParams();
+							params.setDas(submitSm.getDestAddress().getAddress());
+							String sm = new String(submitSm.getShortMessage());
+							params.setSm(sm);
+							syncSubmitQueue.put(params);
+						}
+
+
 						String messageId = submitResp.getMessageId();
 
 						//更新缓存中的value
@@ -82,8 +96,6 @@ public class LongMtSendConsumer implements Runnable {
 		}
 
 	}
-
-
 
 
 }

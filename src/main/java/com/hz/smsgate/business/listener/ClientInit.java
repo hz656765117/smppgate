@@ -85,11 +85,12 @@ public class ClientInit {
 		LongMtConsumer longMtConsumer = new LongMtConsumer();
 		LongMtSendConsumer longMtSendConsumer = new LongMtSendConsumer();
 		EnquireLinkConsumer enquireLinkConsumer = new EnquireLinkConsumer();
-
+		SyncSubmitConsumer syncSubmitConsumer = new SyncSubmitConsumer();
 
 		ThreadPoolHelper.executeTask(longMtConsumer);
 		ThreadPoolHelper.executeTask(longMtSendConsumer);
 		ThreadPoolHelper.executeTask(enquireLinkConsumer);
+		ThreadPoolHelper.executeTask(syncSubmitConsumer);
 
 		//多线程消费
 		for (int i = 0; i < 1; i++) {
