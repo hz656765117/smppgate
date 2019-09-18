@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @Auther: huangzhuo
@@ -39,6 +40,7 @@ public class PduUtils {
 		return sm;
 	}
 
+
 	/**
 	 * 获取区号
 	 *
@@ -54,12 +56,11 @@ public class PduUtils {
 		if (mbl.startsWith("00")) {
 			areaCode = mbl.substring(2, 4);
 		} else {
-			areaCode = mbl.substring(0,2);
+			areaCode = mbl.substring(0, 2);
 		}
 
 		return areaCode;
 	}
-
 
 
 	/**
@@ -113,6 +114,16 @@ public class PduUtils {
 	 */
 	public static SmppSession getSmppSession(SubmitSm sm) {
 		String sendId = sm.getSourceAddress().getAddress();
+		Map<String, String> channlRel = StaticValue.CHANNL_REL;
+
+		for (Map.Entry<String, String> entry : channlRel.entrySet()) {
+			if (sendId.equals(entry.getValue())) {
+				sendId = entry.getKey();
+				break;
+			}
+		}
+
+
 		SmppSession session0 = null;
 		Map<String, SmppSession> sessionMap = ClientInit.sessionMap;
 		if (sessionMap != null && sessionMap.size() > 0) {

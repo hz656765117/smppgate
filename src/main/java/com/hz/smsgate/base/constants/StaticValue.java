@@ -17,7 +17,7 @@ public class StaticValue {
 	public static int SERVER_PORT = 2776;
 
 	//心跳频率
-	public static int  ENQUIRE_LINK_TIME = 20000;
+	public static int ENQUIRE_LINK_TIME = 20000;
 
 
 	public static String CHANNEL_1 = "555";
@@ -26,25 +26,36 @@ public class StaticValue {
 	public static String CHANNEL_3 = "778";
 
 	//马来西亚区号
-	public static String  AREA_CODE_MALAYSIA = "60";
+	public static String AREA_CODE_MALAYSIA = "60";
 
 	//越南区号
-	public static String  AREA_CODE_VIETNAM = "84";
+	public static String AREA_CODE_VIETNAM = "84";
 
-	public static Map<String ,String> CHANNL_REL = null;
+	public static Map<String, String> CHANNL_REL = null;
+
+
+	public static String WEB_GATE = "";
+
+	public static String SP_ID = "";
+
+	public static String SP_PWD = "";
 
 
 	static {
 
 		RESOURCE_HOME = SystemGlobals.getValue("resource.home");
 
-		SERVER_PORT = SystemGlobals.getIntValue("server.port" ,2776) ;
+		SERVER_PORT = SystemGlobals.getIntValue("server.port", 2776);
 
-		ENQUIRE_LINK_TIME = SystemGlobals.getIntValue("enquire.link.time" ,20000) ;
+		ENQUIRE_LINK_TIME = SystemGlobals.getIntValue("enquire.link.time", 20000);
 
 		CHANNL_REL = new LinkedHashMap<>(1);
-		CHANNL_REL.put(CHANNEL_2,"CMK");
-		CHANNL_REL.put(CHANNEL_1,"BYTDNC");
+		CHANNL_REL.put(CHANNEL_2, "CMK");
+		CHANNL_REL.put(CHANNEL_1, "BYTDNC");
+
+		WEB_GATE = SystemGlobals.getValue("montnets.webgate");
+		SP_ID = SystemGlobals.getValue("montnets.spid");
+		SP_PWD = SystemGlobals.getValue("montnets.sppwd");
 
 
 	}
