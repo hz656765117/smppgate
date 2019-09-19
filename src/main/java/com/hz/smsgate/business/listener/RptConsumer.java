@@ -4,8 +4,8 @@ import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
 import com.hz.smsgate.base.smpp.constants.SmppConstants;
 import com.hz.smsgate.base.smpp.pdu.DeliverSm;
-import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pojo.Address;
+import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
 import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppServer;
@@ -106,6 +106,11 @@ public class RptConsumer implements Runnable {
 	public void sendDeliverSm(DeliverSm deliverSm) {
 		Map<String, String> removeMap = new LinkedHashMap<>();
 
+		SmppSession smppSession = PduUtils.getServerSmppSession(deliverSm);
+		if (smppSession == null){
+			return;
+		}
+
 		deliverSm = reWriteDeliverSm(deliverSm);
 
 
@@ -161,7 +166,7 @@ public class RptConsumer implements Runnable {
 					deliverSm.calculateAndSetCommandLength();
 
 					removeMap.put(entry.getKey(), entry.getValue());
-					DefaultSmppServer.smppSession.sendRequestPdu(deliverSm, 10000, true);
+					smppSession.sendRequestPdu(deliverSm, 10000, true);
 				}
 			} catch (Exception e) {
 				LOGGER.error("{}-处理长短信状态报告转发异常", Thread.currentThread().getName(), e);
@@ -181,7 +186,7 @@ public class RptConsumer implements Runnable {
 				deliverSm.setShortMessage(bytes);
 				deliverSm.calculateAndSetCommandLength();
 
-				DefaultSmppServer.smppSession.sendRequestPdu(deliverSm, 3000, true);
+				smppSession.sendRequestPdu(deliverSm, 10000, true);
 			} catch (Exception e) {
 				LOGGER.error("{}-处理短短信状态报告转发异常", Thread.currentThread().getName(), e);
 			}
@@ -189,59 +194,6 @@ public class RptConsumer implements Runnable {
 
 
 	}
-
-//	/**
-//	 * @param deliverSm
-//	 * @return
-//	 * @throws Exception
-//	 */
-//	public DeliverSm reWriteDeliverSm(DeliverSm deliverSm) {
-////		Map<String, String> tempMap = new LinkedHashMap<>();
-//		Map<String, String> removeMap = new LinkedHashMap<>();
-//
-//		StringBuilder preKey = new StringBuilder();
-//		preKey.append(deliverSm.getSourceAddress().getAddress());
-//		preKey.append("-");
-//		preKey.append(deliverSm.getDestAddress().getAddress());
-//		for (Map.Entry<String, String> entry : CACHE_MAP.entrySet()) {
-//			String address = entry.getValue();
-//			String msgId = entry.getKey();
-//			if (address.contains(preKey)) {
-//				String[] split = msgId.split("-");
-//				//替换sequenceNumber
-//				deliverSm.setSequenceNumber(Integer.valueOf(split[3]));
-//
-//				String str = new String(deliverSm.getShortMessage());
-//				try {
-//					DeliveryReceipt deliveryReceipt = DeliveryReceipt.parseShortMessage(str, DateTimeZone.UTC);
-//					//替换messageId
-//					deliveryReceipt.setMessageId(msgId);
-//					byte[] bytes = deliveryReceipt.toShortMessage().getBytes();
-//					deliverSm.setShortMessage(bytes);
-//					deliverSm.calculateAndSetCommandLength();
-//					removeMap.put(entry.getKey(), entry.getValue());
-//					DefaultSmppServer.smppSession.sendRequestPdu(deliverSm, 3000, true);
-//				} catch (Exception e) {
-//					LOGGER.error("{}-处理短信状态报告转发异常", Thread.currentThread().getName(), e);
-//				}
-//
-//
-//			} else if (address.equals(preKey)) {
-//
-//			}
-//
-//		}
-//
-//
-//		if (removeMap != null && removeMap.size() > 0) {
-//			for (Map.Entry<String, String> entry : removeMap.entrySet()) {
-//				CACHE_MAP.remove(entry.getKey());
-//			}
-//		}
-//
-//
-//		return deliverSm;
-//	}
 
 
 }
