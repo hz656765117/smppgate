@@ -79,7 +79,9 @@ public class PduUtils {
 			String key = getKey(sendId);
 			smppSessionConfiguration = ClientInit.configMap.get(key);
 		}
-
+		if (smppSessionConfiguration == null) {
+			return sm;
+		}
 		String systemId = smppSessionConfiguration.getSystemId();
 
 		if (StaticValue.SYSTEMID_CM.equals(systemId)) {

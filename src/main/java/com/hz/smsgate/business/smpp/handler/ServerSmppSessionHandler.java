@@ -62,16 +62,7 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 	public PduResponse firePduRequestReceived(PduRequest pduRequest) {
 		PduResponse response = pduRequest.createResponse();
 
-		//获取客户端session
-//		SmppSession session0 = PduUtils.getSmppSession(submitSm);
-//		SmppSession session0 = ClientInit.session0;
-//		if (session0 == null) {
-//			try {
-//				session0 = ClientInit.clientBootstrap.bind(ClientInit.config0, ClientInit.sessionHandler);
-//			} catch (Exception e) {
-//
-//			}
-//		}
+
 
 		// mimic how long processing could take on a slower smsc
 		try {
@@ -145,7 +136,6 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 				} else if (pduRequest.getCommandId() == SmppConstants.CMD_ID_DELIVER_SM) {
 					return response;
 				} else if (pduRequest.getCommandId() == SmppConstants.CMD_ID_ENQUIRE_LINK) {
-//					EnquireLinkResp enquireLinkResp = session0.enquireLink(new EnquireLink(), 10000);
 					return response;
 				} else {
 					return response;

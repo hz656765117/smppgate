@@ -30,16 +30,10 @@ import com.hz.smsgate.base.smpp.pdu.Pdu;
 import com.hz.smsgate.base.smpp.pdu.PduRequest;
 import com.hz.smsgate.base.smpp.pdu.PduResponse;
 import com.hz.smsgate.base.smpp.pojo.PduAsyncResponse;
-import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppServer;
-import org.apache.commons.lang3.time.DateUtils;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.concurrent.BlockingQueue;
 
 
@@ -78,7 +72,7 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
 			if (pduRequest.isRequest()) {
 				switch (pduRequest.getCommandId()) {
 					case SmppConstants.CMD_ID_SUBMIT_SM:
-						DefaultSmppServer.smppSession.sendRequestPdu(pduRequest, 3000, true);
+						logger.error("----------客户端怎么会接到短信请求呢 ---------------");
 						break;
 					case SmppConstants.CMD_ID_DELIVER_SM:
 						DeliverSm deliverSm = (DeliverSm) pduRequest;
@@ -86,7 +80,7 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
 							BlockingQueue<Object> queue = BDBStoredMapFactoryImpl.INS.getQueue("rptrvok", "rptrvok");
 							queue.put(deliverSm);
 						} catch (Exception e) {
-							logger.error("----------状态报告接收，加入队列异常。---------------",e);
+							logger.error("----------状态报告接收，加入队列异常。---------------", e);
 						}
 						break;
 					case SmppConstants.CMD_ID_DATA_SM:
@@ -94,12 +88,12 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
 					case SmppConstants.CMD_ID_ENQUIRE_LINK:
 						break;
 					default:
-						System.out.println("llllllllll");
+						logger.error("----------客户端接收 未知异常。---------------");
 				}
 			}
 
 		} catch (Exception e) {
-			logger.error("--------客户端处理异常---------",e);
+			logger.error("--------客户端处理异常---------", e);
 		}
 
 		// do any logic here
