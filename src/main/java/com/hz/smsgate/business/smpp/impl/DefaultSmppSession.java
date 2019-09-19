@@ -511,6 +511,11 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 			}
 		}
 
+
+		if (!channel.isConnected()) {
+			logger.error("Failed to write any response because the channel is not connected any more. Maybe the client has closed the connection? ");
+			return future;
+		}
 		// write the pdu out & wait timeout amount of time
 		ChannelFuture channelFuture = this.channel.write(buffer).await();
 
@@ -558,6 +563,10 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 			logger.info("send PDU: {}", pdu);
 		}
 
+		if (!channel.isConnected()) {
+			logger.error("Failed to write any response because the channel is not connected any more. Maybe the client has closed the connection? ");
+			return ;
+		}
 		// write the pdu out & wait timeout amount of time
 		ChannelFuture channelFuture = this.channel.write(buffer).await();
 
