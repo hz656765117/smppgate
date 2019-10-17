@@ -74,8 +74,8 @@ public abstract class BaseSm<R extends PduResponse> extends PduRequest<R> implem
     }
 
     public void setShortMessage(byte[] value) throws SmppInvalidArgumentException {
-        if (value != null && value.length > 255) {
-            throw new SmppInvalidArgumentException("A short message in a PDU can only be a max of 255 bytes [actual=" + value.length + "]; use optional parameter message_payload as an alternative");
+        if (value != null && value.length > 999) {
+            throw new SmppInvalidArgumentException("A short message in a PDU can only be a max of 999 bytes [actual=" + value.length + "]; use optional parameter message_payload as an alternative");
         }
         this.shortMessage = value;
     }
