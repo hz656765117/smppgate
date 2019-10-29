@@ -8,7 +8,6 @@ import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
 import com.hz.smsgate.base.utils.PduUtils;
-import com.hz.smsgate.business.smpp.impl.DefaultSmppServer;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;

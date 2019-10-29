@@ -9,8 +9,11 @@ import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.FileUtils;
 import com.hz.smsgate.base.utils.PropertiesLoader;
 import com.hz.smsgate.base.utils.ThreadPoolHelper;
+import com.hz.smsgate.business.listener.redis.MtRedisConsumer;
 import com.hz.smsgate.business.smpp.handler.Client1SmppSessionHandler;
 import com.hz.smsgate.business.smpp.handler.DefaultSmppSessionHandler;
+import com.hz.smsgate.business.smpp.handler.ServerSmppSessionHandler;
+import com.hz.smsgate.business.smpp.handler.ServerSmppSessionRedisHandler;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,24 +97,36 @@ public class ClientInit {
 	private static void initMutiThread() {
 		RptConsumer rptConsumer = new RptConsumer();
 		MtConsumer mtConsumer = new MtConsumer();
+		MtRedisConsumer mtRedisConsumer = new MtRedisConsumer();
+
 		LongMtConsumer longMtConsumer = new LongMtConsumer();
 		LongMtSendConsumer longMtSendConsumer = new LongMtSendConsumer();
 		EnquireLinkConsumer enquireLinkConsumer = new EnquireLinkConsumer();
 		SyncSubmitConsumer syncSubmitConsumer = new SyncSubmitConsumer();
 
 		ThreadPoolHelper.executeTask(longMtConsumer);
-		ThreadPoolHelper.executeTask(longMtSendConsumer);
 		ThreadPoolHelper.executeTask(enquireLinkConsumer);
 		ThreadPoolHelper.executeTask(syncSubmitConsumer);
+
+
+
+		//0 je   1 redis
+		if ("1".equals(StaticValue.TYPE)) {
+			ThreadPoolHelper.executeTask(mtRedisConsumer);
+		} else {
+			for (int i = 0; i <= 5; i++) {
+				ThreadPoolHelper.executeTask(mtConsumer);
+			}
+			ThreadPoolHelper.executeTask(longMtSendConsumer);
+		}
+
 
 		//多线程消费
 		for (int i = 0; i < 1; i++) {
 			ThreadPoolHelper.executeTask(rptConsumer);
 		}
 
-		for (int i = 0; i <= 5; i++) {
-			ThreadPoolHelper.executeTask(mtConsumer);
-		}
+
 	}
 
 

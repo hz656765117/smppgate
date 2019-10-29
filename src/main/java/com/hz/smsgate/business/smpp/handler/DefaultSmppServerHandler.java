@@ -1,11 +1,13 @@
 package com.hz.smsgate.business.smpp.handler;
 
+import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.exception.SmppProcessingException;
 import com.hz.smsgate.base.smpp.pdu.BaseBind;
 import com.hz.smsgate.base.smpp.pdu.BaseBindResp;
 import com.hz.smsgate.base.smpp.pojo.SmppServerHandler;
 import com.hz.smsgate.base.smpp.pojo.SmppServerSession;
+import com.hz.smsgate.base.smpp.pojo.SmppSessionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * @Date: 2019/8/28 14:07
  * @Description:
  */
-public class DefaultSmppServerHandler implements SmppServerHandler   {
+public class DefaultSmppServerHandler implements SmppServerHandler {
 	private static final Logger logger = LoggerFactory.getLogger(DefaultSmppServerHandler.class);
 
 	@Override
@@ -30,7 +32,16 @@ public class DefaultSmppServerHandler implements SmppServerHandler   {
 	public void sessionCreated(Long sessionId, SmppServerSession session, BaseBindResp preparedBindResponse) throws SmppProcessingException {
 		logger.info("Session created: {}", session);
 		// need to do something it now (flag we're ready)
-		session.serverReady(new ServerSmppSessionHandler(session));
+		SmppSessionHandler smppSessionHandler;
+		//0 je   1 redis
+		if ("1".equals(StaticValue.TYPE)) {
+			smppSessionHandler = new ServerSmppSessionRedisHandler(session);
+		} else {
+			smppSessionHandler = new ServerSmppSessionHandler(session);
+		}
+
+
+		session.serverReady(smppSessionHandler);
 	}
 
 	@Override

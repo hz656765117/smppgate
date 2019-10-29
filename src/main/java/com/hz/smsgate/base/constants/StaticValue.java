@@ -52,8 +52,12 @@ public class StaticValue {
 
 	public static String SP_PWD = "";
 
+	public static String TYPE = "";
+
 
 	static {
+
+		TYPE = SystemGlobals.getValue("montnets.type","0");
 
 		RESOURCE_HOME = SystemGlobals.getValue("resource.home");
 
