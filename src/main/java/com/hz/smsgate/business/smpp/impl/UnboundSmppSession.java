@@ -28,6 +28,7 @@ import com.hz.smsgate.base.smpp.exception.SmppProcessingException;
 import com.hz.smsgate.base.smpp.pdu.*;
 import com.hz.smsgate.base.smpp.pojo.LoggingOptions;
 import com.hz.smsgate.base.smpp.pojo.SmppBindType;
+import com.hz.smsgate.business.listener.ClientInit;
 import com.hz.smsgate.business.smpp.channel.ChannelUtil;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.channel.Channel;
@@ -74,22 +75,25 @@ public class UnboundSmppSession implements SmppSessionChannelListener {
 			// delegate any bind request to the server handler
 			// variables we track for a successful bind request
 			BaseBind bindRequest = (BaseBind) pdu;
+//			ClientInit.sessionMap.get()
 
-			if (!StaticValue.CLIENT_SYSTEMID.equals(bindRequest.getSystemId())) {
-				// create a failed bind response and send back to connection
-				BaseBindResp bindResponse = server.createBindResponse(bindRequest, SmppConstants.STATUS_INVSYSID);
-				this.sendResponsePdu(bindResponse);
-				// cancel the timer task & close connection
-				closeChannelAndCancelTimer();
-				return;
-			} else if (!StaticValue.CLIENT_PASSWORD.equals(bindRequest.getPassword())) {
-				// create a failed bind response and send back to connection
-				BaseBindResp bindResponse = server.createBindResponse(bindRequest, SmppConstants.STATUS_INVPASWD);
-				this.sendResponsePdu(bindResponse);
-				// cancel the timer task & close connection
-				closeChannelAndCancelTimer();
-				return;
-			}
+//			bindRequest.getAddressRange().getAddress();
+//
+//			if (!StaticValue.CLIENT_SYSTEMID.equals(bindRequest.getSystemId())) {
+//				// create a failed bind response and send back to connection
+//				BaseBindResp bindResponse = server.createBindResponse(bindRequest, SmppConstants.STATUS_INVSYSID);
+//				this.sendResponsePdu(bindResponse);
+//				// cancel the timer task & close connection
+//				closeChannelAndCancelTimer();
+//				return;
+//			} else if (!StaticValue.CLIENT_PASSWORD.equals(bindRequest.getPassword())) {
+//				// create a failed bind response and send back to connection
+//				BaseBindResp bindResponse = server.createBindResponse(bindRequest, SmppConstants.STATUS_INVPASWD);
+//				this.sendResponsePdu(bindResponse);
+//				// cancel the timer task & close connection
+//				closeChannelAndCancelTimer();
+//				return;
+//			}
 
 
 			// create a default session configuration based on this bind request
