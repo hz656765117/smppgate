@@ -13,6 +13,7 @@ import java.util.concurrent.BlockingQueue;
 
 
 /**
+ * 长短信合并
  * @author huangzhuo
  * @date 2019/7/2 15:53
  */

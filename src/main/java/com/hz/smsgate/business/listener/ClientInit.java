@@ -99,16 +99,21 @@ public class ClientInit {
 		MtConsumer mtConsumer = new MtConsumer();
 		MtRedisConsumer mtRedisConsumer = new MtRedisConsumer();
 
-		LongMtConsumer longMtConsumer = new LongMtConsumer();
-		LongMtSendConsumer longMtSendConsumer = new LongMtSendConsumer();
+
 		EnquireLinkConsumer enquireLinkConsumer = new EnquireLinkConsumer();
 		SyncSubmitConsumer syncSubmitConsumer = new SyncSubmitConsumer();
 
-		ThreadPoolHelper.executeTask(longMtConsumer);
+		LongMtConsumer longMtConsumer = new LongMtConsumer();
+		LongMtSendConsumer longMtSendConsumer = new LongMtSendConsumer();
+		RealLongMtSendConsumer realLongMtSendConsumer = new RealLongMtSendConsumer();
+
+
 		ThreadPoolHelper.executeTask(enquireLinkConsumer);
 		ThreadPoolHelper.executeTask(syncSubmitConsumer);
 
 
+		ThreadPoolHelper.executeTask(longMtConsumer);
+		ThreadPoolHelper.executeTask(longMtSendConsumer);
 
 		//0 je   1 redis
 		if ("1".equals(StaticValue.TYPE)) {
@@ -117,7 +122,7 @@ public class ClientInit {
 			for (int i = 0; i <= 5; i++) {
 				ThreadPoolHelper.executeTask(mtConsumer);
 			}
-			ThreadPoolHelper.executeTask(longMtSendConsumer);
+			ThreadPoolHelper.executeTask(realLongMtSendConsumer);
 		}
 
 

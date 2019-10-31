@@ -22,14 +22,13 @@ import java.util.concurrent.BlockingQueue;
 
 
 /**
+ * 将长短信拆分并放到真正的发送队列中
+ *
  * @author huangzhuo
  * @date 2019/7/2 15:53
  */
 public class LongMtSendConsumer implements Runnable {
 	private static Logger LOGGER = LoggerFactory.getLogger(LongMtSendConsumer.class);
-
-
-	public static final List<SubmitSm> sendlist = new LinkedList<>();
 
 	@Override
 	public void run() {
@@ -45,42 +44,24 @@ public class LongMtSendConsumer implements Runnable {
 				LOGGER.error("{}-获取je队列异常", Thread.currentThread().getName(), e);
 			}
 
+			BlockingQueue<Object> realSendQueue = null;
+			try {
+				realSendQueue = BDBStoredMapFactoryImpl.INS.getQueue("realLongSubmitSmSend", "realLongSubmitSmSend");
+			} catch (Exception e) {
+				LOGGER.error("{}-获取je队列异常", Thread.currentThread().getName(), e);
+			}
+
 			try {
 				if (queue != null) {
 					Object obj = queue.poll();
 					if (obj != null) {
 						submitSm = (SubmitSm) obj;
-
 						//重组下行对象
 						submitSm = PduUtils.rewriteSubmitSm(submitSm);
 
-						String[] tempMsgIds = submitSm.getTempMsgId().split("\\|");
-
-
-						//获取客户端session
-						SmppSession session0 = PduUtils.getSmppSession(submitSm);
-
-
 						LOGGER.info("{}-读取到长短信下行信息{}", Thread.currentThread().getName(), submitSm.toString());
-						SubmitSmResp submitResp = session0.submit(submitSm, 10000);
+						splitSubmitSm1(submitSm, realSendQueue);
 
-						String sendId = submitSm.getSourceAddress().getAddress();
-						WGParams wgParams = StaticValue.CHANNL_SP_REL.get(sendId);
-						if (wgParams != null) {
-							BlockingQueue<Object> syncSubmitQueue = BDBStoredMapFactoryImpl.INS.getQueue("syncSubmit", "syncSubmit");
-							wgParams.setDas(submitSm.getDestAddress().getAddress());
-							String sm = new String(submitSm.getShortMessage());
-							wgParams.setSm(sm);
-							syncSubmitQueue.put(wgParams);
-						}
-
-
-						String messageId = submitResp.getMessageId();
-
-						//更新缓存中的value
-						for (String key : tempMsgIds) {
-							RptConsumer.CACHE_MAP.put(key, messageId);
-						}
 
 					} else {
 						Thread.sleep(1000);
@@ -96,5 +77,105 @@ public class LongMtSendConsumer implements Runnable {
 
 	}
 
+
+	/**
+	 * 长短信拆分
+	 *
+	 * @param submitSm
+	 * @return
+	 */
+	public static void splitSubmitSm1(SubmitSm submitSm, BlockingQueue<Object> realSendQueue) {
+
+		try {
+
+			byte[] shortMessage = submitSm.getShortMessage();
+			int msgLen = shortMessage.length;
+			if (msgLen < 255) {
+				realSendQueue.put(submitSm);
+			}
+
+			int msgNum = msgLen / 153;
+			int lastMsgSize = msgLen % 153;
+			int allMsgNum = lastMsgSize > 0 ? msgNum + 1 : msgNum;
+			int index = 0;
+
+			for (int i = 0; i < allMsgNum; i++) {
+				SubmitSm ss = submitSm;
+				byte[] shortMsg;
+
+				if ((allMsgNum > msgNum) && (i == msgNum)) {
+					shortMsg = new byte[lastMsgSize + 6];
+				} else {
+					shortMsg = new byte[159];
+				}
+				int realMsgLen = shortMsg.length - 6;
+
+				shortMsg[0] = 05;
+				shortMsg[1] = 00;
+				shortMsg[2] = 03;
+				shortMsg[3] = 39;
+				shortMsg[4] = (byte) allMsgNum;
+				shortMsg[5] = (byte) (i + 1);
+
+				System.arraycopy(shortMessage, index, shortMsg, 6, realMsgLen);
+				index += realMsgLen;
+				ss.setShortMessage(shortMsg);
+				ss.setEsmClass((byte) 00000100);
+				ss.calculateAndSetCommandLength();
+				LOGGER.info("{}-长短信拆分{}-{}下行信息{}", Thread.currentThread().getName(), allMsgNum, (i + 1), ss.toString());
+				realSendQueue.put(ss);
+			}
+		} catch (Exception e) {
+			LOGGER.error("{}-长短信拆分异常", Thread.currentThread().getName(), e);
+		}
+	}
+
+
+	public static void splitSubmitSm(SubmitSm submitSm, BlockingQueue<Object> realSendQueue) {
+
+		try {
+
+			byte[] shortMessage = submitSm.getShortMessage();
+			int msgLen = shortMessage.length;
+			if (msgLen < 255) {
+				realSendQueue.put(submitSm);
+			}
+
+			int msgNum = msgLen / 153;
+			int lastMsgSize = msgLen % 153;
+			int allMsgNum = lastMsgSize > 0 ? msgNum + 1 : msgNum;
+			int index = 0;
+
+			for (int i = 0; i < allMsgNum; i++) {
+				SubmitSm ss = submitSm;
+				byte[] shortMsg;
+
+				if ((allMsgNum > msgNum) && (i == msgNum)) {
+					shortMsg = new byte[lastMsgSize + 7];
+				} else {
+					shortMsg = new byte[160];
+				}
+				int realMsgLen = shortMsg.length - 7;
+
+				shortMsg[0] = 0x06;
+				shortMsg[1] = 0x08;
+				shortMsg[2] = 0x04;
+				shortMsg[3] = 0x00;
+				shortMsg[4] = 0x39;
+				shortMsg[5] = (byte) allMsgNum;
+				shortMsg[6] = (byte) (i + 1);
+
+				System.arraycopy(shortMessage, index, shortMsg, 7, realMsgLen);
+				index += realMsgLen;
+				ss.setShortMessage(shortMsg);
+				ss.setEsmClass((byte) 00000100);
+				ss.calculateAndSetCommandLength();
+				LOGGER.info("{}-长短信拆分{}-{}下行信息{}", Thread.currentThread().getName(), allMsgNum, (i + 1), ss.toString());
+				realSendQueue.put(ss);
+			}
+		} catch (Exception e) {
+			LOGGER.error("{}-长短信拆分异常", Thread.currentThread().getName(), e);
+		}
+	}
 
 }
