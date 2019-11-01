@@ -90,8 +90,10 @@ public class LongMtSendConsumer implements Runnable {
 
 			byte[] shortMessage = submitSm.getShortMessage();
 			int msgLen = shortMessage.length;
+			//少于255个字符 不拆分短信
 			if (msgLen < 255) {
 				realSendQueue.put(submitSm);
+				return;
 			}
 
 			int msgNum = msgLen / 153;
