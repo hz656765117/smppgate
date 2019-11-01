@@ -9,9 +9,11 @@ import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
 import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.FileUtils;
+import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.business.listener.ClientInit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +23,26 @@ import java.util.Set;
 @RestController
 public class TestController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestController.class);
+	@Autowired
+	public   RedisUtil redisUtil ;
+
+	@RequestMapping(value = "/push")
+	public void demoTest(){
+		redisUtil.set("1","value22222");
+		redisUtil.lPush("duilie","111");
+		redisUtil.lPush("duilie","222");
+		redisUtil.lPush("duilie","333");
+	}
+
+
+	@RequestMapping(value = "/pop")
+	public void pop(){
+		Object duilie = redisUtil.rPop("duilie");
+		Object duilie1 = redisUtil.rPop("duilie");
+		Object duilie2 = redisUtil.rPop("duilie");
+
+
+	}
 
 
 	@RequestMapping("test1")
