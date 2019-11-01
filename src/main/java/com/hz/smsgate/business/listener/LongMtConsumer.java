@@ -62,9 +62,7 @@ public class LongMtConsumer implements Runnable {
 
 	public void validateMt(SubmitSm submitSm) throws Exception {
 		byte[] shortMessage = submitSm.getShortMessage();
-		if (shortMessage[0] == 5 && shortMessage[1] == 0 && shortMessage[2] == 3) {
-			System.out.println("这是拆分短信");
-		}
+
 		byte[] test = new byte[6];
 		byte[] realmsg = new byte[shortMessage.length - 6];
 		System.arraycopy(shortMessage, 0, test, 0, 6);
@@ -176,7 +174,6 @@ public class LongMtConsumer implements Runnable {
 			// 排序后输出
 			for (Map.Entry<String, SubmitSm> m : hashList) {
 				CACHE_MAP.put(m.getKey(), m.getValue());
-				System.out.println("Key=" + m.getKey() + ", Value=" + m.getValue());
 			}
 		}
 
