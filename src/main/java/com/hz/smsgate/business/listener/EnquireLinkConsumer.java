@@ -41,7 +41,7 @@ public class EnquireLinkConsumer implements Runnable {
 
 							LOGGER.error("{}-{}心跳异常异常", Thread.currentThread().getName(), entry.getKey(), e);
 						}
-
+						Thread.sleep(1000);
 					}
 					Thread.sleep(StaticValue.ENQUIRE_LINK_TIME);
 				} else {
