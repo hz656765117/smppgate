@@ -362,6 +362,8 @@ public class DefaultSmppServer implements SmppServer, DefaultSmppServerMXBean {
 		if (this.channels.size() > this.configuration.getMaxConnectionSize()) {
 			logger.warn("The current connection size [{}] exceeds the configured max connection size [{}]", this.channels.size(), this.configuration.getMaxConnectionSize());
 		}
+		logger.info("当前客户端session的账号为{}",session.getConfiguration().getSystemId());
+
 		//新增session
 		smppSessionList.add(session);
 		// session created, now pass it upstream
