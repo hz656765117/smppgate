@@ -9,6 +9,7 @@ import com.hz.smsgate.base.smpp.pojo.PduAsyncResponse;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.utils.PduUtil;
 import com.hz.smsgate.base.utils.RedisUtil;
+import com.hz.smsgate.base.utils.SmppUtils;
 import com.hz.smsgate.business.controller.TestController;
 import com.hz.smsgate.business.listener.LongMtConsumer;
 import com.hz.smsgate.business.listener.RptConsumer;
@@ -92,7 +93,7 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 
 					byte[] shortMessage = submitSm.getShortMessage();
 					if (shortMessage[0] == 5 && shortMessage[1] == 0 && shortMessage[2] == 3) {
-						String msgid = LongMtConsumer.getMsgId();
+						String msgid = SmppUtils.getMsgId();
 						logger.info("这是拆分短信,msgid{},后缀为{}", msgid, LongMtConsumer.getSuffixKeyBySm(submitSm));
 						submitResp.setMessageId(msgid);
 
@@ -115,7 +116,7 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 						return submitResp;
 					} else {
 
-						String msgid = LongMtConsumer.getMsgId();
+						String msgid = SmppUtils.getMsgId();
 						submitSm.setTempMsgId(msgid);
 						logger.info("这是短短信,msgid为:{},后缀为{}", msgid);
 						RptConsumer.CACHE_MAP.put(msgid, msgid);

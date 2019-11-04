@@ -3,12 +3,14 @@ package com.hz.smsgate.base.utils;
 import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
 import com.hz.smsgate.base.smpp.config.SmppServerConfiguration;
 import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
-import com.hz.smsgate.business.smpp.handler.ServerSmppSessionRedisHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
-import java.util.concurrent.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SmppUtils {
@@ -74,6 +76,15 @@ public class SmppUtils {
 			logger.error("获取短信下行响应对象异常 {}", e);
 		}
 		return submitSmResp;
+	}
+
+
+	public static String getMsgId() {
+		String str = new MsgId().toString().substring(3);
+		if (str.startsWith("0")) {
+			str = "1" + str.substring(1);
+		}
+		return str;
 	}
 
 }

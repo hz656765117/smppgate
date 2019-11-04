@@ -70,7 +70,7 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 					//通道替换
 					submitSm = PduUtil.rewriteSmSourceAddress(submitSm);
 
-					String msgid = LongMtConsumer.getMsgId();
+					String msgid = SmppUtils.getMsgId();
 					submitSm.setTempMsgId(msgid);
 					logger.info("这是短短信,msgid为:{}", msgid);
 					RptConsumer.CACHE_MAP.put(msgid, msgid);

@@ -83,13 +83,7 @@ public class LongMtConsumer implements Runnable {
 		CACHE_MAP.put(key.toString(), submitSm);
 	}
 
-	public static String getMsgId() {
-		String str = new MsgId().toString().substring(3);
-		if (str.startsWith("0")) {
-			str = "1" + str.substring(1);
-		}
-		return str;
-	}
+
 
 	public static String getSuffixKeyBySm(SubmitSm submitSm) {
 		byte[] shortMessage = submitSm.getShortMessage();
