@@ -8,15 +8,12 @@ import com.hz.smsgate.base.smpp.pdu.*;
 import com.hz.smsgate.base.smpp.pojo.PduAsyncResponse;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.utils.PduUtil;
-import com.hz.smsgate.base.smpp.utils.SmppUtil;
 import com.hz.smsgate.base.utils.SmppUtils;
-import com.hz.smsgate.business.listener.LongMtConsumer;
 import com.hz.smsgate.business.listener.RptConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.ref.WeakReference;
-import java.math.BigInteger;
 import java.util.concurrent.BlockingQueue;
 
 /**

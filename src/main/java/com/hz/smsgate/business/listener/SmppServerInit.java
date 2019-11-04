@@ -29,20 +29,20 @@ public class SmppServerInit {
 
     @PostConstruct
     public void postConstruct() throws Exception {
-        initSystemGlobals();
-
-        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
-
-        ScheduledThreadPoolExecutor monitorExecutor = SmppUtils.getThreadPool("SmppServerSessionWindowMonitorPool");
-
-        final SmppServerConfiguration configuration = SmppUtils.getServerConfig(2887);
-
-        // create a server, start it up
-        DefaultSmppServer smppServer = new DefaultSmppServer(configuration, new CmSmppServerHandler(), executor, monitorExecutor);
-
-        logger.info("Starting SMPP server...  port is {}", 2887);
-        smppServer.start();
-        logger.info("SMPP server started");
+//        initSystemGlobals();
+//
+//        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
+//
+//        ScheduledThreadPoolExecutor monitorExecutor = SmppUtils.getThreadPool("SmppServerSessionWindowMonitorPool");
+//
+//        final SmppServerConfiguration configuration = SmppUtils.getServerConfig(2887);
+//
+//        // create a server, start it up
+//        DefaultSmppServer smppServer = new DefaultSmppServer(configuration, new CmSmppServerHandler(), executor, monitorExecutor);
+//
+//        logger.info("Starting SMPP server...  port is {}", 2887);
+//        smppServer.start();
+//        logger.info("SMPP server started");
 
 
     }

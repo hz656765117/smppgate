@@ -1,6 +1,5 @@
 package com.hz.smsgate.business.smpp.handler;
 
-import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
 import com.hz.smsgate.base.smpp.constants.SmppConstants;
 import com.hz.smsgate.base.smpp.exception.RecoverablePduException;
 import com.hz.smsgate.base.smpp.exception.UnrecoverablePduException;
@@ -10,10 +9,8 @@ import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.utils.PduUtil;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.base.utils.SmppUtils;
-import com.hz.smsgate.business.controller.TestController;
-import com.hz.smsgate.business.listener.LongMtConsumer;
+import com.hz.smsgate.business.listener.je.LongMtConsumer;
 import com.hz.smsgate.business.listener.RptConsumer;
-import com.hz.smsgate.business.listener.ServerInit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +19,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.lang.ref.WeakReference;
 import java.math.BigInteger;
-import java.util.concurrent.BlockingQueue;
 
 
 /**

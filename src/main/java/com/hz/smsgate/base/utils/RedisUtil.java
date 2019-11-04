@@ -139,6 +139,18 @@ public class RedisUtil {
 		return hash.get(key, hashKey);
 	}
 
+	public Object hmGetAll(String key) {
+		HashOperations<String, Object, Object> hash = redisTemplate.opsForHash();
+		return hash.entries(key);
+	}
+
+	public Object hmRemove(String key, Object hashKey) {
+		HashOperations<String, Object, Object> hash = redisTemplate.opsForHash();
+		return hash.delete(key, hashKey);
+	}
+
+
+
 	/**
 	 * 列表添加  LPUSH(头部插入)
 	 *

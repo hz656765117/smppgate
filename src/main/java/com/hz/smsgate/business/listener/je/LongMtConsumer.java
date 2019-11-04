@@ -1,9 +1,7 @@
-package com.hz.smsgate.business.listener;
+package com.hz.smsgate.business.listener.je;
 
-import com.cloudhopper.commons.charset.CharsetUtil;
 import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
-import com.hz.smsgate.base.utils.MsgId;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
