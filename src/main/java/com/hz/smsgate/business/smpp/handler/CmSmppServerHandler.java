@@ -37,7 +37,7 @@ public class CmSmppServerHandler implements SmppServerHandler {
 		if ("1".equals(StaticValue.TYPE)) {
 			smppSessionHandler = new ServerSmppSessionRedisHandler(session);
 		} else {
-			smppSessionHandler = new ServerSmppSessionHandler(session);
+			smppSessionHandler = new ServerSmppSessionCmHandler(session);
 		}
 
 

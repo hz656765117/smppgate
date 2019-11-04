@@ -4,6 +4,7 @@ import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.constants.SystemGlobals;
 import com.hz.smsgate.base.smpp.config.SmppServerConfiguration;
 import com.hz.smsgate.base.utils.PropertiesLoader;
+import com.hz.smsgate.base.utils.SmppUtils;
 import com.hz.smsgate.business.smpp.handler.DefaultSmppServerHandler;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppServer;
 import org.slf4j.Logger;
@@ -32,39 +33,19 @@ public class ServerInit {
 	@PostConstruct
 	public void postConstruct() throws Exception {
 		initSystemGlobals();
+		int serverPort = StaticValue.SERVER_PORT;
 
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
 
-		// to enable automatic expiration of requests, a second scheduled executor
-		// is required which is what a monitor task will be executed with - this
-		// is probably a thread pool that can be shared with between all client bootstraps
-		ScheduledThreadPoolExecutor monitorExecutor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(1, new ThreadFactory() {
-			private AtomicInteger sequence = new AtomicInteger(0);
-
-			@Override
-			public Thread newThread(Runnable r) {
-				Thread t = new Thread(r);
-				t.setName("SmppServerSessionWindowMonitorPool-" + sequence.getAndIncrement());
-				return t;
-			}
-		});
+		ScheduledThreadPoolExecutor monitorExecutor = SmppUtils.getThreadPool("SmppServerSessionWindowMonitorPool");
 
 		// create a server configuration
-		SmppServerConfiguration configuration = new SmppServerConfiguration();
-		configuration.setPort(StaticValue.SERVER_PORT);
-		configuration.setMaxConnectionSize(10);
-		configuration.setNonBlockingSocketsEnabled(true);
-		configuration.setDefaultRequestExpiryTimeout(30000);
-		configuration.setDefaultWindowMonitorInterval(15000);
-		configuration.setDefaultWindowSize(50);
-		configuration.setDefaultWindowWaitTimeout(configuration.getDefaultRequestExpiryTimeout());
-		configuration.setDefaultSessionCountersEnabled(true);
-		configuration.setJmxEnabled(true);
+		SmppServerConfiguration configuration = SmppUtils.getServerConfig(serverPort);
 
 		// create a server, start it up
 		DefaultSmppServer smppServer = new DefaultSmppServer(configuration, new DefaultSmppServerHandler(), executor, monitorExecutor);
 
-		logger.info("Starting SMPP server...  port is {}", StaticValue.SERVER_PORT);
+		logger.info("Starting SMPP server...  port is {}", serverPort);
 		smppServer.start();
 		logger.info("SMPP server started");
 

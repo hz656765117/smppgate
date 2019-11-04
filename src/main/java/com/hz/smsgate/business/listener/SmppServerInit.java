@@ -14,9 +14,7 @@ import javax.annotation.PostConstruct;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Auther: huangzhuo
@@ -35,19 +33,7 @@ public class SmppServerInit {
 
         ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
 
-        // to enable automatic expiration of requests, a second scheduled executor
-        // is required which is what a monitor task will be executed with - this
-        // is probably a thread pool that can be shared with between all client bootstraps
-        ScheduledThreadPoolExecutor monitorExecutor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(1, new ThreadFactory() {
-            private AtomicInteger sequence = new AtomicInteger(0);
-
-            @Override
-            public Thread newThread(Runnable r) {
-                Thread t = new Thread(r);
-                t.setName("SmppServerSessionWindowMonitorPool-" + sequence.getAndIncrement());
-                return t;
-            }
-        });
+        ScheduledThreadPoolExecutor monitorExecutor = SmppUtils.getThreadPool("SmppServerSessionWindowMonitorPool");
 
         final SmppServerConfiguration configuration = SmppUtils.getServerConfig(2887);
 
