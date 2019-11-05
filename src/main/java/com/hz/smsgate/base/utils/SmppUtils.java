@@ -2,6 +2,7 @@ package com.hz.smsgate.base.utils;
 
 import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
 import com.hz.smsgate.base.smpp.config.SmppServerConfiguration;
+import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,6 +86,28 @@ public class SmppUtils {
 			str = "1" + str.substring(1);
 		}
 		return str;
+	}
+
+	/**
+	 * 获取缓存key的后缀
+	 * @param submitSm
+	 * @return
+	 */
+	public static String getSuffixKeyBySm(SubmitSm submitSm) {
+		byte[] shortMessage = submitSm.getShortMessage();
+		StringBuilder key = new StringBuilder();
+
+		if (shortMessage != null && shortMessage.length >= 6) {
+			key.append("-");
+			key.append(shortMessage[4]);
+			key.append("-");
+			key.append(shortMessage[5]);
+		}
+
+		key.append("-");
+		key.append(submitSm.getSequenceNumber());
+
+		return key.toString();
 	}
 
 }

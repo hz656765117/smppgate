@@ -75,11 +75,11 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 					byte[] shortMessage = submitSm.getShortMessage();
 					if (shortMessage[0] == 5 && shortMessage[1] == 0 && shortMessage[2] == 3) {
 						String msgid = SmppUtils.getMsgId();
-						logger.info("这是拆分短信,msgid{},后缀为{}", msgid, LongMtConsumer.getSuffixKeyBySm(submitSm));
+						logger.info("这是拆分短信,msgid{},后缀为{}", msgid, SmppUtils.getSuffixKeyBySm(submitSm));
 						submitResp.setMessageId(msgid);
 
 						//临时流水id
-						String tempMsgId = submitResp.getMessageId() + LongMtConsumer.getSuffixKeyBySm(submitSm);
+						String tempMsgId = submitResp.getMessageId() + SmppUtils.getSuffixKeyBySm(submitSm);
 
 						RptConsumer.CACHE_MAP.put(tempMsgId, tempMsgId);
 

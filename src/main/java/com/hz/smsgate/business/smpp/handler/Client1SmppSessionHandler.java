@@ -132,6 +132,7 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
 
 	/**
 	 * 将状态报告缓存到对应的redis中，交由不同的服务端处理
+	 *
 	 * @param deliverSm
 	 */
 	public static void putRedisCache(DeliverSm deliverSm) {
@@ -148,7 +149,7 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
 			if (realMsgIds.contains(messageId)) {
 				client1SmppSessionHandler.redisUtil.lPush(SmppServerConstants.CM_DELIVER_SM, deliverSm);
 			} else {
-				client1SmppSessionHandler.redisUtil.lPush("deliverSm", deliverSm);
+				client1SmppSessionHandler.redisUtil.lPush(SmppServerConstants.WEB_DELIVER_SM, deliverSm);
 			}
 
 		} catch (Exception e) {

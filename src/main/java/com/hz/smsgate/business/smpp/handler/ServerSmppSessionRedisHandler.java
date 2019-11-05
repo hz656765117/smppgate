@@ -1,5 +1,6 @@
 package com.hz.smsgate.business.smpp.handler;
 
+import com.hz.smsgate.base.constants.SmppServerConstants;
 import com.hz.smsgate.base.smpp.constants.SmppConstants;
 import com.hz.smsgate.base.smpp.exception.RecoverablePduException;
 import com.hz.smsgate.base.smpp.exception.UnrecoverablePduException;
@@ -9,8 +10,6 @@ import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.utils.PduUtil;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.base.utils.SmppUtils;
-import com.hz.smsgate.business.listener.je.LongMtConsumer;
-import com.hz.smsgate.business.listener.RptConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.lang.ref.WeakReference;
 import java.math.BigInteger;
+
+//import com.hz.smsgate.business.listener.RptConsumer;
 
 
 /**
@@ -90,18 +91,16 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 					byte[] shortMessage = submitSm.getShortMessage();
 					if (shortMessage[0] == 5 && shortMessage[1] == 0 && shortMessage[2] == 3) {
 						String msgid = SmppUtils.getMsgId();
-						logger.info("这是拆分短信,msgid{},后缀为{}", msgid, LongMtConsumer.getSuffixKeyBySm(submitSm));
+						logger.info("这是拆分短信,msgid{},后缀为{}", msgid, SmppUtils.getSuffixKeyBySm(submitSm));
 						submitResp.setMessageId(msgid);
 
 						//临时流水id
-						String tempMsgId = submitResp.getMessageId() + LongMtConsumer.getSuffixKeyBySm(submitSm);
-
-						RptConsumer.CACHE_MAP.put(tempMsgId, tempMsgId);
-
+						String tempMsgId = submitResp.getMessageId() + SmppUtils.getSuffixKeyBySm(submitSm);
 						submitSm.setTempMsgId(tempMsgId);
 
 						try {
-							serverSmppSessionRedisHandler.redisUtil.lPush("longSubmitSm", submitSm);
+							serverSmppSessionRedisHandler.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, tempMsgId, tempMsgId);
+							serverSmppSessionRedisHandler.redisUtil.lPush(SmppServerConstants.WEB_LONG_SUBMIT_SM, submitSm);
 						} catch (Exception e) {
 							logger.error("-----------长短信下行接收，加入队列异常。------------- {}", e);
 						}
@@ -115,34 +114,16 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 						String msgid = SmppUtils.getMsgId();
 						submitSm.setTempMsgId(msgid);
 						logger.info("这是短短信,msgid为:{},后缀为{}", msgid);
-						RptConsumer.CACHE_MAP.put(msgid, msgid);
 						try {
-							serverSmppSessionRedisHandler.redisUtil.lPush("submitSm", submitSm);
+							serverSmppSessionRedisHandler.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, msgid, msgid);
+							serverSmppSessionRedisHandler.redisUtil.lPush(SmppServerConstants.WEB_SUBMIT_SM, submitSm);
 						} catch (Exception e) {
 							logger.error("-----------短短信下行接收，加入队列异常。------------- {}", e);
 						}
 						String msgId16 = new BigInteger(msgid, 10).toString(16);
 						submitResp.setMessageId(msgId16);
+						submitResp.calculateAndSetCommandLength();
 						return submitResp;
-//						while (true) {
-//							BlockingQueue<Object> submitRespQueue = null;
-//							try {
-//								submitRespQueue = BDBStoredMapFactoryImpl.INS.getQueue("submitResp", "submitResp");
-//								if (submitRespQueue != null) {
-//									Object obj = submitRespQueue.poll();
-//									if (obj != null) {
-//										SubmitSmResp submitSmResp = (SubmitSmResp) obj;
-//										String msgId16 = new BigInteger(msgid,10).toString(16);
-//										submitSmResp.setMessageId(msgId16);
-//										submitSmResp.calculateAndSetCommandLength();
-//										return submitSmResp;
-//									}
-//								}
-//							} catch (Exception e) {
-//								logger.error("短信下行响应异常 {}", e);
-//							}
-//						}
-
 					}
 
 

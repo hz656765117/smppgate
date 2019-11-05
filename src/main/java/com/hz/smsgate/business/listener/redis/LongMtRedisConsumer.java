@@ -1,5 +1,6 @@
 package com.hz.smsgate.business.listener.redis;
 
+import com.hz.smsgate.base.constants.SmppServerConstants;
 import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.utils.RedisUtil;
@@ -7,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -15,9 +17,11 @@ import java.util.concurrent.BlockingQueue;
 
 /**
  * 长短信合并
+ *
  * @author huangzhuo
  * @date 2019/7/2 15:53
  */
+@Component
 public class LongMtRedisConsumer implements Runnable {
 	private static Logger LOGGER = LoggerFactory.getLogger(LongMtRedisConsumer.class);
 
@@ -34,7 +38,6 @@ public class LongMtRedisConsumer implements Runnable {
 
 	private static final Map<String, SubmitSm> CACHE_MAP = new LinkedHashMap<>();
 
-//	public static final List<SubmitSm> sendlist = new LinkedList<>();
 
 	@Override
 	public void run() {
@@ -46,7 +49,7 @@ public class LongMtRedisConsumer implements Runnable {
 
 			try {
 				if (longMtRedisConsumer.redisUtil != null) {
-					Object obj = longMtRedisConsumer.redisUtil.rPop("longSubmitSm");
+					Object obj = longMtRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_LONG_SUBMIT_SM);
 					if (obj != null) {
 						submitSm = (SubmitSm) obj;
 						validateMt(submitSm);
@@ -89,24 +92,6 @@ public class LongMtRedisConsumer implements Runnable {
 		CACHE_MAP.put(key.toString(), submitSm);
 	}
 
-
-
-	public static String getSuffixKeyBySm(SubmitSm submitSm) {
-		byte[] shortMessage = submitSm.getShortMessage();
-		StringBuilder key = new StringBuilder();
-
-		if (shortMessage != null && shortMessage.length >= 6) {
-			key.append("-");
-			key.append(shortMessage[4]);
-			key.append("-");
-			key.append(shortMessage[5]);
-		}
-
-		key.append("-");
-		key.append(submitSm.getSequenceNumber());
-
-		return key.toString();
-	}
 
 
 	public void mergeSt() throws Exception {

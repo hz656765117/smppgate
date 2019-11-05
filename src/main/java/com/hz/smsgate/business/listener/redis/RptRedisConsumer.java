@@ -1,5 +1,6 @@
 package com.hz.smsgate.business.listener.redis;
 
+import com.hz.smsgate.base.constants.SmppServerConstants;
 import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
 import com.hz.smsgate.base.smpp.constants.SmppConstants;
@@ -52,7 +53,7 @@ public class RptRedisConsumer implements Runnable {
 		while (true) {
 			try {
 				if (rptRedisConsumer.redisUtil != null) {
-					Object obj = rptRedisConsumer.redisUtil.rPop("deliverSm");
+					Object obj = rptRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_DELIVER_SM);
 					if (obj != null) {
 						deliverSm = (DeliverSm) obj;
 						LOGGER.info("{}-读取到状态报告信息{}", Thread.currentThread().getName(), deliverSm.toString());
@@ -152,7 +153,7 @@ public class RptRedisConsumer implements Runnable {
 		}
 
 		//key为 msgid + 后缀     value 为 运营商的真实msgid
-		Map<String, String> msgidCache = (Map<String, String>) rptRedisConsumer.redisUtil.hmGetAll("CACHE_MAP");
+		Map<String, String> msgidCache = (Map<String, String>) rptRedisConsumer.redisUtil.hmGetAll(SmppServerConstants.WEB_MSGID_CACHE);
 
 		for (Map.Entry<String, String> entry : msgidCache.entrySet()) {
 			//生成的Msgid
@@ -190,7 +191,7 @@ public class RptRedisConsumer implements Runnable {
 
 		if (removeMap != null && removeMap.size() > 0) {
 			for (Map.Entry<String, String> entry : removeMap.entrySet()) {
-				rptRedisConsumer.redisUtil.hmRemove("CACHE_MAP", entry.getKey());
+				rptRedisConsumer.redisUtil.hmRemove(SmppServerConstants.WEB_MSGID_CACHE, entry.getKey());
 			}
 		} else {
 			try {

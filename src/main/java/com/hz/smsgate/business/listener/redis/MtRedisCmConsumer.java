@@ -16,6 +16,8 @@ import javax.annotation.PostConstruct;
 
 
 /**
+ * cm redis短信下行线程
+ *
  * @author huangzhuo
  * @date 2019/10/17 15:38
  */

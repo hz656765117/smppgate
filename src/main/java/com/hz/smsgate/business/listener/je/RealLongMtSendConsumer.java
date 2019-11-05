@@ -1,5 +1,6 @@
 package com.hz.smsgate.business.listener.je;
 
+import com.hz.smsgate.base.constants.SmppServerConstants;
 import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.emp.pojo.WGParams;
 import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
@@ -7,10 +8,15 @@ import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.PduUtils;
+import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.business.listener.RptConsumer;
+import com.hz.smsgate.business.listener.redis.LongMtRedisConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.concurrent.BlockingQueue;
 
 
@@ -20,9 +26,20 @@ import java.util.concurrent.BlockingQueue;
  * @author huangzhuo
  * @date 2019/7/2 15:53
  */
+@Component
 public class RealLongMtSendConsumer implements Runnable {
 	private static Logger LOGGER = LoggerFactory.getLogger(RealLongMtSendConsumer.class);
 
+	@Autowired
+	public RedisUtil redisUtil;
+
+	public static RealLongMtSendConsumer realLongMtSendConsumer;
+
+	@PostConstruct
+	public void init() {
+		realLongMtSendConsumer = this;
+		realLongMtSendConsumer.redisUtil = this.redisUtil;
+	}
 
 	@Override
 	public void run() {
@@ -66,7 +83,13 @@ public class RealLongMtSendConsumer implements Runnable {
 
 						//更新缓存中的value
 						for (String key : tempMsgIds) {
-							RptConsumer.CACHE_MAP.put(key, messageId);
+							//0 je   1 redis
+							if ("1".equals(StaticValue.TYPE)) {
+								realLongMtSendConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, key, messageId);
+							}else {
+								RptConsumer.CACHE_MAP.put(key, messageId);
+							}
+
 						}
 					} else {
 						Thread.sleep(1000);
@@ -75,7 +98,7 @@ public class RealLongMtSendConsumer implements Runnable {
 					Thread.sleep(1000);
 				}
 			} catch (Exception e) {
-				LOGGER.error("{}-处理短信状态报告转发异常", Thread.currentThread().getName(), e);
+				LOGGER.error("{}-长短信分段下发异常", Thread.currentThread().getName(), e);
 			}
 
 		}

@@ -1,5 +1,6 @@
 package com.hz.smsgate.business.listener.redis;
 
+import com.hz.smsgate.base.constants.SmppServerConstants;
 import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.emp.pojo.WGParams;
 import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
@@ -18,6 +19,8 @@ import java.util.concurrent.BlockingQueue;
 
 
 /**
+ * redis短信下行线程
+ *
  * @author huangzhuo
  * @date 2019/10/17 15:38
  */
@@ -46,7 +49,7 @@ public class MtRedisConsumer implements Runnable {
 			String sendId = "";
 			try {
 				if (mtRedisConsumer.redisUtil != null) {
-					Object obj = mtRedisConsumer.redisUtil.rPop("submitSm");
+					Object obj = mtRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_SUBMIT_SM);
 					if (obj != null) {
 
 						submitSm = (SubmitSm) obj;
@@ -59,23 +62,18 @@ public class MtRedisConsumer implements Runnable {
 						SubmitSmResp submitResp = session0.submit(submitSm, 10000);
 
 
-
 						String messageId = submitResp.getMessageId();
 
 						//更新缓存中的value
-						mtRedisConsumer.redisUtil.hmSet("CACHE_MAP", submitSm.getTempMsgId(), messageId);
+						mtRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, submitSm.getTempMsgId(), messageId);
 
 
-						int msgLen = messageId.length();
-						if (msgLen > 19) {
-							messageId = messageId.substring(msgLen - 19, msgLen);
-							submitResp.setMessageId(messageId);
-							submitResp.setCommandLength(submitResp.getCommandLength() - (msgLen - 19));
-						}
-
-//						BlockingQueue<Object> submitRespQueue = BDBStoredMapFactoryImpl.INS.getQueue("submitResp", "submitResp");
-//						submitRespQueue.put(submitResp);
-
+//						int msgLen = messageId.length();
+//						if (msgLen > 19) {
+//							messageId = messageId.substring(msgLen - 19, msgLen);
+//							submitResp.setMessageId(messageId);
+//							submitResp.setCommandLength(submitResp.getCommandLength() - (msgLen - 19));
+//						}
 
 					} else {
 						Thread.sleep(1000);

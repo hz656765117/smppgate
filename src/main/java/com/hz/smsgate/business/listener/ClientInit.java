@@ -12,6 +12,7 @@ import com.hz.smsgate.business.listener.je.LongMtConsumer;
 import com.hz.smsgate.business.listener.je.LongMtSendConsumer;
 import com.hz.smsgate.business.listener.je.MtConsumer;
 import com.hz.smsgate.business.listener.je.RealLongMtSendConsumer;
+import com.hz.smsgate.business.listener.redis.LongMtRedisConsumer;
 import com.hz.smsgate.business.listener.redis.MtRedisCmConsumer;
 import com.hz.smsgate.business.listener.redis.MtRedisConsumer;
 import com.hz.smsgate.business.listener.redis.RptRedisConsumer;
@@ -104,57 +105,68 @@ public class ClientInit {
 
 	public static void initConfigs() {
 		configMap = FileUtils.getConfigs(StaticValue.RESOURCE_HOME);
-		clientInit.redisUtil.hmPutAll("configMap",configMap);
+		clientInit.redisUtil.hmPutAll("configMap", configMap);
 	}
 
 
 	private static void initMutiThread() {
 		RptConsumer rptConsumer = new RptConsumer();
 		MtConsumer mtConsumer = new MtConsumer();
-
-
 		RptRedisConsumer rptRedisConsumer = new RptRedisConsumer();
+		LongMtRedisConsumer longMtRedisConsumer = new LongMtRedisConsumer();
 
 		//cm资源下行
 		MtRedisCmConsumer mtRedisCmConsumer = new MtRedisCmConsumer();
-
 		MtRedisConsumer mtRedisConsumer = new MtRedisConsumer();
-
 		EnquireLinkConsumer enquireLinkConsumer = new EnquireLinkConsumer();
 		SyncSubmitConsumer syncSubmitConsumer = new SyncSubmitConsumer();
-
 		LongMtConsumer longMtConsumer = new LongMtConsumer();
 		LongMtSendConsumer longMtSendConsumer = new LongMtSendConsumer();
 		RealLongMtSendConsumer realLongMtSendConsumer = new RealLongMtSendConsumer();
 
 
+		//心跳线程
 		ThreadPoolHelper.executeTask(enquireLinkConsumer);
+
+		//同步下行信息到网关线程
 		ThreadPoolHelper.executeTask(syncSubmitConsumer);
 
-
-		ThreadPoolHelper.executeTask(longMtConsumer);
+		//长短信拆分线程
 		ThreadPoolHelper.executeTask(longMtSendConsumer);
 
+		//CM 短信发送线程
 		ThreadPoolHelper.executeTask(mtRedisCmConsumer);
+
+		//长短信发送线程
+		ThreadPoolHelper.executeTask(realLongMtSendConsumer);
 
 		//0 je   1 redis
 		if ("1".equals(StaticValue.TYPE)) {
-			//redis短短信下行线程
-			ThreadPoolHelper.executeTask(mtRedisConsumer);
+			//redis长短信合并
+			ThreadPoolHelper.executeTask(longMtRedisConsumer);
+
+			for (int i = 0; i <= 5; i++) {
+				//redis短短信下行线程
+				ThreadPoolHelper.executeTask(mtRedisConsumer);
+			}
+
 			//redis状态报告处理线程
 			ThreadPoolHelper.executeTask(rptRedisConsumer);
-		} else {
 
-			//je状态报告处理线程
-			ThreadPoolHelper.executeTask(rptConsumer);
+
+		} else {
+			//je长短信合并
+			ThreadPoolHelper.executeTask(longMtConsumer);
 
 			for (int i = 0; i <= 5; i++) {
 				//je短短信下行线程
 				ThreadPoolHelper.executeTask(mtConsumer);
 			}
 
-			//je长短信发送线程
-			ThreadPoolHelper.executeTask(realLongMtSendConsumer);
+			//je状态报告处理线程
+			ThreadPoolHelper.executeTask(rptConsumer);
+
+
 		}
 
 

@@ -20,7 +20,6 @@ public class LongMtConsumer implements Runnable {
 
 	public static final Map<String, SubmitSm> CACHE_MAP = new LinkedHashMap<>();
 
-//	public static final List<SubmitSm> sendlist = new LinkedList<>();
 
 	@Override
 	public void run() {
@@ -83,22 +82,6 @@ public class LongMtConsumer implements Runnable {
 
 
 
-	public static String getSuffixKeyBySm(SubmitSm submitSm) {
-		byte[] shortMessage = submitSm.getShortMessage();
-		StringBuilder key = new StringBuilder();
-
-		if (shortMessage != null && shortMessage.length >= 6) {
-			key.append("-");
-			key.append(shortMessage[4]);
-			key.append("-");
-			key.append(shortMessage[5]);
-		}
-
-		key.append("-");
-		key.append(submitSm.getSequenceNumber());
-
-		return key.toString();
-	}
 
 
 	public void mergeSt() throws Exception {
