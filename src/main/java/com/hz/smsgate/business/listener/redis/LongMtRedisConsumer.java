@@ -41,6 +41,13 @@ public class LongMtRedisConsumer implements Runnable {
 
 	@Override
 	public void run() {
+		try {
+			Thread.sleep(5000);
+		} catch (Exception e) {
+			LOGGER.error("{}-长短信（redis）合并线程启动异常", Thread.currentThread().getName(), e);
+		}
+		LOGGER.info("{}-长短信（redis）合并线程开始工作......", Thread.currentThread().getName());
+
 		SubmitSm submitSm;
 
 
@@ -61,7 +68,7 @@ public class LongMtRedisConsumer implements Runnable {
 					Thread.sleep(1000);
 				}
 			} catch (Exception e) {
-				LOGGER.error("{}-处理短信状态报告转发异常", Thread.currentThread().getName(), e);
+				LOGGER.error("{}-长短信（redis）合并异常", Thread.currentThread().getName(), e);
 			}
 
 		}
@@ -91,7 +98,6 @@ public class LongMtRedisConsumer implements Runnable {
 
 		CACHE_MAP.put(key.toString(), submitSm);
 	}
-
 
 
 	public void mergeSt() throws Exception {

@@ -43,6 +43,12 @@ public class MtRedisConsumer implements Runnable {
 	public void run() {
 		SubmitSm submitSm;
 
+		try {
+			Thread.sleep(5000);
+		} catch (Exception e) {
+			LOGGER.error("{}-处理短信（redis）下行线程启动异常", Thread.currentThread().getName(), e);
+		}
+		LOGGER.info("{}-处理短信（redis）下行线程开始工作......", Thread.currentThread().getName());
 
 		while (true) {
 
