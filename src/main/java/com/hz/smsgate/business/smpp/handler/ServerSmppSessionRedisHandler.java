@@ -121,7 +121,9 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 						} catch (Exception e) {
 							logger.error("-----------短短信下行接收，加入队列异常。------------- {}", e);
 						}
-						return response;
+						String msgId16 = new BigInteger(msgid, 10).toString(16);
+						submitResp.setMessageId(msgId16);
+						return submitResp;
 //						while (true) {
 //							BlockingQueue<Object> submitRespQueue = null;
 //							try {

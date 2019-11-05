@@ -23,9 +23,10 @@ package com.hz.smsgate.base.smpp.config;
 
 import com.hz.smsgate.base.smpp.constants.SmppConstants;
 
+
 /**
  * Configuration to create a TCP/IP connection (Channel) for an SmppSession.
- * 
+ *
  * @author joelauer (twitter: @jjlauer or <a href="http://twitter.com/jjlauer" target=window>http://twitter.com/jjlauer</a>)
  */
 public class SmppConnectionConfiguration {

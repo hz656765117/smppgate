@@ -21,6 +21,8 @@ package com.hz.smsgate.business.smpp.handler;
  */
 
 
+import com.hz.smsgate.base.constants.SmppServerConstants;
+import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
 import com.hz.smsgate.base.smpp.constants.SmppConstants;
 import com.hz.smsgate.base.smpp.exception.RecoverablePduException;
@@ -30,14 +32,32 @@ import com.hz.smsgate.base.smpp.pdu.Pdu;
 import com.hz.smsgate.base.smpp.pdu.PduRequest;
 import com.hz.smsgate.base.smpp.pdu.PduResponse;
 import com.hz.smsgate.base.smpp.pojo.PduAsyncResponse;
-import com.hz.smsgate.business.smpp.impl.DefaultSmppServer;
+import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
+import com.hz.smsgate.base.utils.RedisUtil;
+import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
-
+@Component
 public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
+
+
+	@Autowired
+	public RedisUtil redisUtil;
+
+	public static Client1SmppSessionHandler client1SmppSessionHandler;
+
+	@PostConstruct
+	public void init() {
+		client1SmppSessionHandler = this;
+		client1SmppSessionHandler.redisUtil = this.redisUtil;
+	}
 
 	private static final Logger logger = LoggerFactory.getLogger(Client1SmppSessionHandler.class);
 
@@ -76,12 +96,21 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
 						break;
 					case SmppConstants.CMD_ID_DELIVER_SM:
 						DeliverSm deliverSm = (DeliverSm) pduRequest;
+
+
 						try {
-							BlockingQueue<Object> queue = BDBStoredMapFactoryImpl.INS.getQueue("rptrvok", "rptrvok");
-							queue.put(deliverSm);
+							//0 je   1 redis
+							if ("1".equals(StaticValue.TYPE)) {
+								putRedisCache(deliverSm);
+							} else {
+								BlockingQueue<Object> queue = BDBStoredMapFactoryImpl.INS.getQueue("rptrvok", "rptrvok");
+								queue.put(deliverSm);
+							}
+
 						} catch (Exception e) {
 							logger.error("----------状态报告接收，加入队列异常。---------------", e);
 						}
+
 						break;
 					case SmppConstants.CMD_ID_DATA_SM:
 						break;
@@ -100,6 +129,35 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
 
 		return response;
 	}
+
+	/**
+	 * 将状态报告缓存到对应的redis中，交由不同的服务端处理
+	 * @param deliverSm
+	 */
+	public static void putRedisCache(DeliverSm deliverSm) {
+		try {
+			Object obj = client1SmppSessionHandler.redisUtil.hmGetAllValues(SmppServerConstants.CM_MSGID_CACHE);
+			List<String> realMsgIds = (List<String>) obj;
+
+			//获取状态报告msgid
+			String str = new String(deliverSm.getShortMessage());
+			DeliveryReceipt deliveryReceipt = DeliveryReceipt.parseShortMessage(str, DateTimeZone.UTC);
+			String messageId = deliveryReceipt.getMessageId();
+
+			//判断msgid是否在cm的msgid缓存中存在
+			if (realMsgIds.contains(messageId)) {
+				client1SmppSessionHandler.redisUtil.lPush(SmppServerConstants.CM_DELIVER_SM, deliverSm);
+			} else {
+				client1SmppSessionHandler.redisUtil.lPush("deliverSm", deliverSm);
+			}
+
+		} catch (Exception e) {
+			logger.error("{}-处理短信状态报告内容解析异常", Thread.currentThread().getName(), e);
+			return;
+		}
+
+	}
+
 
 	@Override
 	public void fireExpectedPduResponseReceived(PduAsyncResponse pduAsyncResponse) {

@@ -1,8 +1,10 @@
 package com.hz.smsgate.business.listener.redis;
 
+import com.hz.smsgate.base.constants.SmppServerConstants;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
+import com.hz.smsgate.base.smpp.utils.PduUtil;
 import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
 import org.slf4j.Logger;
@@ -47,8 +49,10 @@ public class MtRedisCmConsumer implements Runnable {
 
 						submitSm = (SubmitSm) obj;
 						sendId = submitSm.getSourceAddress().getAddress();
+
 						//重组下行对象
 						submitSm = PduUtils.rewriteSubmitSm(submitSm);
+
 						//获取客户端session
 						SmppSession session0 = PduUtils.getSmppSession(submitSm);
 
@@ -63,14 +67,9 @@ public class MtRedisCmConsumer implements Runnable {
 //							wgParams.setSm(sm);
 //							syncSubmitQueue.put(wgParams);
 //						}
-
 						String messageId = submitResp.getMessageId();
-
 						//更新缓存中的value
-						mtRedisConsumer.redisUtil.hmSet("CACHE_MAP", submitSm.getTempMsgId(), messageId);
-
-
-
+						mtRedisConsumer.redisUtil.hmSet(SmppServerConstants.CM_MSGID_CACHE, submitSm.getTempMsgId(), messageId);
 
 					} else {
 						Thread.sleep(1000);

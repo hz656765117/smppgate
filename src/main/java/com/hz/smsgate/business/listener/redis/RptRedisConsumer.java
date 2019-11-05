@@ -43,7 +43,7 @@ public class RptRedisConsumer implements Runnable {
 	}
 
 	//key为 msgid + 后缀     value 为 运营商的真实msgid
-	public static final Map<String, String> CACHE_MAP = new LinkedHashMap<>();
+//	public static final Map<String, String> CACHE_MAP = new LinkedHashMap<>();
 
 	@Override
 	public void run() {
@@ -115,7 +115,7 @@ public class RptRedisConsumer implements Runnable {
 		Map<String, String> removeMap = new LinkedHashMap<>();
 
 		SmppSession smppSession = PduUtils.getServerSmppSession(deliverSm);
-		if (smppSession == null){
+		if (smppSession == null) {
 			return;
 		}
 
@@ -129,7 +129,7 @@ public class RptRedisConsumer implements Runnable {
 			deliveryReceipt = DeliveryReceipt.parseShortMessage(str, DateTimeZone.UTC);
 			messageId = deliveryReceipt.getMessageId();
 		} catch (Exception e) {
-			LOGGER.error("{}-处理长短信状态报告内容解析异常", Thread.currentThread().getName(), e);
+			LOGGER.error("{}-处理短信状态报告内容解析异常", Thread.currentThread().getName(), e);
 			return;
 		}
 
@@ -151,10 +151,15 @@ public class RptRedisConsumer implements Runnable {
 
 		}
 
+		//key为 msgid + 后缀     value 为 运营商的真实msgid
+		Map<String, String> msgidCache = (Map<String, String>) rptRedisConsumer.redisUtil.hmGetAll("CACHE_MAP");
 
-		for (Map.Entry<String, String> entry : CACHE_MAP.entrySet()) {
-			String address = entry.getValue();
+		for (Map.Entry<String, String> entry : msgidCache.entrySet()) {
+			//生成的Msgid
 			String msgId = entry.getKey();
+
+			//资源处下行响应时更新的MsgId
+			String address = entry.getValue();
 
 			try {
 
@@ -185,7 +190,7 @@ public class RptRedisConsumer implements Runnable {
 
 		if (removeMap != null && removeMap.size() > 0) {
 			for (Map.Entry<String, String> entry : removeMap.entrySet()) {
-				CACHE_MAP.remove(entry.getKey());
+				rptRedisConsumer.redisUtil.hmRemove("CACHE_MAP", entry.getKey());
 			}
 		} else {
 			try {

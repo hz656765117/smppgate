@@ -20,11 +20,13 @@ package com.hz.smsgate.base.smpp.pojo;
  * #L%
  */
 
+import java.io.Serializable;
+
 /**
  *
  * @author joelauer (twitter: @jjlauer or <a href="http://twitter.com/jjlauer" target=window>http://twitter.com/jjlauer</a>)
  */
-public class LoggingOptions {
+public class LoggingOptions  implements Serializable {
 
     public static final int LOG_PDU = 0x00000001;
     public static final int LOG_BYTES = 0x00000002;

@@ -28,12 +28,14 @@ import com.hz.smsgate.base.smpp.pojo.LoggingOptions;
 import com.hz.smsgate.base.smpp.pojo.SmppBindType;
 import com.hz.smsgate.base.smpp.ssl.SslConfiguration;
 
+import java.io.Serializable;
+
 /**
  * Configuration to bind an SmppSession as an ESME to an SMSC.
  * 
  * @author joelauer (twitter: @jjlauer or <a href="http://twitter.com/jjlauer" target=window>http://twitter.com/jjlauer</a>)
  */
-public class SmppSessionConfiguration extends SmppConnectionConfiguration {
+public class SmppSessionConfiguration extends SmppConnectionConfiguration  implements Serializable {
 
     // SSL
     private boolean useSsl = false;

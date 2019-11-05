@@ -7,6 +7,7 @@ import com.hz.smsgate.base.smpp.pdu.DeliverSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
+import com.hz.smsgate.base.smpp.utils.PduUtil;
 import com.hz.smsgate.business.listener.ClientInit;
 import com.hz.smsgate.business.smpp.handler.DefaultSmppSessionHandler;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppClient;
@@ -135,6 +136,10 @@ public class PduUtils {
 	 * @return
 	 */
 	public static SubmitSm rewriteSubmitSm(SubmitSm sm) {
+
+		//通道替换
+		sm = PduUtil.rewriteSmSourceAddress(sm);
+
 		//短信下行内容编码
 		sm = PduUtils.encodeGsm(sm);
 		//通道555的短信去掉前面两个00

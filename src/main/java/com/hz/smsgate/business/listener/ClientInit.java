@@ -6,6 +6,7 @@ import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.FileUtils;
 import com.hz.smsgate.base.utils.PropertiesLoader;
+import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.base.utils.ThreadPoolHelper;
 import com.hz.smsgate.business.listener.je.LongMtConsumer;
 import com.hz.smsgate.business.listener.je.LongMtSendConsumer;
@@ -13,11 +14,13 @@ import com.hz.smsgate.business.listener.je.MtConsumer;
 import com.hz.smsgate.business.listener.je.RealLongMtSendConsumer;
 import com.hz.smsgate.business.listener.redis.MtRedisCmConsumer;
 import com.hz.smsgate.business.listener.redis.MtRedisConsumer;
+import com.hz.smsgate.business.listener.redis.RptRedisConsumer;
 import com.hz.smsgate.business.smpp.handler.Client1SmppSessionHandler;
 import com.hz.smsgate.business.smpp.handler.DefaultSmppSessionHandler;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
@@ -37,6 +40,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ClientInit {
 	private static final Logger logger = LoggerFactory.getLogger(ClientInit.class);
 
+	@Autowired
+	public RedisUtil redisUtil;
+
+	public static ClientInit clientInit;
+
+	@PostConstruct
+	public void init() {
+		clientInit = this;
+		clientInit.redisUtil = this.redisUtil;
+	}
 
 	public static Map<String, SmppSession> sessionMap = null;
 
@@ -91,12 +104,16 @@ public class ClientInit {
 
 	public static void initConfigs() {
 		configMap = FileUtils.getConfigs(StaticValue.RESOURCE_HOME);
+		clientInit.redisUtil.hmPutAll("configMap",configMap);
 	}
 
 
 	private static void initMutiThread() {
 		RptConsumer rptConsumer = new RptConsumer();
 		MtConsumer mtConsumer = new MtConsumer();
+
+
+		RptRedisConsumer rptRedisConsumer = new RptRedisConsumer();
 
 		//cm资源下行
 		MtRedisCmConsumer mtRedisCmConsumer = new MtRedisCmConsumer();
@@ -122,18 +139,22 @@ public class ClientInit {
 
 		//0 je   1 redis
 		if ("1".equals(StaticValue.TYPE)) {
+			//redis短短信下行线程
 			ThreadPoolHelper.executeTask(mtRedisConsumer);
+			//redis状态报告处理线程
+			ThreadPoolHelper.executeTask(rptRedisConsumer);
 		} else {
+
+			//je状态报告处理线程
+			ThreadPoolHelper.executeTask(rptConsumer);
+
 			for (int i = 0; i <= 5; i++) {
+				//je短短信下行线程
 				ThreadPoolHelper.executeTask(mtConsumer);
 			}
+
+			//je长短信发送线程
 			ThreadPoolHelper.executeTask(realLongMtSendConsumer);
-		}
-
-
-		//多线程消费
-		for (int i = 0; i < 1; i++) {
-			ThreadPoolHelper.executeTask(rptConsumer);
 		}
 
 

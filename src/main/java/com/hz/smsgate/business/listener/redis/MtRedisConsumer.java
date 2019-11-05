@@ -34,7 +34,6 @@ public class MtRedisConsumer implements Runnable {
 	public void init() {
 		mtRedisConsumer = this;
 		mtRedisConsumer.redisUtil = this.redisUtil;
-		System.out.println("lll");
 	}
 
 	@Override
@@ -56,17 +55,10 @@ public class MtRedisConsumer implements Runnable {
 						submitSm = PduUtils.rewriteSubmitSm(submitSm);
 						//获取客户端session
 						SmppSession session0 = PduUtils.getSmppSession(submitSm);
-						LOGGER.info("{}-读取到状态报告信息{}", Thread.currentThread().getName(), submitSm.toString());
+						LOGGER.info("{}-读取到短信下行信息{}", Thread.currentThread().getName(), submitSm.toString());
 						SubmitSmResp submitResp = session0.submit(submitSm, 10000);
 
-						WGParams wgParams = StaticValue.CHANNL_SP_REL.get(sendId);
-						if (wgParams != null) {
-							BlockingQueue<Object> syncSubmitQueue = BDBStoredMapFactoryImpl.INS.getQueue("syncSubmit", "syncSubmit");
-							wgParams.setDas(submitSm.getDestAddress().getAddress());
-							String sm = new String(submitSm.getShortMessage());
-							wgParams.setSm(sm);
-							syncSubmitQueue.put(wgParams);
-						}
+
 
 						String messageId = submitResp.getMessageId();
 
@@ -92,7 +84,7 @@ public class MtRedisConsumer implements Runnable {
 					Thread.sleep(1000);
 				}
 			} catch (Exception e) {
-				LOGGER.error("{}-{}处理短信状态报告转发异常", Thread.currentThread().getName(), sendId, e);
+				LOGGER.error("{}-{}处理短信下行异常", Thread.currentThread().getName(), sendId, e);
 			}
 
 		}
