@@ -2,6 +2,7 @@ package com.hz.smsgate.business.listener;
 
 import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.constants.SystemGlobals;
+import com.hz.smsgate.base.emp.pojo.WGParams;
 import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.FileUtils;
@@ -104,8 +105,23 @@ public class ClientInit {
 
 
 	public static void initConfigs() {
-		configMap = FileUtils.getConfigs(StaticValue.RESOURCE_HOME);
-		clientInit.redisUtil.hmPutAll("configMap", configMap);
+		try {
+			//移除原有的配置
+			LinkedHashSet keys = (LinkedHashSet) clientInit.redisUtil.hmGetAllKey("configMap");
+			if (keys != null && keys.size() > 0) {
+				Object[] objects = keys.toArray();
+				clientInit.redisUtil.hmRemoves("configMap", objects);
+			}
+
+			ClientInit.configMap = FileUtils.getConfigs(StaticValue.RESOURCE_HOME);
+			//新增配置
+			clientInit.redisUtil.hmPutAll("configMap", ClientInit.configMap);
+
+		} catch (Exception e) {
+			logger.error("初始化通道配置异常", e);
+		}
+
+
 	}
 
 

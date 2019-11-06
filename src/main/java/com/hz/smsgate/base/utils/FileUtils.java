@@ -1,6 +1,7 @@
 package com.hz.smsgate.base.utils;
 
 import com.hz.smsgate.base.constants.StaticValue;
+import com.hz.smsgate.base.emp.pojo.WGParams;
 import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.SmppBindType;
@@ -54,7 +55,9 @@ public class FileUtils {
 	}
 
 	public static void main(String[] args) {
-		getConfigs("C:/Users/Administrator.SC-201812271516/Desktop/resource.txt");
+		Map<String, WGParams> spConfigs = getSpConfigs("C:/Users/Administrator.SC-201812271516/Desktop/spList.txt");
+		System.out.println(spConfigs.size());
+//		getConfigs("C:/Users/Administrator.SC-201812271516/Desktop/resource.txt");
 	}
 
 	public static Map<String, SmppSessionConfiguration> getConfigs(String fileName) {
@@ -96,6 +99,34 @@ public class FileUtils {
 				}
 			} catch (Exception e) {
 				logger.error("客户端配置对象组装异常！,过滤该配置", e);
+				continue;
+			}
+
+		}
+		return configMap;
+	}
+
+
+	public static Map<String, WGParams> getSpConfigs(String fileName) {
+		List<String> strings = readFileByLines(fileName);
+		Map<String, WGParams> configMap = new LinkedHashMap<>(strings.size());
+		WGParams wgParams;
+		for (int i = 0; i < strings.size(); i++) {
+			String str = strings.get(i);
+			if (StringUtils.isBlank(str)) {
+				continue;
+			}
+			String[] split = str.split("\\|");
+			try {
+				if (split != null && split.length > 0) {
+					String channel = split[0].trim();
+					wgParams = new WGParams();
+					wgParams.setSpid(split[1]);
+					wgParams.setSppassword(split[2]);
+					configMap.put(channel, wgParams);
+				}
+			} catch (Exception e) {
+				logger.error("sp账号解析异常！,过滤该配置", e);
 				continue;
 			}
 

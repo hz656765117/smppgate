@@ -156,6 +156,11 @@ public class RedisUtil {
 		return hash.delete(key, hashKey);
 	}
 
+	public Object hmRemoves(String key,  Object... hashKeys) {
+		HashOperations<String, Object, Object> hash = redisTemplate.opsForHash();
+		return hash.delete(key, hashKeys);
+	}
+
 	public Object hmGetAllValues(String key) {
 		HashOperations<String, Object, Object> hash = redisTemplate.opsForHash();
 		return hash.values(key);

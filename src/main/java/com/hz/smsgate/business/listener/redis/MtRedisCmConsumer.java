@@ -71,6 +71,10 @@ public class MtRedisCmConsumer implements Runnable {
 						LOGGER.info("{}-读取到短信下行信息{}", Thread.currentThread().getName(), submitSm.toString());
 						SubmitSmResp submitResp = session0.submit(submitSm, 10000);
 
+						String messageId = submitResp.getMessageId();
+						//更新缓存中的value
+						mtRedisConsumer.redisUtil.hmSet(SmppServerConstants.CM_MSGID_CACHE, submitSm.getTempMsgId(), messageId);
+
 						WGParams wgParams = StaticValue.CHANNL_SP_REL.get(sendId);
 						if (wgParams != null) {
 							BlockingQueue<Object> syncSubmitQueue = BDBStoredMapFactoryImpl.INS.getQueue("syncSubmit", "syncSubmit");
@@ -79,9 +83,7 @@ public class MtRedisCmConsumer implements Runnable {
 							wgParams.setSm(sm);
 							syncSubmitQueue.put(wgParams);
 						}
-						String messageId = submitResp.getMessageId();
-						//更新缓存中的value
-						mtRedisConsumer.redisUtil.hmSet(SmppServerConstants.CM_MSGID_CACHE, submitSm.getTempMsgId(), messageId);
+
 
 					} else {
 						Thread.sleep(1000);

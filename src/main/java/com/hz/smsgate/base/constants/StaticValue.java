@@ -2,6 +2,7 @@ package com.hz.smsgate.base.constants;
 
 
 import com.hz.smsgate.base.emp.pojo.WGParams;
+import com.hz.smsgate.base.utils.FileUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -14,6 +15,9 @@ public class StaticValue {
 
 	//资源文件地址
 	public static String RESOURCE_HOME = "";
+
+	//SP账号资源文件地址
+	public static String SP_RESOURCE_HOME = "";
 
 	//服务端 端口
 	public static int SERVER_PORT = 2776;
@@ -49,18 +53,16 @@ public class StaticValue {
 
 	public static String WEB_GATE = "";
 
-	public static String SP_ID = "";
-
-	public static String SP_PWD = "";
-
 	public static String TYPE = "";
 
 
 	static {
 
-		TYPE = SystemGlobals.getValue("montnets.type","0");
+		TYPE = SystemGlobals.getValue("montnets.type", "0");
 
 		RESOURCE_HOME = SystemGlobals.getValue("resource.home");
+
+		SP_RESOURCE_HOME = SystemGlobals.getValue("sp.resource.home");
 
 		SERVER_PORT = SystemGlobals.getIntValue("server.port", 2776);
 
@@ -78,10 +80,9 @@ public class StaticValue {
 
 		CHANNL_SP_REL = new LinkedHashMap<>();
 
+
 		WEB_GATE = SystemGlobals.getValue("montnets.webgate");
-		SP_ID = SystemGlobals.getValue("montnets.spid");
-		SP_PWD = SystemGlobals.getValue("montnets.sppwd");
 
-
+		CHANNL_SP_REL = FileUtils.getSpConfigs(StaticValue.SP_RESOURCE_HOME);
 	}
 }
