@@ -52,14 +52,7 @@ public class MtConsumer implements Runnable {
 						SubmitSmResp submitResp = session0.submit(submitSm, 10000);
 
 
-						WGParams wgParams = StaticValue.CHANNL_SP_REL.get(sendId);
-						if (wgParams != null) {
-							BlockingQueue<Object> syncSubmitQueue = BDBStoredMapFactoryImpl.INS.getQueue("syncSubmit", "syncSubmit");
-							wgParams.setDas(submitSm.getDestAddress().getAddress());
-							String sm = new String(submitSm.getShortMessage());
-							wgParams.setSm(sm);
-							syncSubmitQueue.put(wgParams);
-						}
+
 
 
 						String messageId = submitResp.getMessageId();

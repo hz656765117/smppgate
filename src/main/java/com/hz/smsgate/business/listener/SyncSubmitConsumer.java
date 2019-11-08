@@ -37,6 +37,12 @@ public class SyncSubmitConsumer implements Runnable {
 						wgParams = (WGParams) obj;
 						LOGGER.info("{}-读取到同步短信信息{}", Thread.currentThread().getName(), wgParams.toString());
 
+						//补齐号码
+						String mbl = wgParams.getDas();
+						if (!mbl.startsWith("0")) {
+							mbl = "00" + mbl;
+						}
+						wgParams.setDas(mbl);
 						new HttpSmsSend().createbatchMtRequest(wgParams);
 
 					} else {

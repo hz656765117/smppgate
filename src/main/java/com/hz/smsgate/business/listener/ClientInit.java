@@ -47,11 +47,7 @@ public class ClientInit {
 
 	public static ClientInit clientInit;
 
-	@PostConstruct
-	public void init() {
-		clientInit = this;
-		clientInit.redisUtil = this.redisUtil;
-	}
+
 
 	public static Map<String, SmppSession> sessionMap = null;
 
@@ -64,6 +60,10 @@ public class ClientInit {
 
 	@PostConstruct
 	public void postConstruct() throws Exception {
+
+		clientInit = this;
+		clientInit.redisUtil = this.redisUtil;
+
 		//初始化配置文件
 		initSystemGlobals();
 
@@ -106,20 +106,20 @@ public class ClientInit {
 
 	public static void initConfigs() {
 		try {
+
 			//移除原有的配置
 			LinkedHashSet keys = (LinkedHashSet) clientInit.redisUtil.hmGetAllKey("configMap");
 			if (keys != null && keys.size() > 0) {
 				Object[] objects = keys.toArray();
 				clientInit.redisUtil.hmRemoves("configMap", objects);
 			}
-
-			ClientInit.configMap = FileUtils.getConfigs(StaticValue.RESOURCE_HOME);
-			//新增配置
-			clientInit.redisUtil.hmPutAll("configMap", ClientInit.configMap);
-
 		} catch (Exception e) {
 			logger.error("初始化通道配置异常", e);
 		}
+
+		ClientInit.configMap = FileUtils.getConfigs(StaticValue.RESOURCE_HOME);
+		//新增配置
+		clientInit.redisUtil.hmPutAll("configMap", ClientInit.configMap);
 
 
 	}
