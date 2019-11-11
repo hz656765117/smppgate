@@ -39,10 +39,11 @@ public class StaticValue {
 	public static String SYSTEMID_CM = "HaloPushingLtd";
 
 
-	public static String CHANNEL_3 = "778";
-
-
+	public static String CHANNEL_MK_1 = "778";
 	public static String CHANNEL_MK_2 = "779";
+
+	public static String CHANNEL_YN_1 = "668";
+
 
 	public static List<String>  CHANNEL_MK_LIST = null;
 
@@ -86,9 +87,13 @@ public class StaticValue {
 		CHANNL_REL.put(CHANNEL_1, "BYTDNC");
 
 		CHANNL_REL.put(CHANNEL_MK_2, "etracker");
+		
+
+		CHANNL_REL.put(CHANNEL_YN_1, "Alex");
 
 
-		CHANNEL_MK_LIST.add(CHANNEL_3);
+
+		CHANNEL_MK_LIST.add(CHANNEL_MK_1);
 		CHANNEL_MK_LIST.add(CHANNEL_MK_2);
 		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_2));
 

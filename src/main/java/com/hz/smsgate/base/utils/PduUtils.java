@@ -34,7 +34,7 @@ public class PduUtils {
 	 * @return
 	 */
 	public static SubmitSm removeZero(SubmitSm sm) {
-		if (sm.getSourceAddress().getAddress().equals(StaticValue.CHANNL_REL.get(StaticValue.CHANNEL_1)) || sm.getSourceAddress().getAddress().equals(StaticValue.CHANNEL_1) || sm.getSourceAddress().getAddress().equals(StaticValue.CHANNEL_3)) {
+		if (sm.getSourceAddress().getAddress().equals(StaticValue.CHANNL_REL.get(StaticValue.CHANNEL_1)) || sm.getSourceAddress().getAddress().equals(StaticValue.CHANNEL_1) || sm.getSourceAddress().getAddress().equals(StaticValue.CHANNEL_MK_1)) {
 			Address destAddress = sm.getDestAddress();
 			if (destAddress.getAddress().startsWith("00")) {
 				String address = destAddress.getAddress().substring(2);
