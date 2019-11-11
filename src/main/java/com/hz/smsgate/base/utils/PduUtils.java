@@ -28,13 +28,14 @@ public class PduUtils {
 	private static Logger LOGGER = LoggerFactory.getLogger(PduUtils.class);
 
 	/**
-	 * 通道555，778的短信去掉前面两个00
+	 * 通道555，778,779的短信去掉前面两个00
 	 *
 	 * @param sm
 	 * @return
 	 */
 	public static SubmitSm removeZero(SubmitSm sm) {
-		if (sm.getSourceAddress().getAddress().equals(StaticValue.CHANNL_REL.get(StaticValue.CHANNEL_1)) || sm.getSourceAddress().getAddress().equals(StaticValue.CHANNEL_1) || sm.getSourceAddress().getAddress().equals(StaticValue.CHANNEL_MK_1)) {
+		String channel = sm.getSourceAddress().getAddress();
+		if (channel.equals(StaticValue.CHANNL_REL.get(StaticValue.CHANNEL_1)) || channel.equals(StaticValue.CHANNEL_1) || StaticValue.CHANNEL_MK_LIST.contains(channel)) {
 			Address destAddress = sm.getDestAddress();
 			if (destAddress.getAddress().startsWith("00")) {
 				String address = destAddress.getAddress().substring(2);
@@ -214,19 +215,19 @@ public class PduUtils {
 
 
 		if (DefaultSmppServer.smppSessionList == null || DefaultSmppServer.smppSessionList.size() < 1) {
-			LOGGER.error("{}-处理状态报告异常，未能获取到服务端连接(通道为：{}，systemId为：{})-------", Thread.currentThread().getName(),channel,systemId);
+			LOGGER.error("{}-处理状态报告异常，未能获取到服务端连接(通道为：{}，systemId为：{})-------", Thread.currentThread().getName(), channel, systemId);
 			return smppSession;
 		}
 
-		for(SmppSession session : DefaultSmppServer.smppSessionList){
-			if(session.getConfiguration().getSystemId().equals(systemId)){
+		for (SmppSession session : DefaultSmppServer.smppSessionList) {
+			if (session.getConfiguration().getSystemId().equals(systemId)) {
 				smppSession = session;
 				break;
 			}
 		}
 
-		if (smppSession == null){
-			LOGGER.error("{}-处理状态报告异常，未能匹配到服务端连接(通道为：{}，systemId为：{})-------", Thread.currentThread().getName(),channel,systemId);
+		if (smppSession == null) {
+			LOGGER.error("{}-处理状态报告异常，未能匹配到服务端连接(通道为：{}，systemId为：{})-------", Thread.currentThread().getName(), channel, systemId);
 			return smppSession;
 		}
 		return smppSession;

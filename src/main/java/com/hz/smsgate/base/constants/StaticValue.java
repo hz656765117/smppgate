@@ -4,6 +4,7 @@ package com.hz.smsgate.base.constants;
 import com.hz.smsgate.base.emp.pojo.WGParams;
 import com.hz.smsgate.base.utils.FileUtils;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +46,7 @@ public class StaticValue {
 	public static String CHANNEL_YN_1 = "668";
 
 
-	public static List<String>  CHANNEL_MK_LIST = null;
+	public static List<String>  CHANNEL_MK_LIST = new ArrayList<>();
 
 
 	//马来西亚区号
@@ -87,7 +88,7 @@ public class StaticValue {
 		CHANNL_REL.put(CHANNEL_1, "BYTDNC");
 
 		CHANNL_REL.put(CHANNEL_MK_2, "etracker");
-		
+
 
 		CHANNL_REL.put(CHANNEL_YN_1, "Alex");
 

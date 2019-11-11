@@ -106,7 +106,7 @@ public class RptConsumer implements Runnable {
 		Map<String, String> removeMap = new LinkedHashMap<>();
 
 		SmppSession smppSession = PduUtils.getServerSmppSession(deliverSm);
-		if (smppSession == null){
+		if (smppSession == null) {
 			return;
 		}
 
@@ -125,7 +125,7 @@ public class RptConsumer implements Runnable {
 		}
 
 		//这个通道的运营商会返回两个状态报告 忽略掉accepted  只处理Delivered
-		if (deliverSm.getDestAddress().getAddress().equals(StaticValue.CHANNEL_MK_1)) {
+		if (StaticValue.CHANNEL_MK_LIST.contains(deliverSm.getDestAddress().getAddress())) {
 			String mbl = deliverSm.getSourceAddress().getAddress();
 			String areaCode = PduUtils.getAreaCode(mbl);
 			//马来西亚和越南 只有accepted
