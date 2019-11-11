@@ -113,11 +113,17 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
 
 						break;
 					case SmppConstants.CMD_ID_DATA_SM:
-						break;
+						return  response;
 					case SmppConstants.CMD_ID_ENQUIRE_LINK:
-						break;
+						logger.info("---------客户端也会接收心跳的吗？----------{}",pduRequest);
+						return  response;
+					case SmppConstants.CMD_ID_UNBIND:
+						logger.info("---------客户端被解绑了----------{}",pduRequest);
+						return  response;
 					default:
-						logger.error("----------客户端接收 未知异常。---------------");
+						logger.error("----------客户端接收 未知异常。---------------{}",response);
+						return  response;
+
 				}
 			}
 

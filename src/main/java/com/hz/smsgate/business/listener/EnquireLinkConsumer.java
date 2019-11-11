@@ -33,11 +33,11 @@ public class EnquireLinkConsumer implements Runnable {
 							EnquireLinkResp enquireLinkResp = session0.enquireLink(new EnquireLink(), 10000);
 						} catch (Exception e) {
 							//如果心跳失败，则重新绑定一次，绑定失败 则移除该session  心跳异常 暂时不重连
-//							SmppSessionConfiguration smppSessionConfiguration = ClientInit.configMap.get(entry.getKey());
-//							SmppSession client = ClientInit.createClient(smppSessionConfiguration);
-//							if (client == null) {
-//								sessionMap.remove(entry.getKey());
-//							}
+							SmppSessionConfiguration smppSessionConfiguration = ClientInit.configMap.get(entry.getKey());
+							SmppSession client = ClientInit.createClient(smppSessionConfiguration);
+							if (client == null) {
+								sessionMap.remove(entry.getKey());
+							}
 
 							LOGGER.error("{}-{}心跳异常异常", Thread.currentThread().getName(), entry.getKey(), e);
 						}
