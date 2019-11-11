@@ -5,6 +5,7 @@ import com.hz.smsgate.base.emp.pojo.WGParams;
 import com.hz.smsgate.base.utils.FileUtils;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,6 +40,12 @@ public class StaticValue {
 
 
 	public static String CHANNEL_3 = "778";
+
+
+	public static String CHANNEL_MK_2 = "779";
+
+	public static List<String>  CHANNEL_MK_LIST = null;
+
 
 	//马来西亚区号
 	public static String AREA_CODE_MALAYSIA = "60";
@@ -77,6 +84,13 @@ public class StaticValue {
 		CHANNL_REL.put(CHANNEL_CM_6, "CASHTP");
 
 		CHANNL_REL.put(CHANNEL_1, "BYTDNC");
+
+		CHANNL_REL.put(CHANNEL_MK_2, "etracker");
+
+
+		CHANNEL_MK_LIST.add(CHANNEL_3);
+		CHANNEL_MK_LIST.add(CHANNEL_MK_2);
+		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_2));
 
 		CHANNL_SP_REL = new LinkedHashMap<>();
 
