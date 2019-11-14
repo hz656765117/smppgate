@@ -9,9 +9,9 @@ package com.hz.smsgate.base.smpp.utils;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,9 +43,9 @@ import java.util.TreeMap;
  * {@link #errorCode} property will remain what it was originally set as,
  * default(int) or in the case of
  * {@link #parseShortMessage(String, DateTimeZone)} -1.
- * 
+ *
  * @author joelauer (twitter: @jjlauer or <a href="http://twitter.com/jjlauer"
- *         target=window>http://twitter.com/jjlauer</a>)
+ * target=window>http://twitter.com/jjlauer</a>)
  */
 public class DeliveryReceipt {
 	private static final Logger logger = LoggerFactory
@@ -151,7 +151,7 @@ public class DeliveryReceipt {
 	 * Smpp 3.4 spec states that the "err" field is a <= 3 c-octet string, this
 	 * field takes that into account and will be chained with the
 	 * {@link #setErrorCode(int)} field if the "err" field is valid
-	 * 
+	 *
 	 * @param rawErrorCode
 	 */
 	public void setRawErrorCode(String rawErrorCode) {
@@ -182,7 +182,7 @@ public class DeliveryReceipt {
 	/**
 	 * Sets the "id" field to the exact String we'll use. Utility method
 	 * provided for setting this value as a long.
-	 * 
+	 *
 	 * @param messageId
 	 */
 	public void setMessageId(String messageId) {
@@ -192,7 +192,7 @@ public class DeliveryReceipt {
 	/**
 	 * Sets the "id" field parameter as a long value that is zero padded to 10
 	 * digits.
-	 * 
+	 *
 	 * @param messageId
 	 */
 	public void setMessageId(long messageId) {
@@ -234,9 +234,9 @@ public class DeliveryReceipt {
 	public String toShortMessage() {
 		StringBuilder buf = new StringBuilder(200);
 		buf.append(FIELD_ID);
-		if(this.messageId.length()>19){
-			buf.append(this.messageId.substring(this.messageId.length()-19,this.messageId.length()));
-		}else {
+		if (this.messageId.length() > 19) {
+			buf.append(this.messageId.substring(this.messageId.length() - 19, this.messageId.length()));
+		} else {
 			buf.append(this.messageId);
 		}
 
@@ -306,7 +306,7 @@ public class DeliveryReceipt {
 	/**
 	 * Validation method to guarantee that an err value passed in is valid by
 	 * smpp 3.4 spec
-	 * 
+	 *
 	 * @param errorCode
 	 * @return
 	 */
@@ -317,16 +317,18 @@ public class DeliveryReceipt {
 	/**
 	 * Validation method to guarantee that an err value passed in is valid by
 	 * smpp 3.4 spec
-	 * 
+	 *
 	 * @param errorCode
 	 * @return
 	 */
 	private static boolean isValidErrorCode(String errorCode) {
 		if (StringUtil.isEmpty(errorCode)
-				|| (!StringUtil.isEmpty(errorCode) && errorCode.length() <= FIELD_ERR_MAX_LEN))
+				|| (!StringUtil.isEmpty(errorCode) && errorCode.length() <= FIELD_ERR_MAX_LEN)) {
 			return true;
-		else
+		} else {
 			return false;
+		}
+
 	}
 
 	static private DateTime parseDateTimeHelper(String value, DateTimeZone zone) {
@@ -363,7 +365,7 @@ public class DeliveryReceipt {
 	 * Parses the text of the short message and creates a DeliveryReceipt from
 	 * the fields. This method is lenient as possible. The order of the fields
 	 * does not matter, as well as permitting some fields to be optional.
-	 * 
+	 *
 	 * @param shortMessage
 	 * @param zone
 	 * @return
@@ -464,12 +466,14 @@ public class DeliveryReceipt {
 										+ fieldValue + "] into a valid state");
 					}
 				} else if (fieldLabel.equalsIgnoreCase(FIELD_ERR)) {
-					if (isValidErrorCode(fieldValue))
+					if (isValidErrorCode(fieldValue)) {
 						dlr.setRawErrorCode(fieldValue);
-					else
+					} else {
 						throw new DeliveryReceiptException(
 								"The [err] field was not of a valid lengh of <= "
 										+ FIELD_ERR_MAX_LEN);
+					}
+
 				} else if (fieldLabel.equalsIgnoreCase(FIELD_TEXT)) {
 					dlr.text = fieldValue;
 				} else {
@@ -526,7 +530,7 @@ public class DeliveryReceipt {
 			}
 
 
-			if (StringUtils.isBlank(dlr.text)){
+			if (StringUtils.isBlank(dlr.text)) {
 				dlr.setText("000");
 			}
 
@@ -563,30 +567,30 @@ public class DeliveryReceipt {
 
 	static public String toStateText(byte state) {
 		switch (state) {
-		case SmppConstants.STATE_DELIVERED:
-			return "DELIVRD";
-		case SmppConstants.STATE_EXPIRED:
-			return "EXPIRED";
-		case SmppConstants.STATE_DELETED:
-			return "DELETED";
-		case SmppConstants.STATE_UNDELIVERABLE:
-			return "UNDELIV";
-		case SmppConstants.STATE_ACCEPTED:
-			return "ACCEPTD";
-		case SmppConstants.STATE_UNKNOWN:
-			return "UNKNOWN";
-		case SmppConstants.STATE_REJECTED:
-			return "REJECTD";
-		case SmppConstants.STATE_ENROUTE:
-			return "ENROUTE";
-		default:
-			return "BADSTAT";
+			case SmppConstants.STATE_DELIVERED:
+				return "DELIVRD";
+			case SmppConstants.STATE_EXPIRED:
+				return "EXPIRED";
+			case SmppConstants.STATE_DELETED:
+				return "DELETED";
+			case SmppConstants.STATE_UNDELIVERABLE:
+				return "UNDELIV";
+			case SmppConstants.STATE_ACCEPTED:
+				return "ACCEPTD";
+			case SmppConstants.STATE_UNKNOWN:
+				return "UNKNOWN";
+			case SmppConstants.STATE_REJECTED:
+				return "REJECTD";
+			case SmppConstants.STATE_ENROUTE:
+				return "ENROUTE";
+			default:
+				return "BADSTAT";
 		}
 	}
 
 	/**
 	 * Converts a long value to a hex string. E.g. 98765432101L to "16fee0e525"
-	 * 
+	 *
 	 * @param value
 	 * @return
 	 */
@@ -596,7 +600,7 @@ public class DeliveryReceipt {
 
 	/**
 	 * Converts a hex string to a long value. E.g. "16fee0e525" to 98765432101L
-	 * 
+	 *
 	 * @param value
 	 * @return
 	 */

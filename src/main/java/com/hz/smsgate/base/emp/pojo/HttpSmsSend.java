@@ -16,7 +16,7 @@ public class HttpSmsSend {
 	/**
 	 * 网关发送接口
 	 *
-	 * @param wgParams 网关动态参数
+	 * @param params 网关动态参数
 	 * @return 接收字符串
 	 * @throws Exception
 	 */

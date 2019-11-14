@@ -187,27 +187,47 @@ public class MsgId implements Serializable {
 	}
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj){
 			return true;
-		if (obj == null)
+		}
+
+		if (obj == null){
 			return false;
-		if (getClass() != obj.getClass())
+		}
+
+		if (getClass() != obj.getClass()){
 			return false;
+		}
+
 		MsgId other = (MsgId) obj;
-		if (day != other.day)
+		if (day != other.day){
 			return false;
-		if (gateId != other.gateId)
+		}
+
+		if (gateId != other.gateId){
 			return false;
-		if (hour != other.hour)
+		}
+
+		if (hour != other.hour){
 			return false;
-		if (minutes != other.minutes)
+		}
+
+		if (minutes != other.minutes){
 			return false;
-		if (month != other.month)
+		}
+
+		if (month != other.month){
 			return false;
-		if (seconds != other.seconds)
+		}
+
+		if (seconds != other.seconds){
 			return false;
-		if (sequenceId != other.sequenceId)
+		}
+
+		if (sequenceId != other.sequenceId){
 			return false;
+		}
+
 		return true;
 	}
 	
