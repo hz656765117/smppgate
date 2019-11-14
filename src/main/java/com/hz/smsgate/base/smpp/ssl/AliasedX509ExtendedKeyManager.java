@@ -51,6 +51,7 @@ public class AliasedX509ExtendedKeyManager extends X509ExtendedKeyManager
     /**
      * @see javax.net.ssl.X509KeyManager#chooseClientAlias(java.lang.String[], java.security.Principal[], java.net.Socket)
      */
+    @Override
     public String chooseClientAlias(String[] keyType, Principal[] issuers, Socket socket) {
         return keyAlias == null ? keyManager.chooseClientAlias(keyType, issuers, socket) : keyAlias;
     }
@@ -58,6 +59,7 @@ public class AliasedX509ExtendedKeyManager extends X509ExtendedKeyManager
     /**
      * @see javax.net.ssl.X509KeyManager#chooseServerAlias(java.lang.String, java.security.Principal[], java.net.Socket)
      */
+    @Override
     public String chooseServerAlias(String keyType, Principal[] issuers, Socket socket) {
         return keyAlias == null ? keyManager.chooseServerAlias(keyType, issuers, socket) : keyAlias;
     }
@@ -65,6 +67,7 @@ public class AliasedX509ExtendedKeyManager extends X509ExtendedKeyManager
     /**
      * @see javax.net.ssl.X509KeyManager#getClientAliases(java.lang.String, java.security.Principal[])
      */
+    @Override
     public String[] getClientAliases(String keyType, Principal[] issuers) {
         return keyManager.getClientAliases(keyType, issuers);
     }
@@ -72,6 +75,7 @@ public class AliasedX509ExtendedKeyManager extends X509ExtendedKeyManager
     /**
      * @see javax.net.ssl.X509KeyManager#getServerAliases(java.lang.String, java.security.Principal[])
      */
+    @Override
     public String[] getServerAliases(String keyType, Principal[] issuers) {
         return keyManager.getServerAliases(keyType, issuers);
     }
@@ -79,6 +83,7 @@ public class AliasedX509ExtendedKeyManager extends X509ExtendedKeyManager
     /**
      * @see javax.net.ssl.X509KeyManager#getCertificateChain(java.lang.String)
      */
+    @Override
     public X509Certificate[] getCertificateChain(String alias) {
         return keyManager.getCertificateChain(alias);
     }
@@ -86,6 +91,7 @@ public class AliasedX509ExtendedKeyManager extends X509ExtendedKeyManager
     /**
      * @see javax.net.ssl.X509KeyManager#getPrivateKey(java.lang.String)
      */
+    @Override
     public PrivateKey getPrivateKey(String alias) {
         return keyManager.getPrivateKey(alias);
     }

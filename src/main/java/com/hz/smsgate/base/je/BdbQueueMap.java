@@ -25,8 +25,6 @@ import java.util.concurrent.locks.ReentrantLock;
  * 缺省的持久化安全保证应用挂掉后的数据安全 不保证系统挂掉后的事务完整性 <br> {@link StoredSortedMap}
  *
  * @author huzorro(huzorro @ gmail.com)
- * @param <K>
- *            the type of map key
  * @param <E>
  *            the type of queue elements
  *
@@ -119,7 +117,6 @@ public class BdbQueueMap<E> extends AbstractQueue<E> implements BlockingQueue<E>
 	/**
 	 * 使用自定义的{@code key} 插入元素{@code e}到队列
 	 *
-	 * @see #insert(Object, Object)
 	 * @param k
 	 * @param e
 	 * @return
