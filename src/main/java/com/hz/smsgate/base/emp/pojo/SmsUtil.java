@@ -65,6 +65,10 @@ public class SmsUtil {
 		httpclient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 20000);
 		//设置请求超时时间
 		httpclient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, 30000);
+
+		httppost.addHeader("Connection", "close"); 
+
+
 		//执行
 		HttpEntity entity = httpclient.execute(httppost).getEntity();
 		//获取返回结果
