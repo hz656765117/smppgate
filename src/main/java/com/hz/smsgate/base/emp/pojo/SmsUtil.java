@@ -41,7 +41,7 @@ public class SmsUtil {
 		//组装请求参数
 		for (int i = 0; i < fields.length; i++) {
 			fieldName = fields[i].getName();
-			if (fieldName.equals("LOGGER")) {
+			if ("LOGGER".equals(fieldName)) {
 				continue;
 			}
 			fieldNameUpper = Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);

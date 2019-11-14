@@ -74,9 +74,11 @@ public class SslContextFactory {
 						public java.security.cert.X509Certificate[] getAcceptedIssuers() {
 							return null;
 						}
+
 						@Override
 						public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
 						}
+
 						@Override
 						public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
 						}
@@ -263,7 +265,7 @@ public class SslContextFactory {
 		if (trustStore != null) {
 			// Revocation checking is only supported for PKIX algorithm
 			if (sslConfig.isValidatePeerCerts() &&
-					sslConfig.getTrustManagerFactoryAlgorithm().equalsIgnoreCase("PKIX")) {
+					"PKIX".equalsIgnoreCase(sslConfig.getTrustManagerFactoryAlgorithm())) {
 				PKIXBuilderParameters pbParams = new PKIXBuilderParameters(trustStore, new X509CertSelector());
 				// Set maximum certification path length
 				pbParams.setMaxPathLength(sslConfig.getMaxCertPathLength());
