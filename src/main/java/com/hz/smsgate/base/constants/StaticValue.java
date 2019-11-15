@@ -29,13 +29,15 @@ public class StaticValue {
 
 
 	public static String CHANNEL_1 = "555";
+
 	public static String CHANNEL_CM_1 = "882";
 	public static String CHANNEL_CM_2 = "883";
 	public static String CHANNEL_CM_3 = "884";
 	public static String CHANNEL_CM_4 = "885";
 	public static String CHANNEL_CM_5 = "886";
 	public static String CHANNEL_CM_6 = "887";
-
+	public static String CHANNEL_CM_7 = "8881";
+	public static String CHANNEL_CM_8 = "8882";
 
 	public static String SYSTEMID_CM = "HaloPushingLtd";
 
@@ -84,6 +86,7 @@ public class StaticValue {
 		CHANNL_REL.put(CHANNEL_CM_4, "FINLNX");
 		CHANNL_REL.put(CHANNEL_CM_5, "INLINX");
 		CHANNL_REL.put(CHANNEL_CM_6, "CASHTP");
+		CHANNL_REL.put(CHANNEL_CM_7, "MONEYB");
 
 		CHANNL_REL.put(CHANNEL_1, "BYTDNC");
 
