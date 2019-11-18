@@ -552,6 +552,8 @@ public class DeliveryReceipt {
 			return SmppConstants.STATE_DELETED;
 		} else if (stateText.equalsIgnoreCase("UNDELIV")) {
 			return SmppConstants.STATE_UNDELIVERABLE;
+		} else if (stateText.equalsIgnoreCase("UNDELIVRD")) {
+			return SmppConstants.STATE_UNDELIVERABLE;
 		} else if (stateText.equalsIgnoreCase("ACCEPTD")) {
 			return SmppConstants.STATE_ACCEPTED;
 		} else if (stateText.equalsIgnoreCase("UNKNOWN")) {
