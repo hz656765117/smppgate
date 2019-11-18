@@ -193,7 +193,6 @@ public class ClientInit {
 
 
 	public static SmppSession createClient(SmppSessionConfiguration config) {
-		boolean flag = false;
 		if (config == null) {
 			return null;
 		}
@@ -215,15 +214,15 @@ public class ClientInit {
 		sessionKey.setSenderId(config.getAddressRange().getAddress());
 		sessionKey.setSystemId(config.getSystemId());
 
-
-		clientBootstrapMap.put(sessionKey, clientBootstrap);
-		sessionHandlerMap.put(sessionKey, sessionHandler);
 		SmppSession session0 = null;
 		try {
 			session0 = clientBootstrap.bind(config, sessionHandler);
+			sessionHandler.setSmppSession(session0);
 			logger.info("-----连接资源(systemid:{},host:{} port:{} sendId:{})成功------", config.getSystemId(), config.getHost(), config.getPort(), config.getAddressRange().getAddress());
+
+			clientBootstrapMap.put(sessionKey, clientBootstrap);
+			sessionHandlerMap.put(sessionKey, sessionHandler);
 			sessionMap.put(sessionKey, session0);
-			flag = true;
 		} catch (Exception e) {
 			logger.error("连接资源(systemid:{},host:{} port:{} sendId:{})失败", config.getSystemId(), config.getHost(), config.getPort(), config.getAddressRange().getAddress(), e);
 		}

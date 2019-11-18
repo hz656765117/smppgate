@@ -32,6 +32,7 @@ import com.hz.smsgate.base.smpp.pdu.Pdu;
 import com.hz.smsgate.base.smpp.pdu.PduRequest;
 import com.hz.smsgate.base.smpp.pdu.PduResponse;
 import com.hz.smsgate.base.smpp.pojo.PduAsyncResponse;
+import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
 import com.hz.smsgate.base.utils.RedisUtil;
 import org.joda.time.DateTimeZone;
@@ -41,12 +42,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 @Component
 public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
 
+	private WeakReference<SmppSession> sessionRef;
 
 	@Autowired
 	public RedisUtil redisUtil;
@@ -57,6 +60,12 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
 	public void init() {
 		client1SmppSessionHandler = this;
 		client1SmppSessionHandler.redisUtil = this.redisUtil;
+	}
+
+
+	@Override
+	public void setSmppSession(SmppSession session) {
+		this.sessionRef = new WeakReference<>(session);
 	}
 
 	private static final Logger logger = LoggerFactory.getLogger(Client1SmppSessionHandler.class);
@@ -97,6 +106,13 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
 					case SmppConstants.CMD_ID_DELIVER_SM:
 						DeliverSm deliverSm = (DeliverSm) pduRequest;
 
+						String systemId = "";
+						SmppSession session = this.sessionRef.get();
+						if (session != null) {
+							systemId = session.getConfiguration().getSystemId();
+							deliverSm.setSystemId(systemId);
+						}
+
 
 						try {
 							//0 je   1 redis
@@ -113,16 +129,16 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
 
 						break;
 					case SmppConstants.CMD_ID_DATA_SM:
-						return  response;
+						return response;
 					case SmppConstants.CMD_ID_ENQUIRE_LINK:
-						logger.info("---------客户端也会接收心跳的吗？----------{}",pduRequest);
-						return  response;
+						logger.info("---------客户端也会接收心跳的吗？----------{}", pduRequest);
+						return response;
 					case SmppConstants.CMD_ID_UNBIND:
-						logger.info("---------客户端被解绑了----------{}",pduRequest);
-						return  response;
+						logger.info("---------客户端被解绑了----------{}", pduRequest);
+						return response;
 					default:
-						logger.error("----------客户端接收 未知异常。---------------{}",response);
-						return  response;
+						logger.error("----------客户端接收 未知异常。---------------{}", response);
+						return response;
 
 				}
 			}

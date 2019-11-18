@@ -26,10 +26,12 @@ import com.hz.smsgate.base.smpp.pdu.Pdu;
 import com.hz.smsgate.base.smpp.pdu.PduRequest;
 import com.hz.smsgate.base.smpp.pdu.PduResponse;
 import com.hz.smsgate.base.smpp.pojo.PduAsyncResponse;
+import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.pojo.SmppSessionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.ref.WeakReference;
 import java.nio.channels.ClosedChannelException;
 
 /**
@@ -48,6 +50,12 @@ public class DefaultSmppSessionHandler implements SmppSessionListener {
 
     public DefaultSmppSessionHandler(Logger logger) {
         this.logger = logger;
+    }
+
+    private WeakReference<SmppSession> sessionRef;
+
+    public void setSmppSession(SmppSession session){
+        this.sessionRef = new WeakReference<>(session);
     }
 
     @Override

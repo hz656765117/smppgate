@@ -77,18 +77,18 @@ public class PduUtils {
 	 * @param sendId 通道id
 	 * @return
 	 */
-	public static String getSystemIdBySendId(String sendId) {
-		SmppSessionConfiguration smppSessionConfiguration = ClientInit.configMap.get(sendId);
-		if (smppSessionConfiguration == null) {
-			String key = getKey(sendId);
-			smppSessionConfiguration = ClientInit.configMap.get(key);
-		}
-		if (smppSessionConfiguration == null) {
-			return null;
-		}
-		String systemId = smppSessionConfiguration.getSystemId();
-		return systemId;
-	}
+//	public static String getSystemIdBySendId(String sendId) {
+//		SmppSessionConfiguration smppSessionConfiguration = ClientInit.configMap.get(sendId);
+//		if (smppSessionConfiguration == null) {
+//			String key = getKey(sendId);
+//			smppSessionConfiguration = ClientInit.configMap.get(key);
+//		}
+//		if (smppSessionConfiguration == null) {
+//			return null;
+//		}
+//		String systemId = smppSessionConfiguration.getSystemId();
+//		return systemId;
+//	}
 
 
 	/**
@@ -99,7 +99,7 @@ public class PduUtils {
 	 */
 	public static SubmitSm encodeGsm(SubmitSm sm) {
 		String sendId = sm.getSourceAddress().getAddress();
-		String systemId = getSystemIdBySendId(sendId);
+		String systemId = sm.getSystemId();
 
 		//cm资源需要GSM格式编码
 		if (StaticValue.SYSTEMID_CM.equals(systemId)) {
@@ -226,7 +226,7 @@ public class PduUtils {
 		SmppSession smppSession = null;
 		//根据通道获取session
 		String channel = deliverSm.getDestAddress().getAddress();
-		String systemId = getSystemIdBySendId(channel);
+		String systemId = deliverSm.getSystemId();
 
 
 		if (DefaultSmppServer.smppSessionList == null || DefaultSmppServer.smppSessionList.size() < 1) {

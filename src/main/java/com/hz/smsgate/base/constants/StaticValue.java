@@ -38,6 +38,8 @@ public class StaticValue {
 	public static String CHANNEL_CM_6 = "887";
 	public static String CHANNEL_CM_7 = "8881";
 	public static String CHANNEL_CM_8 = "8882";
+	public static String CHANNEL_CM_9 = "8883";
+
 
 	public static String SYSTEMID_CM = "HaloPushingLtd";
 
@@ -88,6 +90,8 @@ public class StaticValue {
 		CHANNL_REL.put(CHANNEL_CM_6, "CASHTP");
 		CHANNL_REL.put(CHANNEL_CM_7, "MONEYB");
 
+		CHANNL_REL.put(CHANNEL_CM_9, "HAALOO");
+
 		CHANNL_REL.put(CHANNEL_1, "BYTDNC");
 
 		CHANNL_REL.put(CHANNEL_MK_2, "etracker");
@@ -108,4 +112,17 @@ public class StaticValue {
 
 		CHANNL_SP_REL = FileUtils.getSpConfigs(StaticValue.SP_RESOURCE_HOME);
 	}
+
+
+
+	public static Map<String, String>  initChannelRel(){
+		Map<String, String> list =  new LinkedHashMap<>();
+
+		return list;
+	}
+
+
+
+
+
 }
