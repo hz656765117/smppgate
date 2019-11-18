@@ -36,7 +36,7 @@ public class PduUtils {
 	 */
 	public static SubmitSm removeZero(SubmitSm sm) {
 		String channel = sm.getSourceAddress().getAddress();
-		if (channel.equals(StaticValue.CHANNL_REL.get(StaticValue.CHANNEL_1)) || channel.equals(StaticValue.CHANNEL_1) || StaticValue.CHANNEL_MK_LIST.contains(channel)) {
+		if (channel.equals(StaticValue.CHANNL_REL.get(StaticValue.CHANNEL_1).getSenderId()) || channel.equals(StaticValue.CHANNEL_1) || StaticValue.CHANNEL_MK_LIST.contains(channel)) {
 			Address destAddress = sm.getDestAddress();
 			if (destAddress.getAddress().startsWith("00")) {
 				String address = destAddress.getAddress().substring(2);
@@ -158,8 +158,9 @@ public class PduUtils {
 	 */
 	public static SmppSession getSmppSession(SubmitSm sm) {
 		String sendId = sm.getSourceAddress().getAddress();
-		String key = getKey(sendId);
 		String systemId = sm.getSystemId();
+
+		String key = getKey(systemId,sendId);
 
 		SessionKey sessionKey = new SessionKey();
 		sessionKey.setSystemId(systemId);
@@ -209,16 +210,31 @@ public class PduUtils {
 		return session0;
 	}
 
-	public static String getKey(String sendId) {
-		Map<String, String> channlRel = StaticValue.CHANNL_REL;
-
-		for (Map.Entry<String, String> entry : channlRel.entrySet()) {
-			if (sendId.equals(entry.getValue())) {
+	public static String getKey(String systemId,String sendId) {
+		Map<String, SessionKey> channlRel = StaticValue.CHANNL_REL;
+		SessionKey sessionKey = new SessionKey(systemId,sendId);
+		for (Map.Entry<String, SessionKey> entry : channlRel.entrySet()) {
+			if (sessionKey.equals(entry.getValue())) {
 				sendId = entry.getKey();
 				break;
 			}
 		}
 		return sendId;
+	}
+
+
+	//获取原通道
+	public static String getRealChannel(String systemId, String gwChannel) {
+		if (StringUtils.isBlank(gwChannel)) {
+			return gwChannel;
+		}
+		SessionKey sessionKey = new SessionKey(systemId,gwChannel);
+		for (Map.Entry<String, SessionKey> entry : StaticValue.CHANNL_REL.entrySet()) {
+			if (sessionKey.equals(entry.getValue())) {
+				return entry.getKey();
+			}
+		}
+		return gwChannel;
 	}
 
 

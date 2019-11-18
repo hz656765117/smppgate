@@ -5,6 +5,7 @@ import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
 import com.hz.smsgate.base.smpp.constants.SmppConstants;
 import com.hz.smsgate.base.smpp.pdu.DeliverSm;
 import com.hz.smsgate.base.smpp.pojo.Address;
+import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
 import com.hz.smsgate.base.utils.PduUtils;
@@ -61,18 +62,6 @@ public class RptConsumer implements Runnable {
 		}
 	}
 
-	//获取原通道
-	public String getRealChannel(String gwChannel) {
-		if (StringUtils.isBlank(gwChannel)) {
-			return gwChannel;
-		}
-		for (Map.Entry<String, String> entry : StaticValue.CHANNL_REL.entrySet()) {
-			if (gwChannel.equals(entry.getValue())) {
-				return entry.getKey();
-			}
-		}
-		return gwChannel;
-	}
 
 	/**
 	 * @param deliverSm
@@ -81,7 +70,7 @@ public class RptConsumer implements Runnable {
 	public DeliverSm reWriteDeliverSm(DeliverSm deliverSm) {
 		//替换真实通道
 		Address destAddress = deliverSm.getDestAddress();
-		String realChannel = getRealChannel(destAddress.getAddress());
+		String realChannel = PduUtils.getRealChannel(deliverSm.getSystemId(), destAddress.getAddress());
 		destAddress.setAddress(realChannel);
 		deliverSm.setDestAddress(destAddress);
 

@@ -73,14 +73,6 @@ public class MtRedisConsumer implements Runnable {
 						//更新缓存中的value
 						mtRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, submitSm.getTempMsgId(), messageId);
 
-
-//						int msgLen = messageId.length();
-//						if (msgLen > 19) {
-//							messageId = messageId.substring(msgLen - 19, msgLen);
-//							submitResp.setMessageId(messageId);
-//							submitResp.setCommandLength(submitResp.getCommandLength() - (msgLen - 19));
-//						}
-
 					} else {
 						Thread.sleep(1000);
 					}
