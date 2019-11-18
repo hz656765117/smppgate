@@ -12,6 +12,15 @@ public class SessionKey implements Serializable {
 	public String systemId;
 	public String senderId;
 
+
+	public SessionKey(String systemId, String senderId) {
+		this.systemId = systemId;
+		this.senderId = senderId;
+	}
+
+	public SessionKey() {
+	}
+
 	public String getSystemId() {
 		return systemId;
 	}

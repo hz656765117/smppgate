@@ -2,6 +2,7 @@ package com.hz.smsgate.base.constants;
 
 
 import com.hz.smsgate.base.emp.pojo.WGParams;
+import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.utils.FileUtils;
 
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class StaticValue {
 	public static String CHANNEL_YN_1 = "668";
 
 
-	public static List<String>  CHANNEL_MK_LIST = new ArrayList<>();
+	public static List<String> CHANNEL_MK_LIST = new ArrayList<>();
 
 
 	//马来西亚区号
@@ -59,7 +60,7 @@ public class StaticValue {
 	//越南区号
 	public static String AREA_CODE_VIETNAM = "84";
 
-	public static Map<String, String> CHANNL_REL = null;
+	public static Map<String, SessionKey> CHANNL_REL = null;
 
 	public static Map<String, WGParams> CHANNL_SP_REL = null;
 
@@ -82,28 +83,28 @@ public class StaticValue {
 		ENQUIRE_LINK_TIME = SystemGlobals.getIntValue("enquire.link.time", 20000);
 
 		CHANNL_REL = new LinkedHashMap<>();
-		CHANNL_REL.put(CHANNEL_CM_1, "CMK");
-		CHANNL_REL.put(CHANNEL_CM_2, "HAALOO");
-		CHANNL_REL.put(CHANNEL_CM_3, "HALLOO");
-		CHANNL_REL.put(CHANNEL_CM_4, "FINLNX");
-		CHANNL_REL.put(CHANNEL_CM_5, "INLINX");
-		CHANNL_REL.put(CHANNEL_CM_6, "CASHTP");
-		CHANNL_REL.put(CHANNEL_CM_7, "MONEYB");
 
-		CHANNL_REL.put(CHANNEL_CM_9, "HAALOO");
+		CHANNL_REL.put(CHANNEL_CM_1, new SessionKey("HaloPushingLtd", "CMK"));
+		CHANNL_REL.put(CHANNEL_CM_2, new SessionKey("HaloPushingLtd", "HAALOO"));
+		CHANNL_REL.put(CHANNEL_CM_3, new SessionKey("HaloPushingLtd", "HALLOO"));
+		CHANNL_REL.put(CHANNEL_CM_4, new SessionKey("HaloPushingLtd", "FINLNX"));
+		CHANNL_REL.put(CHANNEL_CM_5, new SessionKey("HaloPushingLtd", "INLINX"));
+		CHANNL_REL.put(CHANNEL_CM_6, new SessionKey("HaloPushingLtd", "CASHTP"));
+		CHANNL_REL.put(CHANNEL_CM_7, new SessionKey("HaloPushingLtd", "MONEYB"));
 
-		CHANNL_REL.put(CHANNEL_1, "BYTDNC");
-
-		CHANNL_REL.put(CHANNEL_MK_2, "etracker");
+		CHANNL_REL.put(CHANNEL_CM_9, new SessionKey("HaloMakreting", "HAALOO"));
 
 
-		CHANNL_REL.put(CHANNEL_YN_1, "Alex");
+		CHANNL_REL.put(CHANNEL_1, new SessionKey("INFIPRO", "BYTDNC"));
 
+		CHANNL_REL.put(CHANNEL_MK_2, new SessionKey("HP01", "etracker"));
+
+		CHANNL_REL.put(CHANNEL_YN_1, new SessionKey("Alex", "Alex"));
 
 
 		CHANNEL_MK_LIST.add(CHANNEL_MK_1);
 		CHANNEL_MK_LIST.add(CHANNEL_MK_2);
-		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_2));
+		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_2).getSenderId());
 
 		CHANNL_SP_REL = new LinkedHashMap<>();
 
@@ -114,15 +115,11 @@ public class StaticValue {
 	}
 
 
-
-	public static Map<String, String>  initChannelRel(){
-		Map<String, String> list =  new LinkedHashMap<>();
+	public static Map<String, String> initChannelRel() {
+		Map<String, String> list = new LinkedHashMap<>();
 
 		return list;
 	}
-
-
-
 
 
 }

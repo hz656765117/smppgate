@@ -41,7 +41,7 @@ public class EnquireLinkConsumer implements Runnable {
 
 						SmppSession session0 = entry.getValue();
 						try {
-							LOGGER.info("systemId（{}）开始心跳......", systemId);
+							LOGGER.info("-----------------------------systemId（{}）开始心跳......", systemId);
 							session0.enquireLink(new EnquireLink(), 10000);
 						} catch (Exception e) {
 							session0.destroy();
