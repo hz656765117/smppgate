@@ -6,6 +6,7 @@ import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.pdu.DeliverSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pojo.Address;
+import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.utils.PduUtil;
 import com.hz.smsgate.business.listener.ClientInit;
@@ -158,35 +159,49 @@ public class PduUtils {
 	public static SmppSession getSmppSession(SubmitSm sm) {
 		String sendId = sm.getSourceAddress().getAddress();
 		String key = getKey(sendId);
+		String systemId = sm.getSystemId();
+
+		SessionKey sessionKey = new SessionKey();
+		sessionKey.setSystemId(systemId);
+		sessionKey.setSenderId(sendId);
 
 		SmppSession session0 = null;
-		Map<String, SmppSession> sessionMap = ClientInit.sessionMap;
+		Map<SessionKey, SmppSession> sessionMap = ClientInit.sessionMap;
 		if (sessionMap != null && sessionMap.size() > 0) {
-			session0 = sessionMap.get(sendId);
+			session0 = sessionMap.get(sessionKey);
 			if (session0 == null) {
-				session0 = sessionMap.get(key);
+				sessionKey.setSenderId(key);
+				session0 = sessionMap.get(sessionKey);
 			}
 		}
 
 
 		if (session0 == null) {
 			try {
-				DefaultSmppClient defaultSmppClient = ClientInit.clientBootstrapMap.get(sendId);
+
+				sessionKey.setSenderId(sendId);
+				DefaultSmppClient defaultSmppClient = ClientInit.clientBootstrapMap.get(sessionKey);
 				if (defaultSmppClient == null) {
-					defaultSmppClient = ClientInit.clientBootstrapMap.get(key);
+					sessionKey.setSenderId(key);
+					defaultSmppClient = ClientInit.clientBootstrapMap.get(sessionKey);
 				}
 
-				SmppSessionConfiguration smppSessionConfiguration = ClientInit.configMap.get(sendId);
+				sessionKey.setSenderId(sendId);
+				SmppSessionConfiguration smppSessionConfiguration = ClientInit.configMap.get(sessionKey);
 				if (smppSessionConfiguration == null) {
-					smppSessionConfiguration = ClientInit.configMap.get(key);
+					sessionKey.setSenderId(key);
+					smppSessionConfiguration = ClientInit.configMap.get(sessionKey);
 				}
-				DefaultSmppSessionHandler defaultSmppSessionHandler = ClientInit.sessionHandlerMap.get(sendId);
+
+				sessionKey.setSenderId(sendId);
+				DefaultSmppSessionHandler defaultSmppSessionHandler = ClientInit.sessionHandlerMap.get(sessionKey);
 				if (defaultSmppSessionHandler == null) {
-					defaultSmppSessionHandler = ClientInit.sessionHandlerMap.get(key);
+					sessionKey.setSenderId(key);
+					defaultSmppSessionHandler = ClientInit.sessionHandlerMap.get(sessionKey);
 				}
 
 				session0 = defaultSmppClient.bind(smppSessionConfiguration, defaultSmppSessionHandler);
-				ClientInit.sessionMap.put(sendId, session0);
+				ClientInit.sessionMap.put(sessionKey, session0);
 			} catch (Exception e) {
 				LOGGER.error("获取客户端连接异常", e);
 			}

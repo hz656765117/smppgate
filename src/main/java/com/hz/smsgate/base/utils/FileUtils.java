@@ -1,16 +1,19 @@
 package com.hz.smsgate.base.utils;
 
-import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.emp.pojo.WGParams;
 import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.pojo.Address;
+import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppBindType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: huangzhuo
@@ -60,9 +63,9 @@ public class FileUtils {
 //		getConfigs("C:/Users/Administrator.SC-201812271516/Desktop/resource.txt");
 	}
 
-	public static Map<String, SmppSessionConfiguration> getConfigs(String fileName) {
+	public static Map<SessionKey, SmppSessionConfiguration> getConfigs(String fileName) {
 		List<String> strings = readFileByLines(fileName);
-		Map<String, SmppSessionConfiguration> configMap = new LinkedHashMap<>(strings.size());
+		Map<SessionKey, SmppSessionConfiguration> configMap = new LinkedHashMap<>(strings.size());
 		for (int i = 0; i < strings.size(); i++) {
 			String str = strings.get(i);
 			if (StringUtils.isBlank(str)) {
@@ -92,7 +95,11 @@ public class FileUtils {
 
 							String channel = split1[j];
 							config0.setAddressRange(new Address((byte) 0, (byte) 0, channel));
-							configMap.put(config0.getAddressRange().getAddress(), config0);
+
+							SessionKey sessionKey = new SessionKey();
+							sessionKey.setSenderId(config0.getAddressRange().getAddress());
+							sessionKey.setSystemId(config0.getSystemId());
+							configMap.put(sessionKey, config0);
 						}
 					}
 

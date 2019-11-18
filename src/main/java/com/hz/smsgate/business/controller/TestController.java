@@ -7,6 +7,7 @@ import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
 import com.hz.smsgate.base.smpp.pojo.Address;
+import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.FileUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
@@ -148,12 +149,12 @@ public class TestController {
 	public String flushClientConnect() {
 		LOGGER.info("刷新客户端连接");
 		//如果心跳失败，则重新绑定一次，绑定失败 则移除该session
-		for (Map.Entry<String, SmppSession> entry : ClientInit.sessionMap.entrySet()) {
+		for (Map.Entry<SessionKey, SmppSession> entry : ClientInit.sessionMap.entrySet()) {
 			entry.getValue().close();
 			ClientInit.sessionMap.remove(entry.getKey());
 		}
 
-		for (Map.Entry<String, SmppSessionConfiguration> entry : ClientInit.configMap.entrySet()) {
+		for (Map.Entry<SessionKey, SmppSessionConfiguration> entry : ClientInit.configMap.entrySet()) {
 			ClientInit.createClient(entry.getValue());
 		}
 

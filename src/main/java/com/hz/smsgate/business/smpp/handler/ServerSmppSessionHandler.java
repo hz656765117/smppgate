@@ -61,7 +61,6 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 		PduResponse response = pduRequest.createResponse();
 
 
-
 		// mimic how long processing could take on a slower smsc
 		try {
 			if (pduRequest.isRequest()) {
@@ -75,8 +74,16 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 					byte[] shortMessage = submitSm.getShortMessage();
 					if (shortMessage[0] == 5 && shortMessage[1] == 0 && shortMessage[2] == 3) {
 						String msgid = SmppUtils.getMsgId();
-						logger.info("这是拆分短信,msgid{},后缀为{}", msgid, SmppUtils.getSuffixKeyBySm(submitSm));
+
 						submitResp.setMessageId(msgid);
+
+						String systemId = "";
+						SmppSession session = this.sessionRef.get();
+						if (session != null) {
+							systemId = session.getConfiguration().getSystemId();
+							submitSm.setSystemId(systemId);
+						}
+						logger.info("这是拆分短信,systemid{},msgid{},后缀为{}", systemId, msgid, SmppUtils.getSuffixKeyBySm(submitSm));
 
 						//临时流水id
 						String tempMsgId = submitResp.getMessageId() + SmppUtils.getSuffixKeyBySm(submitSm);
@@ -92,7 +99,7 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 						}
 
 
-						String msgId16 = new BigInteger(msgid,10).toString(16);
+						String msgId16 = new BigInteger(msgid, 10).toString(16);
 						submitResp.setMessageId(msgId16);
 						return submitResp;
 					} else {
@@ -100,7 +107,18 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 
 						String msgid = SmppUtils.getMsgId();
 						submitSm.setTempMsgId(msgid);
-						logger.info("这是短短信,msgid为:{},后缀为{}", msgid);
+
+
+						String systemId = "";
+						SmppSession session = this.sessionRef.get();
+						if (session != null) {
+							systemId = session.getConfiguration().getSystemId();
+							submitSm.setSystemId(systemId);
+						}
+
+
+						logger.info("这是短短信,systemid为{},msgid为:{}", systemId, msgid);
+
 						RptConsumer.CACHE_MAP.put(msgid, msgid);
 
 						try {
@@ -117,7 +135,7 @@ public class ServerSmppSessionHandler extends DefaultSmppSessionHandler {
 									Object obj = submitRespQueue.poll();
 									if (obj != null) {
 										SubmitSmResp submitSmResp = (SubmitSmResp) obj;
-										String msgId16 = new BigInteger(msgid,10).toString(16);
+										String msgId16 = new BigInteger(msgid, 10).toString(16);
 										submitSmResp.setMessageId(msgId16);
 										submitSmResp.calculateAndSetCommandLength();
 										return submitSmResp;

@@ -2,8 +2,8 @@ package com.hz.smsgate.business.listener;
 
 import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.constants.SystemGlobals;
-import com.hz.smsgate.base.emp.pojo.WGParams;
 import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
+import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.FileUtils;
 import com.hz.smsgate.base.utils.PropertiesLoader;
@@ -48,18 +48,17 @@ public class ClientInit {
 	public static ClientInit clientInit;
 
 
+	public static Map<SessionKey, SmppSession> sessionMap = null;
 
-	public static Map<String, SmppSession> sessionMap = null;
+	public static Map<SessionKey, SmppSessionConfiguration> configMap = null;
 
-	public static Map<String, SmppSessionConfiguration> configMap = null;
+	public static Map<SessionKey, DefaultSmppClient> clientBootstrapMap = null;
 
-	public static Map<String, DefaultSmppClient> clientBootstrapMap = null;
-
-	public static Map<String, DefaultSmppSessionHandler> sessionHandlerMap = null;
+	public static Map<SessionKey, DefaultSmppSessionHandler> sessionHandlerMap = null;
 
 
 	@PostConstruct
-	public void postConstruct() throws Exception {
+	public void postConstruct() {
 
 		clientInit = this;
 		clientInit.redisUtil = this.redisUtil;
@@ -77,18 +76,22 @@ public class ClientInit {
 		//初始化客户端配置
 		initConfigs();
 
-		List<String> existSystemIds = new LinkedList<>();
 		Map<String, SmppSession> existSystemId1s = new LinkedHashMap<>();
 		//启动客户端
 		if (configMap != null && configMap.size() > 0) {
-			for (Map.Entry<String, SmppSessionConfiguration> entry : configMap.entrySet()) {
+			for (Map.Entry<SessionKey, SmppSessionConfiguration> entry : configMap.entrySet()) {
 				String systemId = entry.getValue().getSystemId();
 				String host = entry.getValue().getHost();
 				String address = entry.getValue().getAddressRange().getAddress();
 				String key = host + "|" + systemId;
+
+				SessionKey sessionKey = new SessionKey();
+				sessionKey.setSystemId(systemId);
+				sessionKey.setSenderId(address);
+
 				//同一个账号，不同通道 只建立一个客户端
 				if (existSystemId1s.get(key) != null) {
-					sessionMap.put(address, existSystemId1s.get(key));
+					sessionMap.put(sessionKey, existSystemId1s.get(key));
 					continue;
 				}
 
@@ -208,16 +211,21 @@ public class ClientInit {
 		DefaultSmppClient clientBootstrap = new DefaultSmppClient(Executors.newCachedThreadPool(), 1, monitorExecutor);
 		DefaultSmppSessionHandler sessionHandler = new Client1SmppSessionHandler();
 
-		clientBootstrapMap.put(config.getAddressRange().getAddress(), clientBootstrap);
-		sessionHandlerMap.put(config.getAddressRange().getAddress(), sessionHandler);
+		SessionKey sessionKey = new SessionKey();
+		sessionKey.setSenderId(config.getAddressRange().getAddress());
+		sessionKey.setSystemId(config.getSystemId());
+
+
+		clientBootstrapMap.put(sessionKey, clientBootstrap);
+		sessionHandlerMap.put(sessionKey, sessionHandler);
 		SmppSession session0 = null;
 		try {
 			session0 = clientBootstrap.bind(config, sessionHandler);
-			logger.info("-----连接资源(host:{} port:{} sendId:{})成功------", config.getHost(), config.getPort(), config.getAddressRange().getAddress());
-			sessionMap.put(config.getAddressRange().getAddress(), session0);
+			logger.info("-----连接资源(systemid:{},host:{} port:{} sendId:{})成功------", config.getSystemId(), config.getHost(), config.getPort(), config.getAddressRange().getAddress());
+			sessionMap.put(sessionKey, session0);
 			flag = true;
 		} catch (Exception e) {
-			logger.error("连接资源(host:{} port:{} sendId:{})失败", config.getHost(), config.getPort(), config.getAddressRange().getAddress(), e);
+			logger.error("连接资源(systemid:{},host:{} port:{} sendId:{})失败", config.getSystemId(), config.getHost(), config.getPort(), config.getAddressRange().getAddress(), e);
 		}
 		return session0;
 	}

@@ -4,6 +4,7 @@ import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.pdu.EnquireLink;
 import com.hz.smsgate.base.smpp.pdu.EnquireLinkResp;
+import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +26,9 @@ public class EnquireLinkConsumer implements Runnable {
 		while (true) {
 
 			try {
-				Map<String, SmppSession> sessionMap = ClientInit.sessionMap;
+				Map<SessionKey, SmppSession> sessionMap = ClientInit.sessionMap;
 				if (sessionMap != null && sessionMap.size() > 0) {
-					for (Map.Entry<String, SmppSession> entry : sessionMap.entrySet()) {
+					for (Map.Entry<SessionKey, SmppSession> entry : sessionMap.entrySet()) {
 						SmppSession session0 = entry.getValue();
 						try {
 							EnquireLinkResp enquireLinkResp = session0.enquireLink(new EnquireLink(), 10000);

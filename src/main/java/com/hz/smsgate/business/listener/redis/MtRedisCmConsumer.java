@@ -7,7 +7,6 @@ import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
-import com.hz.smsgate.base.smpp.utils.PduUtil;
 import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
 import org.slf4j.Logger;

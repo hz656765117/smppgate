@@ -91,12 +91,21 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 					byte[] shortMessage = submitSm.getShortMessage();
 					if (shortMessage[0] == 5 && shortMessage[1] == 0 && shortMessage[2] == 3) {
 						String msgid = SmppUtils.getMsgId();
-						logger.info("这是拆分短信,msgid{},后缀为{}", msgid, SmppUtils.getSuffixKeyBySm(submitSm));
+
 						submitResp.setMessageId(msgid);
+
+						String systemId = "";
+						SmppSession session = this.sessionRef.get();
+						if (session != null) {
+							systemId = session.getConfiguration().getSystemId();
+							submitSm.setSystemId(systemId);
+						}
+						logger.info("这是拆分短信,systemid{},msgid{},后缀为{}", systemId, msgid, SmppUtils.getSuffixKeyBySm(submitSm));
 
 						//临时流水id
 						String tempMsgId = submitResp.getMessageId() + SmppUtils.getSuffixKeyBySm(submitSm);
 						submitSm.setTempMsgId(tempMsgId);
+
 
 						try {
 							serverSmppSessionRedisHandler.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, tempMsgId, tempMsgId);
@@ -113,7 +122,16 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 
 						String msgid = SmppUtils.getMsgId();
 						submitSm.setTempMsgId(msgid);
-						logger.info("这是短短信,msgid为:{},后缀为{}", msgid);
+
+
+						String systemId = "";
+						SmppSession session = this.sessionRef.get();
+						if (session != null) {
+							systemId = session.getConfiguration().getSystemId();
+							submitSm.setSystemId(systemId);
+						}
+
+						logger.info("这是短短信,systemid为{},msgid为:{}", systemId, msgid);
 						try {
 							serverSmppSessionRedisHandler.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, msgid, msgid);
 							serverSmppSessionRedisHandler.redisUtil.lPush(SmppServerConstants.WEB_SUBMIT_SM, submitSm);
