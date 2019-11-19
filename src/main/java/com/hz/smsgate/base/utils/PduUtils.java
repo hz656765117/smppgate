@@ -98,11 +98,10 @@ public class PduUtils {
 	 * @return
 	 */
 	public static SubmitSm encodeGsm(SubmitSm sm) {
-		String sendId = sm.getSourceAddress().getAddress();
 		String systemId = sm.getSystemId();
 
 		//cm资源需要GSM格式编码
-		if (StaticValue.SYSTEMID_CM.equals(systemId)) {
+		if (StaticValue.SYSTEMID_CM_1.equals(systemId) || StaticValue.SYSTEMID_CM_2.equals(systemId)) {
 			onlyEncodeGsm(sm);
 		}
 		return sm;
@@ -160,7 +159,7 @@ public class PduUtils {
 		String sendId = sm.getSourceAddress().getAddress();
 		String systemId = sm.getSystemId();
 
-		String key = getKey(systemId,sendId);
+		String key = getKey(systemId, sendId);
 
 		SessionKey sessionKey = new SessionKey();
 		sessionKey.setSystemId(systemId);
@@ -210,9 +209,9 @@ public class PduUtils {
 		return session0;
 	}
 
-	public static String getKey(String systemId,String sendId) {
+	public static String getKey(String systemId, String sendId) {
 		Map<String, SessionKey> channlRel = StaticValue.CHANNL_REL;
-		SessionKey sessionKey = new SessionKey(systemId,sendId);
+		SessionKey sessionKey = new SessionKey(systemId, sendId);
 		for (Map.Entry<String, SessionKey> entry : channlRel.entrySet()) {
 			if (sessionKey.equals(entry.getValue())) {
 				sendId = entry.getKey();
@@ -228,7 +227,7 @@ public class PduUtils {
 		if (StringUtils.isBlank(gwChannel)) {
 			return gwChannel;
 		}
-		SessionKey sessionKey = new SessionKey(systemId,gwChannel);
+		SessionKey sessionKey = new SessionKey(systemId, gwChannel);
 		for (Map.Entry<String, SessionKey> entry : StaticValue.CHANNL_REL.entrySet()) {
 			if (sessionKey.equals(entry.getValue())) {
 				return entry.getKey();

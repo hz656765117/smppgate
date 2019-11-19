@@ -40,13 +40,18 @@ public class StaticValue {
 	public static String CHANNEL_CM_7 = "8881";
 	public static String CHANNEL_CM_8 = "8882";
 	public static String CHANNEL_CM_9 = "8883";
+	public static String CHANNEL_CM_10 = "8884";
+	public static String CHANNEL_CM_11 = "8885";
 
-
-	public static String SYSTEMID_CM = "HaloPushingLtd";
+	public static String SYSTEMID_CM_1 = "HaloPushingLtd";
+	public static String SYSTEMID_CM_2 = "HaloMakreting";
 
 
 	public static String CHANNEL_MK_1 = "778";
 	public static String CHANNEL_MK_2 = "779";
+	public static String CHANNEL_MK_3 = "771";
+	public static String CHANNEL_MK_4 = "772";
+	public static String CHANNEL_MK_5 = "773";
 
 	public static String CHANNEL_YN_1 = "668";
 
@@ -84,27 +89,45 @@ public class StaticValue {
 
 		CHANNL_REL = new LinkedHashMap<>();
 
-		CHANNL_REL.put(CHANNEL_CM_1, new SessionKey("HaloPushingLtd", "CMK"));
-		CHANNL_REL.put(CHANNEL_CM_2, new SessionKey("HaloPushingLtd", "HAALOO"));
-		CHANNL_REL.put(CHANNEL_CM_3, new SessionKey("HaloPushingLtd", "HALLOO"));
-		CHANNL_REL.put(CHANNEL_CM_4, new SessionKey("HaloPushingLtd", "FINLNX"));
-		CHANNL_REL.put(CHANNEL_CM_5, new SessionKey("HaloPushingLtd", "INLINX"));
-		CHANNL_REL.put(CHANNEL_CM_6, new SessionKey("HaloPushingLtd", "CASHTP"));
-		CHANNL_REL.put(CHANNEL_CM_7, new SessionKey("HaloPushingLtd", "MONEYB"));
+		CHANNL_REL.put(CHANNEL_CM_1, new SessionKey(SYSTEMID_CM_1, "CMK"));
+		CHANNL_REL.put(CHANNEL_CM_2, new SessionKey(SYSTEMID_CM_1, "HAALOO"));
+		CHANNL_REL.put(CHANNEL_CM_3, new SessionKey(SYSTEMID_CM_1, "HALLOO"));
+		CHANNL_REL.put(CHANNEL_CM_4, new SessionKey(SYSTEMID_CM_1, "FINLNX"));
+		CHANNL_REL.put(CHANNEL_CM_5, new SessionKey(SYSTEMID_CM_1, "INLINX"));
+		CHANNL_REL.put(CHANNEL_CM_6, new SessionKey(SYSTEMID_CM_1, "CASHTP"));
+		CHANNL_REL.put(CHANNEL_CM_7, new SessionKey(SYSTEMID_CM_1, "MONEYB"));
+		CHANNL_REL.put(CHANNEL_CM_10, new SessionKey(SYSTEMID_CM_1, "RUPEEP"));
 
-		CHANNL_REL.put(CHANNEL_CM_9, new SessionKey("HaloMakreting", "HAALOO"));
+		CHANNL_REL.put(CHANNEL_CM_8, new SessionKey(SYSTEMID_CM_2, "CASHTAP"));
+		CHANNL_REL.put(CHANNEL_CM_9, new SessionKey(SYSTEMID_CM_2, "MONEYB"));
+		CHANNL_REL.put(CHANNEL_CM_11, new SessionKey(SYSTEMID_CM_2, "RUPEEP"));
 
 
 		CHANNL_REL.put(CHANNEL_1, new SessionKey("INFIPRO", "BYTDNC"));
 
 		CHANNL_REL.put(CHANNEL_MK_2, new SessionKey("HP01", "etracker"));
+		CHANNL_REL.put(CHANNEL_MK_3, new SessionKey("HP02", "etracker"));
+		CHANNL_REL.put(CHANNEL_MK_4, new SessionKey("HP03", "etracker"));
+		CHANNL_REL.put(CHANNEL_MK_5, new SessionKey("HP04", "etracker"));
+
+
 
 		CHANNL_REL.put(CHANNEL_YN_1, new SessionKey("Alex", "Alex"));
 
 
 		CHANNEL_MK_LIST.add(CHANNEL_MK_1);
+
 		CHANNEL_MK_LIST.add(CHANNEL_MK_2);
 		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_2).getSenderId());
+
+		CHANNEL_MK_LIST.add(CHANNEL_MK_3);
+		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_3).getSenderId());
+
+		CHANNEL_MK_LIST.add(CHANNEL_MK_4);
+		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_4).getSenderId());
+
+		CHANNEL_MK_LIST.add(CHANNEL_MK_5);
+		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_5).getSenderId());
 
 		CHANNL_SP_REL = new LinkedHashMap<>();
 

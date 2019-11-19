@@ -2,7 +2,6 @@ package com.hz.smsgate.business.listener.redis;
 
 import com.hz.smsgate.base.constants.SmppServerConstants;
 import com.hz.smsgate.base.constants.StaticValue;
-import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
 import com.hz.smsgate.base.smpp.constants.SmppConstants;
 import com.hz.smsgate.base.smpp.pdu.DeliverSm;
 import com.hz.smsgate.base.smpp.pojo.Address;
@@ -10,7 +9,6 @@ import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
 import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +18,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
 
 
 /**
@@ -178,7 +175,7 @@ public class RptRedisConsumer implements Runnable {
 					smppSession.sendRequestPdu(deliverSm, 10000, true);
 				}
 			} catch (Exception e) {
-				LOGGER.error("{}-处理长短信状态报告转发异常", Thread.currentThread().getName(), e);
+				LOGGER.error("{}-  systemid为{}，msgid={}  ，处理长短信状态报告转发异常", Thread.currentThread().getName(), deliverSm.getSystemId(), messageId, e);
 			}
 
 		}
@@ -190,14 +187,14 @@ public class RptRedisConsumer implements Runnable {
 			}
 		} else {
 			try {
-
+				LOGGER.error("{}- systemid为{}，msgid={}，未能匹配到对应的下行记录", Thread.currentThread().getName(), deliverSm.getSystemId(), messageId);
 				byte[] bytes = deliveryReceipt.toShortMessage().getBytes();
 				deliverSm.setShortMessage(bytes);
 				deliverSm.calculateAndSetCommandLength();
 
 				smppSession.sendRequestPdu(deliverSm, 10000, true);
 			} catch (Exception e) {
-				LOGGER.error("{}-处理短短信状态报告转发异常", Thread.currentThread().getName(), e);
+				LOGGER.error("{}-  systemid为{}，msgid={}，处理短短信状态报告转发异常", Thread.currentThread().getName(), deliverSm.getSystemId(), messageId, e);
 			}
 		}
 
