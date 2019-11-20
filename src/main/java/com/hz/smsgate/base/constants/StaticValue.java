@@ -46,6 +46,8 @@ public class StaticValue {
 	public static String SYSTEMID_CM_1 = "HaloPushingLtd";
 	public static String SYSTEMID_CM_2 = "HaloMakreting";
 
+	public static String SYSTEMID_ALEX = "Alex";
+
 
 	public static String CHANNEL_MK_1 = "778";
 	public static String CHANNEL_MK_2 = "779";
@@ -98,7 +100,7 @@ public class StaticValue {
 		CHANNL_REL.put(CHANNEL_CM_7, new SessionKey(SYSTEMID_CM_1, "MONEYB"));
 		CHANNL_REL.put(CHANNEL_CM_10, new SessionKey(SYSTEMID_CM_1, "RUPEEP"));
 
-		CHANNL_REL.put(CHANNEL_CM_8, new SessionKey(SYSTEMID_CM_2, "CASHTAP"));
+		CHANNL_REL.put(CHANNEL_CM_8, new SessionKey(SYSTEMID_CM_2, "CASHTP"));
 		CHANNL_REL.put(CHANNEL_CM_9, new SessionKey(SYSTEMID_CM_2, "MONEYB"));
 		CHANNL_REL.put(CHANNEL_CM_11, new SessionKey(SYSTEMID_CM_2, "RUPEEP"));
 
