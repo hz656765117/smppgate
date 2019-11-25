@@ -3,7 +3,6 @@ package com.hz.smsgate.business.listener;
 import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.pdu.EnquireLink;
-import com.hz.smsgate.base.smpp.pdu.EnquireLinkResp;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import org.slf4j.Logger;

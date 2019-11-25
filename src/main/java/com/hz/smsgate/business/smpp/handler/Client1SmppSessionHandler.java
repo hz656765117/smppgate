@@ -96,6 +96,11 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
 	@Override
 	public PduResponse firePduRequestReceived(PduRequest pduRequest) {
 		PduResponse response = pduRequest.createResponse();
+		SmppSession session = this.sessionRef.get();
+		String systemId = "";
+		if (session != null) {
+			systemId = session.getConfiguration().getSystemId();
+		}
 
 		try {
 			if (pduRequest.isRequest()) {
@@ -106,13 +111,7 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
 					case SmppConstants.CMD_ID_DELIVER_SM:
 						DeliverSm deliverSm = (DeliverSm) pduRequest;
 
-						String systemId = "";
-						SmppSession session = this.sessionRef.get();
-						if (session != null) {
-							systemId = session.getConfiguration().getSystemId();
-							deliverSm.setSystemId(systemId);
-						}
-
+						deliverSm.setSystemId(systemId);
 
 						try {
 							//0 je   1 redis
@@ -131,13 +130,13 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
 					case SmppConstants.CMD_ID_DATA_SM:
 						return response;
 					case SmppConstants.CMD_ID_ENQUIRE_LINK:
-						logger.info("---------客户端也会接收心跳的吗？----------{}", pduRequest);
+						logger.info("---------客户端{}也会接收心跳请求----------{}", systemId, pduRequest);
 						return response;
 					case SmppConstants.CMD_ID_UNBIND:
-						logger.info("---------客户端被解绑了----------{}", pduRequest);
+						logger.info("---------客户端{}被解绑了----------{}", systemId, pduRequest);
 						return response;
 					default:
-						logger.error("----------客户端接收 未知异常。---------------{}", response);
+						logger.error("----------客户端{}接收 未知异常。---------------{}", systemId, pduRequest);
 						return response;
 
 				}

@@ -52,9 +52,9 @@ public class ClientInit {
 
 	public static Map<SessionKey, SmppSessionConfiguration> configMap = null;
 
-	public static Map<SessionKey, DefaultSmppClient> clientBootstrapMap = null;
+	public static Map<String, DefaultSmppClient> clientBootstrapMap = null;
 
-	public static Map<SessionKey, DefaultSmppSessionHandler> sessionHandlerMap = null;
+	public static Map<String, DefaultSmppSessionHandler> sessionHandlerMap = null;
 
 
 	@PostConstruct
@@ -220,8 +220,8 @@ public class ClientInit {
 			sessionHandler.setSmppSession(session0);
 			logger.info("-----连接资源(systemid:{},host:{} port:{} sendId:{})成功------", config.getSystemId(), config.getHost(), config.getPort(), config.getAddressRange().getAddress());
 
-			clientBootstrapMap.put(sessionKey, clientBootstrap);
-			sessionHandlerMap.put(sessionKey, sessionHandler);
+			clientBootstrapMap.put(config.getSystemId(), clientBootstrap);
+			sessionHandlerMap.put(config.getSystemId(), sessionHandler);
 			sessionMap.put(sessionKey, session0);
 		} catch (Exception e) {
 			logger.error("连接资源(systemid:{},host:{} port:{} sendId:{})失败", config.getSystemId(), config.getHost(), config.getPort(), config.getAddressRange().getAddress(), e);

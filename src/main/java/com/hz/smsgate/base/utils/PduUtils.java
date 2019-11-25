@@ -158,11 +158,13 @@ public class PduUtils {
 		String sendId = sm.getSourceAddress().getAddress();
 		String systemId = sm.getSystemId();
 
+
 		String key = getKey(systemId, sendId);
 
 		SessionKey sessionKey = new SessionKey();
 		sessionKey.setSystemId(systemId);
 		sessionKey.setSenderId(sendId);
+
 
 		SmppSession session0 = null;
 		Map<SessionKey, SmppSession> sessionMap = ClientInit.sessionMap;
@@ -174,17 +176,8 @@ public class PduUtils {
 			}
 		}
 
-
 		if (session0 == null) {
 			try {
-
-				sessionKey.setSenderId(sendId);
-				DefaultSmppClient defaultSmppClient = ClientInit.clientBootstrapMap.get(sessionKey);
-				if (defaultSmppClient == null) {
-					sessionKey.setSenderId(key);
-					defaultSmppClient = ClientInit.clientBootstrapMap.get(sessionKey);
-				}
-
 				sessionKey.setSenderId(sendId);
 				SmppSessionConfiguration smppSessionConfiguration = ClientInit.configMap.get(sessionKey);
 				if (smppSessionConfiguration == null) {
@@ -192,11 +185,21 @@ public class PduUtils {
 					smppSessionConfiguration = ClientInit.configMap.get(sessionKey);
 				}
 
-				sessionKey.setSenderId(sendId);
-				DefaultSmppSessionHandler defaultSmppSessionHandler = ClientInit.sessionHandlerMap.get(sessionKey);
+				session0 = ClientInit.createClient(smppSessionConfiguration);
+				if (session0 == null) {
+					sessionMap.remove(sessionKey);
+				} else {
+					return session0;
+				}
+
+				DefaultSmppClient defaultSmppClient = ClientInit.clientBootstrapMap.get(systemId);
+				if (defaultSmppClient == null) {
+					LOGGER.error("systemid({})获取defaultSmppClient异常", systemId);
+				}
+
+				DefaultSmppSessionHandler defaultSmppSessionHandler = ClientInit.sessionHandlerMap.get(systemId);
 				if (defaultSmppSessionHandler == null) {
-					sessionKey.setSenderId(key);
-					defaultSmppSessionHandler = ClientInit.sessionHandlerMap.get(sessionKey);
+					LOGGER.error("systemid({})获取defaultSmppSessionHandler异常", systemId);
 				}
 
 				session0 = defaultSmppClient.bind(smppSessionConfiguration, defaultSmppSessionHandler);
