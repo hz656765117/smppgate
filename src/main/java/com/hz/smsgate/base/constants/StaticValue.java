@@ -50,6 +50,7 @@ public class StaticValue {
 	public static String SYSTEMID_MK_2 = "HP02";
 	public static String SYSTEMID_MK_3 = "HP03";
 	public static String SYSTEMID_MK_4 = "HP04";
+	public static String SYSTEMID_MK_5 = "HP0101";
 
 	public static String SYSTEMID_ALEX = "Alex";
 
@@ -68,6 +69,11 @@ public class StaticValue {
 	public static String CHANNEL_MK_10 = "7774";
 	public static String CHANNEL_MK_11 = "7775";
 
+	public static String CHANNEL_MK_12 = "7776";
+	public static String CHANNEL_MK_13 = "7777";
+	public static String CHANNEL_MK_14 = "7778";
+
+
 
 
 	public static String CHANNEL_YN_1 = "668";
@@ -84,7 +90,7 @@ public class StaticValue {
 
 	public static Map<String, SessionKey> CHANNL_REL = null;
 
-	public static Map<String, WGParams> CHANNL_SP_REL = null;
+	public static Map<SessionKey, WGParams> CHANNL_SP_REL = null;
 
 
 	public static String WEB_GATE = "";
@@ -136,6 +142,13 @@ public class StaticValue {
 
 		CHANNL_REL.put(CHANNEL_MK_5, new SessionKey(SYSTEMID_MK_4, "etracker"));
 		CHANNL_REL.put(CHANNEL_MK_9, new SessionKey(SYSTEMID_MK_4, "Tantan"));
+
+		CHANNL_REL.put(CHANNEL_MK_12, new SessionKey(SYSTEMID_MK_5, "etracker"));
+		CHANNL_REL.put(CHANNEL_MK_13, new SessionKey(SYSTEMID_MK_5, "Tantan"));
+		CHANNL_REL.put(CHANNEL_MK_14, new SessionKey(SYSTEMID_MK_5, "Haaloo"));
+
+
+
 
 		CHANNL_REL.put(CHANNEL_YN_1, new SessionKey(SYSTEMID_ALEX, "Alex"));
 

@@ -58,7 +58,7 @@ public class FileUtils {
 	}
 
 	public static void main(String[] args) {
-		Map<String, WGParams> spConfigs = getSpConfigs("C:/Users/Administrator.SC-201812271516/Desktop/spList.txt");
+		Map<SessionKey, WGParams> spConfigs = getSpConfigs("C:/Users/Administrator.SC-201812271516/Desktop/spList.txt");
 		System.out.println(spConfigs.size());
 //		getConfigs("C:/Users/Administrator.SC-201812271516/Desktop/resource.txt");
 	}
@@ -114,10 +114,11 @@ public class FileUtils {
 	}
 
 
-	public static Map<String, WGParams> getSpConfigs(String fileName) {
+	public static Map<SessionKey, WGParams> getSpConfigs(String fileName) {
 		List<String> strings = readFileByLines(fileName);
-		Map<String, WGParams> configMap = new LinkedHashMap<>(strings.size());
+		Map<SessionKey, WGParams> configMap = new LinkedHashMap<>(strings.size());
 		WGParams wgParams;
+		SessionKey sessionKey;
 		for (int i = 0; i < strings.size(); i++) {
 			String str = strings.get(i);
 			if (StringUtils.isBlank(str)) {
@@ -128,9 +129,12 @@ public class FileUtils {
 				if (split != null && split.length > 0) {
 					String channel = split[0].trim();
 					wgParams = new WGParams();
+					sessionKey = new SessionKey();
 					wgParams.setSpid(split[1]);
 					wgParams.setSppassword(split[2]);
-					configMap.put(channel, wgParams);
+					sessionKey.setSenderId(channel);
+					sessionKey.setSystemId(split[3]);
+					configMap.put(sessionKey, wgParams);
 				}
 			} catch (Exception e) {
 				logger.error("sp账号解析异常！,过滤该配置", e);

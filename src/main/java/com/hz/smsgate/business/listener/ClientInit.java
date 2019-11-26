@@ -153,8 +153,7 @@ public class ClientInit {
 		//长短信拆分线程
 		ThreadPoolHelper.executeTask(longMtSendConsumer);
 
-		//CM 短信发送线程
-		ThreadPoolHelper.executeTask(mtRedisCmConsumer);
+
 
 		//长短信发送线程
 		ThreadPoolHelper.executeTask(realLongMtSendConsumer);
@@ -167,6 +166,10 @@ public class ClientInit {
 			for (int i = 0; i <= 5; i++) {
 				//redis短短信下行线程
 				ThreadPoolHelper.executeTask(mtRedisConsumer);
+
+				//CM 短信发送线程
+				ThreadPoolHelper.executeTask(mtRedisCmConsumer);
+
 			}
 
 			//redis状态报告处理线程
