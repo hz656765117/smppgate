@@ -40,6 +40,14 @@ public class SmppServerConstants {
 	 */
 	public static final String WEB_LONG_SUBMIT_SM_SEND = "webLongSubmitSmSend";
 
+	/**
+	 * WEB 长短信真实发送
+	 */
+	public static final String WEB_REL_LONG_SUBMIT_SM_SEND = "webRealLongSubmitSmSend";
+
+
+
+
 
 	/**
 	 *WEB 状态报告缓存key

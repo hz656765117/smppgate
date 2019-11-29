@@ -128,10 +128,9 @@ public class LongMtRedisConsumer implements Runnable {
 							tempKey = "";
 							flag = true;
 							try {
-								BlockingQueue<Object> queue = BDBStoredMapFactoryImpl.INS.getQueue("longSubmitSmSend", "longSubmitSmSend");
-								queue.put(submitSm);
+								longMtRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_LONG_SUBMIT_SM_SEND, submitSm);
 							} catch (Exception e) {
-								LOGGER.error("-----------后短信下行（长短信合并），加入队列异常。------------- {}", e);
+								LOGGER.error("-----------短信下行（长短信合并），加入队列异常。------------- {}", e);
 							}
 							completeMap.clear();
 						} else {
