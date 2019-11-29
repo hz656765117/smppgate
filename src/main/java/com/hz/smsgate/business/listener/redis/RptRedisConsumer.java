@@ -95,7 +95,6 @@ public class RptRedisConsumer implements Runnable {
 			address1 = "00" + address1;
 			sourceAddress.setAddress(address1);
 			deliverSm.setSourceAddress(sourceAddress);
-
 		}
 
 

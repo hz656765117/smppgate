@@ -20,7 +20,7 @@ public class ThreadPoolHelper {
 	/**
 	 * 线程池大小
 	 */
-	private static final int POOL_SIZE = 40;
+	private static final int POOL_SIZE = 60;
 
 	/**
 	 * 线程池

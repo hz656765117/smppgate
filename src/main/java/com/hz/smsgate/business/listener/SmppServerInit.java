@@ -1,20 +1,13 @@
 package com.hz.smsgate.business.listener;
 
 import com.hz.smsgate.base.constants.SystemGlobals;
-import com.hz.smsgate.base.smpp.config.SmppServerConfiguration;
 import com.hz.smsgate.base.utils.PropertiesLoader;
-import com.hz.smsgate.base.utils.SmppUtils;
-import com.hz.smsgate.business.smpp.handler.CmSmppServerHandler;
-import com.hz.smsgate.business.smpp.impl.DefaultSmppServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import java.util.Properties;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @Auther: huangzhuo

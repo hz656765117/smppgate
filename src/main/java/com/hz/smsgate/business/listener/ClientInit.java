@@ -141,6 +141,8 @@ public class ClientInit {
 		SyncSubmitConsumer syncSubmitConsumer = new SyncSubmitConsumer();
 		LongMtConsumer longMtConsumer = new LongMtConsumer();
 		LongMtSendConsumer longMtSendConsumer = new LongMtSendConsumer();
+
+
 		RealLongMtSendConsumer realLongMtSendConsumer = new RealLongMtSendConsumer();
 
 
@@ -150,26 +152,34 @@ public class ClientInit {
 		//同步下行信息到网关线程
 		ThreadPoolHelper.executeTask(syncSubmitConsumer);
 
-		//长短信拆分线程
-		ThreadPoolHelper.executeTask(longMtSendConsumer);
+
+		for (int i = 0; i <= 5; i++) {
+			//长短信拆分线程
+			ThreadPoolHelper.executeTask(longMtSendConsumer);
+		}
 
 
 
-		//长短信发送线程
-		ThreadPoolHelper.executeTask(realLongMtSendConsumer);
+		for (int i = 0; i <= 1; i++) {
+			//CM 短信发送线程
+			ThreadPoolHelper.executeTask(mtRedisCmConsumer);
+		}
+
+
+		for (int i = 0; i <= 8; i++) {
+			//长短信发送线程
+			ThreadPoolHelper.executeTask(realLongMtSendConsumer);
+		}
+
 
 		//0 je   1 redis
 		if ("1".equals(StaticValue.TYPE)) {
 			//redis长短信合并
 			ThreadPoolHelper.executeTask(longMtRedisConsumer);
 
-			for (int i = 0; i <= 5; i++) {
+			for (int i = 0; i <= 3; i++) {
 				//redis短短信下行线程
 				ThreadPoolHelper.executeTask(mtRedisConsumer);
-
-				//CM 短信发送线程
-				ThreadPoolHelper.executeTask(mtRedisCmConsumer);
-
 			}
 
 			//redis状态报告处理线程
@@ -180,7 +190,7 @@ public class ClientInit {
 			//je长短信合并
 			ThreadPoolHelper.executeTask(longMtConsumer);
 
-			for (int i = 0; i <= 5; i++) {
+			for (int i = 0; i <= 3; i++) {
 				//je短短信下行线程
 				ThreadPoolHelper.executeTask(mtConsumer);
 			}
