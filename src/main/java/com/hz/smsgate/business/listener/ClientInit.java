@@ -13,7 +13,7 @@ import com.hz.smsgate.business.listener.je.LongMtConsumer;
 import com.hz.smsgate.business.listener.je.LongMtSendConsumer;
 import com.hz.smsgate.business.listener.je.MtConsumer;
 import com.hz.smsgate.business.listener.je.RealLongMtSendConsumer;
-import com.hz.smsgate.business.listener.redis.LongMtRedisConsumer;
+import com.hz.smsgate.business.listener.redis.LongMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.MtRedisCmConsumer;
 import com.hz.smsgate.business.listener.redis.MtRedisConsumer;
 import com.hz.smsgate.business.listener.redis.RptRedisConsumer;
@@ -132,7 +132,7 @@ public class ClientInit {
 		RptConsumer rptConsumer = new RptConsumer();
 		MtConsumer mtConsumer = new MtConsumer();
 		RptRedisConsumer rptRedisConsumer = new RptRedisConsumer();
-		LongMtRedisConsumer longMtRedisConsumer = new LongMtRedisConsumer();
+		LongMtMergeRedisConsumer longMtMergeRedisConsumer = new LongMtMergeRedisConsumer();
 
 		//cm资源下行
 		MtRedisCmConsumer mtRedisCmConsumer = new MtRedisCmConsumer();
@@ -175,7 +175,7 @@ public class ClientInit {
 		//0 je   1 redis
 		if ("1".equals(StaticValue.TYPE)) {
 			//redis长短信合并
-			ThreadPoolHelper.executeTask(longMtRedisConsumer);
+			ThreadPoolHelper.executeTask(longMtMergeRedisConsumer);
 
 			for (int i = 0; i <= 3; i++) {
 				//redis短短信下行线程

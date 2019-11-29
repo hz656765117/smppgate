@@ -1,7 +1,6 @@
 package com.hz.smsgate.business.listener.redis;
 
 import com.hz.smsgate.base.constants.SmppServerConstants;
-import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.utils.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
-import java.util.concurrent.BlockingQueue;
 
 
 /**
@@ -22,18 +20,18 @@ import java.util.concurrent.BlockingQueue;
  * @date 2019/7/2 15:53
  */
 @Component
-public class LongMtRedisConsumer implements Runnable {
-	private static Logger LOGGER = LoggerFactory.getLogger(LongMtRedisConsumer.class);
+public class LongMtMergeRedisConsumer implements Runnable {
+	private static Logger LOGGER = LoggerFactory.getLogger(LongMtMergeRedisConsumer.class);
 
 	@Autowired
 	public RedisUtil redisUtil;
 
-	public static LongMtRedisConsumer longMtRedisConsumer;
+	public static LongMtMergeRedisConsumer longMtMergeRedisConsumer;
 
 	@PostConstruct
 	public void init() {
-		longMtRedisConsumer = this;
-		longMtRedisConsumer.redisUtil = this.redisUtil;
+		longMtMergeRedisConsumer = this;
+		longMtMergeRedisConsumer.redisUtil = this.redisUtil;
 	}
 
 	private static final Map<String, SubmitSm> CACHE_MAP = new LinkedHashMap<>();
@@ -55,8 +53,8 @@ public class LongMtRedisConsumer implements Runnable {
 
 
 			try {
-				if (longMtRedisConsumer.redisUtil != null) {
-					Object obj = longMtRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_LONG_SUBMIT_SM);
+				if (longMtMergeRedisConsumer.redisUtil != null) {
+					Object obj = longMtMergeRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_LONG_SUBMIT_SM);
 					if (obj != null) {
 						submitSm = (SubmitSm) obj;
 						validateMt(submitSm);
@@ -128,7 +126,7 @@ public class LongMtRedisConsumer implements Runnable {
 							tempKey = "";
 							flag = true;
 							try {
-								longMtRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_LONG_SUBMIT_SM_SEND, submitSm);
+								longMtMergeRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_LONG_SUBMIT_SM_SEND, submitSm);
 							} catch (Exception e) {
 								LOGGER.error("-----------短信下行（长短信合并），加入队列异常。------------- {}", e);
 							}

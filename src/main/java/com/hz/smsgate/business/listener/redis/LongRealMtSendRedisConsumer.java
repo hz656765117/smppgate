@@ -2,7 +2,6 @@ package com.hz.smsgate.business.listener.redis;
 
 import com.hz.smsgate.base.constants.SmppServerConstants;
 import com.hz.smsgate.base.constants.StaticValue;
-import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.concurrent.BlockingQueue;
 
 
 /**
@@ -25,18 +23,18 @@ import java.util.concurrent.BlockingQueue;
  * @date 2019/7/2 15:53
  */
 @Component
-public class RealLongMtSendRedisConsumer implements Runnable {
-	private static Logger LOGGER = LoggerFactory.getLogger(RealLongMtSendRedisConsumer.class);
+public class LongRealMtSendRedisConsumer implements Runnable {
+	private static Logger LOGGER = LoggerFactory.getLogger(LongRealMtSendRedisConsumer.class);
 
 	@Autowired
 	public RedisUtil redisUtil;
 
-	public static RealLongMtSendRedisConsumer realLongMtSendConsumer;
+	public static LongRealMtSendRedisConsumer longRealMtSendRedisConsumer;
 
 	@PostConstruct
 	public void init() {
-		realLongMtSendConsumer = this;
-		realLongMtSendConsumer.redisUtil = this.redisUtil;
+		longRealMtSendRedisConsumer = this;
+		longRealMtSendRedisConsumer.redisUtil = this.redisUtil;
 	}
 
 	@Override
@@ -47,8 +45,8 @@ public class RealLongMtSendRedisConsumer implements Runnable {
 		while (true) {
 
 			try {
-				if (realLongMtSendConsumer.redisUtil != null) {
-					Object obj = realLongMtSendConsumer.redisUtil.rPop(SmppServerConstants.WEB_REL_LONG_SUBMIT_SM_SEND);
+				if (longRealMtSendRedisConsumer.redisUtil != null) {
+					Object obj = longRealMtSendRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_REL_LONG_SUBMIT_SM_SEND);
 					if (obj != null) {
 						submitSm = (SubmitSm) obj;
 
@@ -62,7 +60,7 @@ public class RealLongMtSendRedisConsumer implements Runnable {
 						for (String key : tempMsgIds) {
 							//0 je   1 redis
 							if ("1".equals(StaticValue.TYPE)) {
-								realLongMtSendConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, key, messageId);
+								longRealMtSendRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, key, messageId);
 							}else {
 								RptConsumer.CACHE_MAP.put(key, messageId);
 							}
