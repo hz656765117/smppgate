@@ -15,8 +15,8 @@ import java.util.concurrent.BlockingQueue;
  * @author huangzhuo
  * @date 2019/7/2 15:53
  */
-public class LongMtConsumer implements Runnable {
-	private static Logger LOGGER = LoggerFactory.getLogger(LongMtConsumer.class);
+public class LongMtMergeConsumer implements Runnable {
+	private static Logger LOGGER = LoggerFactory.getLogger(LongMtMergeConsumer.class);
 
 	public static final Map<String, SubmitSm> CACHE_MAP = new LinkedHashMap<>();
 
