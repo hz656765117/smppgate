@@ -25,18 +25,18 @@ import java.util.concurrent.BlockingQueue;
  * @date 2019/7/2 15:53
  */
 @Component
-public class RealLongMtSendConsumer implements Runnable {
-	private static Logger LOGGER = LoggerFactory.getLogger(RealLongMtSendConsumer.class);
+public class LongRealMtSendConsumer implements Runnable {
+	private static Logger LOGGER = LoggerFactory.getLogger(LongRealMtSendConsumer.class);
 
 	@Autowired
 	public RedisUtil redisUtil;
 
-	public static RealLongMtSendConsumer realLongMtSendConsumer;
+	public static LongRealMtSendConsumer longRealMtSendConsumer;
 
 	@PostConstruct
 	public void init() {
-		realLongMtSendConsumer = this;
-		realLongMtSendConsumer.redisUtil = this.redisUtil;
+		longRealMtSendConsumer = this;
+		longRealMtSendConsumer.redisUtil = this.redisUtil;
 	}
 
 	@Override
@@ -75,7 +75,7 @@ public class RealLongMtSendConsumer implements Runnable {
 						for (String key : tempMsgIds) {
 							//0 je   1 redis
 							if ("1".equals(StaticValue.TYPE)) {
-								realLongMtSendConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, key, messageId);
+								longRealMtSendConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, key, messageId);
 							}else {
 								RptConsumer.CACHE_MAP.put(key, messageId);
 							}

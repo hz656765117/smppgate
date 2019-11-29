@@ -12,7 +12,7 @@ import com.hz.smsgate.base.utils.ThreadPoolHelper;
 import com.hz.smsgate.business.listener.je.LongMtConsumer;
 import com.hz.smsgate.business.listener.je.LongMtSendConsumer;
 import com.hz.smsgate.business.listener.je.MtConsumer;
-import com.hz.smsgate.business.listener.je.RealLongMtSendConsumer;
+import com.hz.smsgate.business.listener.je.LongRealMtSendConsumer;
 import com.hz.smsgate.business.listener.redis.LongMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.MtRedisCmConsumer;
 import com.hz.smsgate.business.listener.redis.MtRedisConsumer;
@@ -143,7 +143,7 @@ public class ClientInit {
 		LongMtSendConsumer longMtSendConsumer = new LongMtSendConsumer();
 
 
-		RealLongMtSendConsumer realLongMtSendConsumer = new RealLongMtSendConsumer();
+		LongRealMtSendConsumer longRealMtSendConsumer = new LongRealMtSendConsumer();
 
 
 		//心跳线程
@@ -168,7 +168,7 @@ public class ClientInit {
 
 		for (int i = 0; i <= 8; i++) {
 			//长短信发送线程
-			ThreadPoolHelper.executeTask(realLongMtSendConsumer);
+			ThreadPoolHelper.executeTask(longRealMtSendConsumer);
 		}
 
 
