@@ -36,6 +36,12 @@ public class SmppServerConstants {
 	public static final String WEB_LONG_SUBMIT_SM = "webLongSubmitSm";
 
 	/**
+	 * WEB 长短信合并
+	 */
+	public static final String WEB_LONG_SUBMIT_SM_SEND = "webLongSubmitSmSend";
+
+
+	/**
 	 *WEB 状态报告缓存key
 	 */
 	public static final String WEB_DELIVER_SM = "webDeliverSm";
