@@ -46,6 +46,13 @@ public class SmppServerConstants {
 	public static final String WEB_REL_LONG_SUBMIT_SM_SEND = "webRealLongSubmitSmSend";
 
 
+	/**
+	 * 同步请求到网关
+	 */
+	public static final String SYNC_SUBMIT = "syncSubmit";
+
+
+
 
 
 

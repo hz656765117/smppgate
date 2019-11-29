@@ -155,8 +155,7 @@ public class ClientInit {
         ThreadPoolHelper.executeTask(syncSubmitConsumer);
 
 
-        //长短信拆分线程
-        ThreadPoolHelper.executeTask(longMtSendConsumer);
+
 
 
         for (int i = 0; i <= 1; i++) {
@@ -164,8 +163,6 @@ public class ClientInit {
             ThreadPoolHelper.executeTask(mtRedisCmConsumer);
         }
 
-        //长短信发送线程
-        ThreadPoolHelper.executeTask(longRealMtSendConsumer);
 
 
         //0 je   1 redis
@@ -192,6 +189,10 @@ public class ClientInit {
         } else {
             //je长短信合并
             ThreadPoolHelper.executeTask(longMtMergeConsumer);
+            //长短信拆分线程
+            ThreadPoolHelper.executeTask(longMtSendConsumer);
+            //长短信发送线程
+            ThreadPoolHelper.executeTask(longRealMtSendConsumer);
 
             for (int i = 0; i <= 3; i++) {
                 //je短短信下行线程

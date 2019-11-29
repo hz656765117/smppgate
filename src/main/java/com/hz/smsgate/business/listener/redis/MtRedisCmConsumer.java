@@ -82,11 +82,10 @@ public class MtRedisCmConsumer implements Runnable {
 						sessionKey.setSenderId(sendId);
 						WGParams wgParams = StaticValue.CHANNL_SP_REL.get(sessionKey);
 						if (wgParams != null) {
-							BlockingQueue<Object> syncSubmitQueue = BDBStoredMapFactoryImpl.INS.getQueue("syncSubmit", "syncSubmit");
 							wgParams.setDas(submitSm.getDestAddress().getAddress());
 							String sm = new String(submitSm.getShortMessage());
 							wgParams.setSm(sm);
-							syncSubmitQueue.put(wgParams);
+							mtRedisConsumer.redisUtil.lPush(SmppServerConstants.SYNC_SUBMIT, wgParams);
 						} else {
 							LOGGER.error("{}- {} -{}短信记录异常，未能获取到sp账号", Thread.currentThread().getName(), submitSm.getSystemId(), sendId);
 						}

@@ -1,11 +1,17 @@
 package com.hz.smsgate.business.listener;
 
+import com.hz.smsgate.base.constants.SmppServerConstants;
 import com.hz.smsgate.base.emp.pojo.HttpSmsSend;
 import com.hz.smsgate.base.emp.pojo.WGParams;
 import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
+import com.hz.smsgate.base.utils.RedisUtil;
+import com.hz.smsgate.business.listener.redis.LongMtMergeRedisConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.concurrent.BlockingQueue;
 
 
@@ -13,9 +19,22 @@ import java.util.concurrent.BlockingQueue;
  * @author huangzhuo
  * @date 2019/7/2 15:53
  */
+@Component
 public class SyncSubmitConsumer implements Runnable {
 	private static Logger LOGGER = LoggerFactory.getLogger(SyncSubmitConsumer.class);
 
+
+
+	@Autowired
+	public RedisUtil redisUtil;
+
+	public static SyncSubmitConsumer syncSubmitConsumer;
+
+	@PostConstruct
+	public void init() {
+		syncSubmitConsumer = this;
+		syncSubmitConsumer.redisUtil = this.redisUtil;
+	}
 
 	@Override
 	public void run() {
@@ -23,16 +42,11 @@ public class SyncSubmitConsumer implements Runnable {
 
 		while (true) {
 
-			BlockingQueue<Object> queue = null;
-			try {
-				queue = BDBStoredMapFactoryImpl.INS.getQueue("syncSubmit", "syncSubmit");
-			} catch (Exception e) {
-				LOGGER.error("{}-获取je队列异常", Thread.currentThread().getName(), e);
-			}
+
 
 			try {
-				if (queue != null) {
-					Object obj = queue.poll();
+				if (syncSubmitConsumer.redisUtil != null) {
+					Object obj = syncSubmitConsumer.redisUtil.rPop(SmppServerConstants.SYNC_SUBMIT);
 					if (obj != null) {
 						wgParams = (WGParams) obj;
 						LOGGER.info("{}-读取到同步短信信息{}", Thread.currentThread().getName(), wgParams.toString());
