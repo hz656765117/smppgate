@@ -82,6 +82,19 @@ public class StaticValue {
 	public static List<String> CHANNEL_MK_LIST = new ArrayList<>();
 
 
+	/**
+	 * opt通道
+	 */
+	public static List<String> CHANNEL_OPT_LIST = new ArrayList<>();
+	/**
+	 * 营销通道
+	 */
+	public static List<String> CHANNEL_YX_LIST = new ArrayList<>();
+	/**
+	 * 通知通道
+	 */
+	public static List<String> CHANNEL_TZ_LIST = new ArrayList<>();
+
 	//马来西亚区号
 	public static String AREA_CODE_MALAYSIA = "60";
 
@@ -185,6 +198,17 @@ public class StaticValue {
 
 		CHANNEL_MK_LIST.add(CHANNEL_MK_11);
 		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_11).getSenderId());
+
+
+
+
+
+		CHANNEL_OPT_LIST.add(CHANNEL_CM_6);
+		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_6).getSenderId());
+
+
+
+
 
 
 		CHANNL_SP_REL = new LinkedHashMap<>();

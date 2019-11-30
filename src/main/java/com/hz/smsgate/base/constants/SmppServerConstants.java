@@ -26,9 +26,22 @@ public class SmppServerConstants {
 	 */
 	public static final String WEB_MSGID_CACHE = "webMsgIdCache";
 	/**
-	 * WEB 短信下行缓存key
+	 * WEB 短信下行
 	 */
 	public static final String WEB_SUBMIT_SM = "webSubmitSm";
+
+	/**
+	 * WEB 短短信下行 opt
+	 */
+	public static final String WEB_SUBMIT_SM_OPT = "webSubmitSmOpt";
+	/**
+	 * WEB 短短信下行 tz
+	 */
+	public static final String WEB_SUBMIT_SM_TZ = "webSubmitSmTz";
+	/**
+	 * WEB 短短信下行 yx
+	 */
+	public static final String WEB_SUBMIT_SM_YX = "webSubmitSmYx";
 
 	/**
 	 * WEB 长短信下行缓存key
