@@ -135,7 +135,8 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
                         logger.info("这是短短信,systemid为{},msgid为:{}", systemId, msgid);
                         try {
                             serverSmppSessionRedisHandler.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, msgid, msgid);
-                            serverSmppSessionRedisHandler.redisUtil.lPush(SmppServerConstants.WEB_SUBMIT_SM, submitSm);
+
+                            putSelfQueue(submitSm);
                         } catch (Exception e) {
                             logger.error("-----------短短信下行接收，加入队列异常。------------- {}", e);
                         }
@@ -169,8 +170,6 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 
     public void putSelfQueue(SubmitSm submitSm) {
         String senderId = submitSm.getSourceAddress().getAddress();
-
-
 
         if (StaticValue.CHANNEL_YX_LIST.contains(senderId)) {
             serverSmppSessionRedisHandler.redisUtil.lPush(SmppServerConstants.WEB_SUBMIT_SM_YX, submitSm);

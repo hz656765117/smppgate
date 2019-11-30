@@ -172,7 +172,7 @@ public class ClientInit {
             //redis长短信拆分
             ThreadPoolHelper.executeTask(longMtSplitRedisConsumer);
 
-            for (int i = 0; i <= 2; i++) {
+            for (int i = 0; i <= 5; i++) {
                 //redis长短信发送
                 ThreadPoolHelper.executeTask(longRealMtSendRedisConsumer);
             }

@@ -25,10 +25,7 @@ public class SmppServerConstants {
 	 * WEB msgid的缓存key
 	 */
 	public static final String WEB_MSGID_CACHE = "webMsgIdCache";
-	/**
-	 * WEB 短信下行
-	 */
-	public static final String WEB_SUBMIT_SM = "webSubmitSm";
+
 
 	/**
 	 * WEB 短短信下行 opt
