@@ -20,7 +20,6 @@ import javax.annotation.PostConstruct;
 import java.lang.ref.WeakReference;
 import java.math.BigInteger;
 
-//import com.hz.smsgate.business.listener.RptConsumer;
 
 
 /**

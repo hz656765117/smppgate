@@ -3,16 +3,13 @@ package com.hz.smsgate.business.listener;
 import com.hz.smsgate.base.constants.SmppServerConstants;
 import com.hz.smsgate.base.emp.pojo.HttpSmsSend;
 import com.hz.smsgate.base.emp.pojo.WGParams;
-import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;
 import com.hz.smsgate.base.utils.RedisUtil;
-import com.hz.smsgate.business.listener.redis.LongMtMergeRedisConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.concurrent.BlockingQueue;
 
 
 /**

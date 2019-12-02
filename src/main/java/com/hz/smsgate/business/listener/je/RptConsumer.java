@@ -1,4 +1,4 @@
-package com.hz.smsgate.business.listener;
+package com.hz.smsgate.business.listener.je;
 
 import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.je.BDBStoredMapFactoryImpl;

@@ -7,7 +7,7 @@ import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
-import com.hz.smsgate.business.listener.RptConsumer;
+import com.hz.smsgate.business.listener.je.RptConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
