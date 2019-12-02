@@ -52,6 +52,10 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 						LOGGER.info("{}-读取到长短信下行信息{}", Thread.currentThread().getName(), submitSm.toString());
 
 						String[] tempMsgIds = submitSm.getTempMsgId().split("\\|");
+
+						submitSm.removeSequenceNumber();
+						submitSm.calculateAndSetCommandLength();
+
 						//获取客户端session
 						SmppSession session0 = PduUtils.getSmppSession(submitSm);
 						SubmitSmResp submitResp = session0.submit(submitSm, 10000);
