@@ -131,7 +131,7 @@ public class ClientInit {
 	private static void initMutiThread() {
 
 		try {
-			Thread.sleep(5000);
+			Thread.sleep(15000);
 		} catch (Exception e) {
 			logger.error("{}-线程初始化前休眠异常异常", Thread.currentThread().getName(), e);
 		}

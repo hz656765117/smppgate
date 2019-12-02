@@ -124,7 +124,7 @@ public class RptRedisConsumer implements Runnable {
 			String mbl = deliverSm.getSourceAddress().getAddress();
 			String areaCode = PduUtils.getAreaCode(mbl);
 			//马来西亚和越南 只有accepted
-			if (StaticValue.AREA_CODE_MALAYSIA.equals(areaCode) || StaticValue.AREA_CODE_VIETNAM.equals(areaCode)) {
+			if (StaticValue.AREA_CODE_MALAYSIA.equals(areaCode) || StaticValue.AREA_CODE_VIETNAM.equals(areaCode) || StaticValue.AREA_CODE_PHILIPPINES.equals(areaCode)) {
 				if (deliveryReceipt.getState() == SmppConstants.STATE_ACCEPTED) {
 					deliveryReceipt.setState(SmppConstants.STATE_DELIVERED);
 				}
