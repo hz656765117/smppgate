@@ -13,7 +13,7 @@ import javax.annotation.PostConstruct;
 
 
 /**
- * 将长短信拆分并放到真正的发送队列中
+ * 将长短信拆分并放到真正的发送队列中(通知消息类型)
  *
  * @author huangzhuo
  * @date 2019/7/2 15:53
@@ -38,6 +38,7 @@ public class LongTzMtSplitRedisConsumer implements Runnable {
 	@Override
 	public void run() {
 		SubmitSm submitSm;
+		LOGGER.info("{}-处理将长短信拆分并放到真正的发送队列中(通知消息类型)线程（redis）开始工作......", Thread.currentThread().getName());
 
 
 		while (true) {
@@ -50,7 +51,6 @@ public class LongTzMtSplitRedisConsumer implements Runnable {
 						submitSm = (SubmitSm) obj;
 						//重组下行对象
 						submitSm = PduUtils.rewriteSubmitSm(submitSm);
-						LOGGER.info("{}-读取到长短信下行信息{}", Thread.currentThread().getName(), submitSm.toString());
 						splitSubmitSm(submitSm);
 					} else {
 						Thread.sleep(1000);
@@ -59,7 +59,7 @@ public class LongTzMtSplitRedisConsumer implements Runnable {
 					Thread.sleep(1000);
 				}
 			} catch (Exception e) {
-				LOGGER.error("{}-处理短信状态报告转发异常", Thread.currentThread().getName(), e);
+				LOGGER.error("{}-处理将长短信拆分并放到真正的发送队列中(通知消息类型)异常", Thread.currentThread().getName(), e);
 			}
 
 		}

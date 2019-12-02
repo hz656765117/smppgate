@@ -40,7 +40,7 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 	@Override
 	public void run() {
 		SubmitSm submitSm;
-
+		LOGGER.info("{}-长短信（redis）真实发送线程开始工作......", Thread.currentThread().getName());
 
 		while (true) {
 
@@ -49,6 +49,7 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 					Object obj = longRealMtSendRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_REL_LONG_SUBMIT_SM_SEND_OPT);
 					if (obj != null) {
 						submitSm = (SubmitSm) obj;
+						LOGGER.info("{}-读取到长短信下行信息{}", Thread.currentThread().getName(), submitSm.toString());
 
 						String[] tempMsgIds = submitSm.getTempMsgId().split("\\|");
 						//获取客户端session

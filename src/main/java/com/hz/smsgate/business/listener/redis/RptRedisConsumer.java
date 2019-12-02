@@ -46,12 +46,6 @@ public class RptRedisConsumer implements Runnable {
 	@Override
 	public void run() {
 		DeliverSm deliverSm;
-
-		try {
-			Thread.sleep(5000);
-		} catch (Exception e) {
-			LOGGER.error("{}-处理短信状态报告转发线程（redis）启动异常", Thread.currentThread().getName(), e);
-		}
 		LOGGER.info("{}-处理短信状态报告转发线程（redis）开始工作......", Thread.currentThread().getName());
 
 		while (true) {

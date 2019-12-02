@@ -41,12 +41,6 @@ public class MtRedisCmConsumer implements Runnable {
     @Override
     public void run() {
         SubmitSm submitSm;
-
-        try {
-            Thread.sleep(5000);
-        } catch (Exception e) {
-            LOGGER.error("{}-处理短信（redis）-cm下行线程启动异常", Thread.currentThread().getName(), e);
-        }
         LOGGER.info("{}-处理短信（redis）-cm下行线程开始工作......", Thread.currentThread().getName());
 
         while (true) {
@@ -65,10 +59,10 @@ public class MtRedisCmConsumer implements Runnable {
                         sendId = submitSm.getSourceAddress().getAddress();
                         mbl = submitSm.getDestAddress().getAddress();
 
+                        LOGGER.info("{}-读取到短信下行信息{}", Thread.currentThread().getName(), submitSm.toString());
                         //获取客户端session
                         SmppSession session0 = PduUtils.getSmppSession(submitSm);
 
-                        LOGGER.info("{}-读取到短信下行信息{}", Thread.currentThread().getName(), submitSm.toString());
                         SubmitSmResp submitResp = session0.submit(submitSm, 10000);
 
                         String messageId = submitResp.getMessageId();

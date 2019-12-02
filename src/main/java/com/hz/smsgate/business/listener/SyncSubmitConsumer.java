@@ -37,6 +37,15 @@ public class SyncSubmitConsumer implements Runnable {
 	public void run() {
 		WGParams wgParams;
 
+
+		try {
+			Thread.sleep(5000);
+		} catch (Exception e) {
+			LOGGER.error("{}-处理同步短信信息异常", Thread.currentThread().getName(), e);
+		}
+		LOGGER.info("{}-处理同步短信信息线程（redis）开始工作......", Thread.currentThread().getName());
+
+
 		while (true) {
 
 
