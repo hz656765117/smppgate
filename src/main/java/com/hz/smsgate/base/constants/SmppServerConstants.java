@@ -40,38 +40,72 @@ public class SmppServerConstants {
      */
     public static final String WEB_SUBMIT_SM_YX = "webSubmitSmYx";
 
-    /**
-     * WEB 长短信下行缓存key
-     */
-    public static final String WEB_LONG_SUBMIT_SM = "webLongSubmitSm";
+//    /**
+//     * WEB 长短信下行缓存key
+//     */
+//    public static final String WEB_LONG_SUBMIT_SM = "webLongSubmitSm";
 
     /**
      * WEB 长短信下行缓存  opt
      */
-    public static final String WEB_LONG_SUBMIT_SM_OPT = "webLongSubmitSmOpt";
+    public static final String WEB_LONG_SUBMIT_SM_OPT = "webOptLongSm";
 
     /**
      * WEB 长短信下行缓存  通知
      */
-    public static final String WEB_LONG_SUBMIT_SM_TZ = "webLongSubmitSmTz";
+    public static final String WEB_LONG_SUBMIT_SM_TZ = "webTzLongSm";
 
     /**
      * WEB 长短信下行缓存  营销
      */
-    public static final String WEB_LONG_SUBMIT_SM_YX = "webLongSubmitSmYx";
-
-
+    public static final String WEB_LONG_SUBMIT_SM_YX = "webYxLongSm";
 
 
     /**
-     * WEB 长短信合并
+     * WEB 长短信合并  opt 验证码类型
      */
-    public static final String WEB_LONG_SUBMIT_SM_SEND = "webLongSubmitSmSend";
+    public static final String WEB_LONG_SUBMIT_SM_SEND_OPT = "webOptLongSmSend";
 
     /**
-     * WEB 长短信真实发送
+     * WEB 长短信合并   通知类型
      */
-    public static final String WEB_REL_LONG_SUBMIT_SM_SEND = "webRealLongSubmitSmSend";
+    public static final String WEB_LONG_SUBMIT_SM_SEND_TZ = "webTzLongSmSend";
+
+    /**
+     * WEB 长短信合并   营销类型
+     */
+    public static final String WEB_LONG_SUBMIT_SM_SEND_YX = "webYxLongSmSend";
+
+
+//    /**
+//     * WEB 长短信合并
+//     */
+//    public static final String WEB_LONG_SUBMIT_SM_SEND = "webLongSubmitSmSend";
+//
+//    /**
+//     * WEB 长短信真实发送
+//     */
+//    public static final String WEB_REL_LONG_SUBMIT_SM_SEND = "webRealLongSubmitSmSend";
+
+
+    /**
+     * WEB 长短信真实发送  OPT
+     */
+    public static final String WEB_REL_LONG_SUBMIT_SM_SEND_OPT = "webRealOptLongSmSend";
+
+    /**
+     * WEB 长短信真实发送  通知类型
+     */
+    public static final String WEB_REL_LONG_SUBMIT_SM_SEND_TZ = "webRealTzLongSmSend";
+
+
+    /**
+     * WEB 长短信真实发送  营销类型
+     */
+    public static final String WEB_REL_LONG_SUBMIT_SM_SEND_YX = "webRealYxLongSmSend";
+
+
+
 
 
     /**

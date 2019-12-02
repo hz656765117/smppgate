@@ -1,4 +1,4 @@
-package com.hz.smsgate.business.listener.redis;
+package com.hz.smsgate.business.listener.redis.opt;
 
 import com.hz.smsgate.base.constants.SmppServerConstants;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
@@ -20,13 +20,13 @@ import java.util.*;
  * @date 2019/7/2 15:53
  */
 @Component
-public class LongMtMergeRedisConsumer implements Runnable {
-	private static Logger LOGGER = LoggerFactory.getLogger(LongMtMergeRedisConsumer.class);
+public class LongOptMtMergeRedisConsumer implements Runnable {
+	private static Logger LOGGER = LoggerFactory.getLogger(LongOptMtMergeRedisConsumer.class);
 
 	@Autowired
 	public RedisUtil redisUtil;
 
-	public static LongMtMergeRedisConsumer longMtMergeRedisConsumer;
+	public static LongOptMtMergeRedisConsumer longMtMergeRedisConsumer;
 
 	@PostConstruct
 	public void init() {
@@ -54,7 +54,7 @@ public class LongMtMergeRedisConsumer implements Runnable {
 
 			try {
 				if (longMtMergeRedisConsumer.redisUtil != null) {
-					Object obj = longMtMergeRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_LONG_SUBMIT_SM);
+					Object obj = longMtMergeRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_LONG_SUBMIT_SM_OPT);
 					if (obj != null) {
 						submitSm = (SubmitSm) obj;
 						validateMt(submitSm);
@@ -126,7 +126,7 @@ public class LongMtMergeRedisConsumer implements Runnable {
 							tempKey = "";
 							flag = true;
 							try {
-								longMtMergeRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_LONG_SUBMIT_SM_SEND, submitSm);
+								longMtMergeRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_LONG_SUBMIT_SM_SEND_OPT, submitSm);
 							} catch (Exception e) {
 								LOGGER.error("-----------短信下行（长短信合并），加入队列异常。------------- {}", e);
 							}

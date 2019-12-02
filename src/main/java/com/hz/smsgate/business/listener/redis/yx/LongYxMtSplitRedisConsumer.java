@@ -1,4 +1,4 @@
-package com.hz.smsgate.business.listener.redis;
+package com.hz.smsgate.business.listener.redis.yx;
 
 import com.hz.smsgate.base.constants.SmppServerConstants;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.concurrent.BlockingQueue;
 
 
 /**
@@ -20,14 +19,14 @@ import java.util.concurrent.BlockingQueue;
  * @date 2019/7/2 15:53
  */
 @Component
-public class LongMtSplitRedisConsumer implements Runnable {
-	private static Logger LOGGER = LoggerFactory.getLogger(LongMtSplitRedisConsumer.class);
+public class LongYxMtSplitRedisConsumer implements Runnable {
+	private static Logger LOGGER = LoggerFactory.getLogger(LongYxMtSplitRedisConsumer.class);
 
 
 	@Autowired
 	public RedisUtil redisUtil;
 
-	public static LongMtSplitRedisConsumer longMtSplitRedisConsumer;
+	public static LongYxMtSplitRedisConsumer longMtSplitRedisConsumer;
 
 	@PostConstruct
 	public void init() {
@@ -46,7 +45,7 @@ public class LongMtSplitRedisConsumer implements Runnable {
 
 			try {
 				if (longMtSplitRedisConsumer.redisUtil != null) {
-					Object obj = longMtSplitRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_LONG_SUBMIT_SM_SEND);
+					Object obj = longMtSplitRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_LONG_SUBMIT_SM_SEND_YX);
 					if (obj != null) {
 						submitSm = (SubmitSm) obj;
 						//重组下行对象
@@ -83,7 +82,7 @@ public class LongMtSplitRedisConsumer implements Runnable {
 			LOGGER.info("{}-短信内容为{}-长度为{}", Thread.currentThread().getName(), new String(shortMessage), msgLen);
 			//少于255个字符 不拆分短信
 			if (msgLen < 255) {
-				longMtSplitRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_REL_LONG_SUBMIT_SM_SEND, submitSm);
+				longMtSplitRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_REL_LONG_SUBMIT_SM_SEND_YX, submitSm);
 				return;
 			}
 
@@ -116,7 +115,7 @@ public class LongMtSplitRedisConsumer implements Runnable {
 				ss.setEsmClass((byte) 00000100);
 				ss.calculateAndSetCommandLength();
 				LOGGER.info("{}-长短信拆分{}-{}下行信息{}", Thread.currentThread().getName(), allMsgNum, (i + 1), ss.toString());
-				longMtSplitRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_REL_LONG_SUBMIT_SM_SEND, submitSm);
+				longMtSplitRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_REL_LONG_SUBMIT_SM_SEND_YX, submitSm);
 			}
 		} catch (Exception e) {
 			LOGGER.error("{}-长短信拆分异常", Thread.currentThread().getName(), e);

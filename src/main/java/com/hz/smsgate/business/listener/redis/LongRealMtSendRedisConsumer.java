@@ -46,7 +46,7 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 
 			try {
 				if (longRealMtSendRedisConsumer.redisUtil != null) {
-					Object obj = longRealMtSendRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_REL_LONG_SUBMIT_SM_SEND);
+					Object obj = longRealMtSendRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_REL_LONG_SUBMIT_SM_SEND_OPT);
 					if (obj != null) {
 						submitSm = (SubmitSm) obj;
 
@@ -67,6 +67,22 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 
 						}
 					} else {
+
+						//opt的短信发完后 处理通知的短信
+						Object tzObj = longRealMtSendRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_REL_LONG_SUBMIT_SM_SEND_TZ);
+						if (tzObj != null) {
+							longRealMtSendRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_REL_LONG_SUBMIT_SM_SEND_OPT, tzObj);
+							continue;
+						}
+
+						//通知的短信发完后 处理营销的短信
+						Object yxObj = longRealMtSendRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_REL_LONG_SUBMIT_SM_SEND_YX);
+						if (yxObj != null) {
+							longRealMtSendRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_REL_LONG_SUBMIT_SM_SEND_OPT, yxObj);
+							continue;
+						}
+
+						//三个通道都没消息 则休眠1s
 						Thread.sleep(1000);
 					}
 				} else {
