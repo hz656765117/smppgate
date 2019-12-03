@@ -40,9 +40,8 @@ public class EnquireLinkConsumer implements Runnable {
 
                         SmppSession session0 = entry.getValue();
                         boolean bound = session0.isBound();
-                        System.out.println(bound);
                         try {
-                            LOGGER.info("-----------------------------systemId（{}）开始心跳......", systemId);
+                            LOGGER.info("-----------------------------systemId（{}），session状态为{}，开始心跳......", systemId, bound);
                             session0.enquireLink(new EnquireLink(), 10000);
                         } catch (Exception e) {
                             LOGGER.error("{}-{}心跳异常异常", Thread.currentThread().getName(), systemId, e);
