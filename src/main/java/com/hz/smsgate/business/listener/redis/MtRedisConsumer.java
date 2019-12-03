@@ -1,6 +1,7 @@
 package com.hz.smsgate.business.listener.redis;
 
 import com.hz.smsgate.base.constants.SmppServerConstants;
+import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
@@ -37,7 +38,7 @@ public class MtRedisConsumer implements Runnable {
 
 	@Override
 	public void run() {
-		SubmitSm submitSm;
+		SubmitSm submitSm = new SubmitSm();
 		LOGGER.info("{}-处理短信（redis）下行线程开始工作......", Thread.currentThread().getName());
 
 		while (true) {
@@ -85,6 +86,7 @@ public class MtRedisConsumer implements Runnable {
 					Thread.sleep(1000);
 				}
 			} catch (Exception e) {
+				putSelfQueue(submitSm);
 				LOGGER.error("{}-{}处理短信下行异常", Thread.currentThread().getName(), sendId, e);
 			}
 
@@ -92,5 +94,23 @@ public class MtRedisConsumer implements Runnable {
 
 	}
 
+
+	/**
+	 * 将发送失败的非opt短信放入到营销中，继续下一次发送
+	 *
+	 * @param submitSm 下行短信对象
+	 */
+	public void putSelfQueue(SubmitSm submitSm) {
+		try {
+			String senderId = submitSm.getSourceAddress().getAddress();
+			if (!StaticValue.CHANNEL_OPT_LIST.contains(senderId)) {
+				submitSm.removeSequenceNumber();
+				submitSm.calculateAndSetCommandLength();
+				mtRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_SUBMIT_SM_YX, submitSm);
+			}
+		} catch (Exception e) {
+			LOGGER.error("{} 将发送失败的非opt短信放入到营销中异常", Thread.currentThread().getName(), e);
+		}
+	}
 
 }

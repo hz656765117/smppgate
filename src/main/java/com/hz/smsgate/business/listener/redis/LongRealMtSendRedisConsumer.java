@@ -39,7 +39,7 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 
 	@Override
 	public void run() {
-		SubmitSm submitSm;
+		SubmitSm submitSm = new SubmitSm();
 		LOGGER.info("{}-长短信（redis）真实发送线程开始工作......", Thread.currentThread().getName());
 
 		while (true) {
@@ -66,7 +66,7 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 							//0 je   1 redis
 							if ("1".equals(StaticValue.TYPE)) {
 								longRealMtSendRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, key, messageId);
-							}else {
+							} else {
 								RptConsumer.CACHE_MAP.put(key, messageId);
 							}
 
@@ -94,11 +94,31 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 					Thread.sleep(1000);
 				}
 			} catch (Exception e) {
+				putSelfQueue(submitSm);
 				LOGGER.error("{}-长短信分段下发异常", Thread.currentThread().getName(), e);
 			}
 
 		}
 
+	}
+
+
+	/**
+	 * 将发送失败的非opt短信放入到营销中，继续下一次发送
+	 *
+	 * @param submitSm 下行短信对象
+	 */
+	public void putSelfQueue(SubmitSm submitSm) {
+		try {
+			String senderId = submitSm.getSourceAddress().getAddress();
+			if (!StaticValue.CHANNEL_OPT_LIST.contains(senderId)) {
+				submitSm.removeSequenceNumber();
+				submitSm.calculateAndSetCommandLength();
+				longRealMtSendRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_LONG_SUBMIT_SM_YX, submitSm);
+			}
+		} catch (Exception e) {
+			LOGGER.error("{} 将发送失败的非opt短信放入到营销中异常", Thread.currentThread().getName(), e);
+		}
 	}
 
 
