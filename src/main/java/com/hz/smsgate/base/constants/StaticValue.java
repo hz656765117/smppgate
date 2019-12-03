@@ -203,9 +203,6 @@ public class StaticValue {
 		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_11).getSenderId());
 
 
-
-
-
 		CHANNEL_OPT_LIST.add(CHANNEL_CM_6);
 		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_6).getSenderId());
 
@@ -220,9 +217,7 @@ public class StaticValue {
 		CHANNEL_YX_LIST.add(CHANNL_REL.get(CHANNEL_YN_1).getSenderId());
 
 
-
 		CHANNL_SP_REL = new LinkedHashMap<>();
-
 
 		WEB_GATE = SystemGlobals.getValue("montnets.webgate");
 

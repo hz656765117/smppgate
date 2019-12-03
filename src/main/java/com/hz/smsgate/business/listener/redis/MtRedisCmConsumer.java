@@ -49,7 +49,7 @@ public class MtRedisCmConsumer implements Runnable {
             String mbl = "";
             try {
                 if (mtRedisConsumer.redisUtil != null) {
-                    Object obj = mtRedisConsumer.redisUtil.rPop(SmppServerConstants.CM_SUBMIT_SM);
+                    Object obj = mtRedisConsumer.redisUtil.rPop(SmppServerConstants.CM_SUBMIT_SM_OPT);
                     if (obj != null) {
 
                         submitSm = (SubmitSm) obj;
@@ -84,6 +84,21 @@ public class MtRedisCmConsumer implements Runnable {
 
 
                     } else {
+                        //opt的短信发完后 处理通知的短信
+                        Object tzObj = mtRedisConsumer.redisUtil.rPop(SmppServerConstants.CM_SUBMIT_SM_TZ);
+                        if (tzObj != null) {
+                            mtRedisConsumer.redisUtil.lPush(SmppServerConstants.CM_SUBMIT_SM_OPT, tzObj);
+                            continue;
+                        }
+
+                        //通知的短信发完后 处理营销的短信
+                        Object yxObj = mtRedisConsumer.redisUtil.rPop(SmppServerConstants.CM_SUBMIT_SM_YX);
+                        if (yxObj != null) {
+                            mtRedisConsumer.redisUtil.lPush(SmppServerConstants.CM_SUBMIT_SM_OPT, yxObj);
+                            continue;
+                        }
+
+                        //三个通道都没消息 则休眠1s
                         Thread.sleep(1000);
                     }
                 } else {
