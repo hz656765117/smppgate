@@ -58,7 +58,7 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 
 						//获取客户端session
 						SmppSession session0 = PduUtils.getSmppSession(submitSm);
-						SubmitSmResp submitResp = session0.submit(submitSm, 10000);
+						SubmitSmResp submitResp = session0.submit(submitSm, 15000);
 						String messageId = submitResp.getMessageId();
 
 						//更新缓存中的value
@@ -115,6 +115,8 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 				submitSm.removeSequenceNumber();
 				submitSm.calculateAndSetCommandLength();
 				longRealMtSendRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_LONG_SUBMIT_SM_YX, submitSm);
+				LOGGER.info("{} 将发送失败的非opt短信放入到营销中", Thread.currentThread().getName(), submitSm.toString());
+				Thread.sleep(500);
 			}
 		} catch (Exception e) {
 			LOGGER.error("{} 将发送失败的非opt短信放入到营销中异常", Thread.currentThread().getName(), e);

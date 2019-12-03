@@ -107,6 +107,8 @@ public class MtRedisConsumer implements Runnable {
 				submitSm.removeSequenceNumber();
 				submitSm.calculateAndSetCommandLength();
 				mtRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_SUBMIT_SM_YX, submitSm);
+				LOGGER.info("{} 将发送失败的非opt短信放入到营销中", Thread.currentThread().getName(), submitSm.toString());
+				Thread.sleep(500);
 			}
 		} catch (Exception e) {
 			LOGGER.error("{} 将发送失败的非opt短信放入到营销中异常", Thread.currentThread().getName(), e);

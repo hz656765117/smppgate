@@ -78,6 +78,8 @@ public class StaticValue {
 
 	public static String CHANNEL_YN_1 = "668";
 
+	public static String CHANNEL_YN_2 = "776";
+
 
 	public static List<String> CHANNEL_MK_LIST = new ArrayList<>();
 
@@ -203,8 +205,27 @@ public class StaticValue {
 		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_11).getSenderId());
 
 
+		CHANNEL_OPT_LIST.add(CHANNEL_CM_1);
+		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_1).getSenderId());
+		CHANNEL_OPT_LIST.add(CHANNEL_CM_2);
+		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_2).getSenderId());
+		CHANNEL_OPT_LIST.add(CHANNEL_CM_3);
+		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_3).getSenderId());
+		CHANNEL_OPT_LIST.add(CHANNEL_CM_4);
+		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_4).getSenderId());
+		CHANNEL_OPT_LIST.add(CHANNEL_CM_5);
+		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_5).getSenderId());
 		CHANNEL_OPT_LIST.add(CHANNEL_CM_6);
 		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_6).getSenderId());
+		CHANNEL_OPT_LIST.add(CHANNEL_CM_7);
+		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_7).getSenderId());
+		CHANNEL_OPT_LIST.add(CHANNEL_CM_8);
+		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_8).getSenderId());
+		CHANNEL_OPT_LIST.add(CHANNEL_CM_9);
+		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_9).getSenderId());
+		CHANNEL_OPT_LIST.add(CHANNEL_CM_10);
+		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_10).getSenderId());
+
 
 		CHANNEL_OPT_LIST.add(CHANNEL_MK_2);
 		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_MK_2).getSenderId());
@@ -213,8 +234,10 @@ public class StaticValue {
 		CHANNEL_OPT_LIST.add(CHANNEL_MK_10);
 		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_MK_10).getSenderId());
 
-		CHANNEL_YX_LIST.add(CHANNEL_YN_1);
-		CHANNEL_YX_LIST.add(CHANNL_REL.get(CHANNEL_YN_1).getSenderId());
+		CHANNEL_YX_LIST.add(CHANNEL_YN_2);
+
+		CHANNEL_TZ_LIST.add(CHANNEL_YN_1);
+		CHANNEL_TZ_LIST.add(CHANNL_REL.get(CHANNEL_YN_1).getSenderId());
 
 
 		CHANNL_SP_REL = new LinkedHashMap<>();

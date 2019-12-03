@@ -210,7 +210,10 @@ public class ClientInit {
 			}
 
 			//redis状态报告处理线程
-			ThreadPoolHelper.executeTask(rptRedisConsumer);
+			for (int i = 0; i <= 3; i++) {
+				ThreadPoolHelper.executeTask(rptRedisConsumer);
+			}
+
 
 
 		} else {
