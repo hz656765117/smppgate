@@ -43,15 +43,16 @@ public class EnquireLinkConsumer implements Runnable {
 							LOGGER.info("-----------------------------systemId（{}）开始心跳......", systemId);
 							session0.enquireLink(new EnquireLink(), 10000);
 						} catch (Exception e) {
-							session0.destroy();
-							//如果心跳失败，则重新绑定一次，绑定失败 则移除该session  心跳异常 暂时不重连
+							LOGGER.error("{}-{}心跳异常异常", Thread.currentThread().getName(), systemId, e);
+
+							session0.unbind(10000);
+							//如果心跳失败，则重新绑定一次，绑定失败 则移除该session
 							SmppSessionConfiguration smppSessionConfiguration = ClientInit.configMap.get(entry.getKey());
 							SmppSession client = ClientInit.createClient(smppSessionConfiguration);
 							if (client == null) {
+								LOGGER.error("{}-{}心跳异常异常且重新绑定失败", Thread.currentThread().getName(), systemId);
 								sessionMap.remove(entry.getKey());
 							}
-
-							LOGGER.error("{}-{}心跳异常异常", Thread.currentThread().getName(), systemId, e);
 						}
 						Thread.sleep(1000);
 					}
@@ -65,7 +66,7 @@ public class EnquireLinkConsumer implements Runnable {
 
 			} catch (Exception e) {
 				isEnquireLink.clear();
-				LOGGER.error("{}-处理短信状态报告转发异常", Thread.currentThread().getName(), e);
+				LOGGER.error("{}-处理心跳异常", Thread.currentThread().getName(), e);
 			}
 
 		}
