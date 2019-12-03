@@ -25,74 +25,67 @@ import java.util.concurrent.BlockingQueue;
  */
 @Component
 public class LongRealMtSendConsumer implements Runnable {
-	private static Logger LOGGER = LoggerFactory.getLogger(LongRealMtSendConsumer.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(LongRealMtSendConsumer.class);
 
-	@Autowired
-	public RedisUtil redisUtil;
+    @Autowired
+    public RedisUtil redisUtil;
 
-	public static LongRealMtSendConsumer longRealMtSendConsumer;
+    public static LongRealMtSendConsumer longRealMtSendConsumer;
 
-	@PostConstruct
-	public void init() {
-		longRealMtSendConsumer = this;
-		longRealMtSendConsumer.redisUtil = this.redisUtil;
-	}
+    @PostConstruct
+    public void init() {
+        longRealMtSendConsumer = this;
+        longRealMtSendConsumer.redisUtil = this.redisUtil;
+    }
 
-	@Override
-	public void run() {
-		SubmitSm submitSm;
-
-
-		while (true) {
-
-			BlockingQueue<Object> realSendQueue = null;
-			try {
-				realSendQueue = BDBStoredMapFactoryImpl.INS.getQueue("realLongSubmitSmSend", "realLongSubmitSmSend");
-			} catch (Exception e) {
-				LOGGER.error("{}-获取je队列异常", Thread.currentThread().getName(), e);
-			}
-
-			try {
-				if (realSendQueue != null) {
-					Object obj = realSendQueue.poll();
-					if (obj != null) {
-
-						submitSm = (SubmitSm) obj;
-
-						String[] tempMsgIds = submitSm.getTempMsgId().split("\\|");
-						//获取客户端session
-						SmppSession session0 = PduUtils.getSmppSession(submitSm);
+    @Override
+    public void run() {
+        SubmitSm submitSm;
 
 
-						SubmitSmResp submitResp = session0.submit(submitSm, 10000);
+        while (true) {
+
+            BlockingQueue<Object> realSendQueue = null;
+            try {
+                realSendQueue = BDBStoredMapFactoryImpl.INS.getQueue("realLongSubmitSmSend", "realLongSubmitSmSend");
+            } catch (Exception e) {
+                LOGGER.error("{}-获取je队列异常", Thread.currentThread().getName(), e);
+            }
+
+            try {
+                if (realSendQueue != null) {
+                    Object obj = realSendQueue.poll();
+                    if (obj != null) {
+
+                        submitSm = (SubmitSm) obj;
+
+                        String[] tempMsgIds = submitSm.getTempMsgId().split("\\|");
+                        //获取客户端session
+                        SmppSession session0 = PduUtils.getSmppSession(submitSm);
 
 
+                        SubmitSmResp submitResp = session0.submit(submitSm, 10000);
 
-						String messageId = submitResp.getMessageId();
 
-						//更新缓存中的value
-						for (String key : tempMsgIds) {
-							//0 je   1 redis
-							if ("1".equals(StaticValue.TYPE)) {
-								longRealMtSendConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, key, messageId);
-							}else {
-								RptConsumer.CACHE_MAP.put(key, messageId);
-							}
+                        String messageId = submitResp.getMessageId();
 
-						}
-					} else {
-						Thread.sleep(1000);
-					}
-				} else {
-					Thread.sleep(1000);
-				}
-			} catch (Exception e) {
-				LOGGER.error("{}-长短信分段下发异常", Thread.currentThread().getName(), e);
-			}
+                        //更新缓存中的value
+                        for (String key : tempMsgIds) {
+                            RptConsumer.CACHE_MAP.put(key, messageId);
+                        }
+                    } else {
+                        Thread.sleep(1000);
+                    }
+                } else {
+                    Thread.sleep(1000);
+                }
+            } catch (Exception e) {
+                LOGGER.error("{}-长短信分段下发异常", Thread.currentThread().getName(), e);
+            }
 
-		}
+        }
 
-	}
+    }
 
 
 }

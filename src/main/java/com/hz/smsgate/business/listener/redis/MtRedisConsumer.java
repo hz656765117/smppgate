@@ -62,7 +62,8 @@ public class MtRedisConsumer implements Runnable {
 						String messageId = submitResp.getMessageId();
 
 						//更新缓存中的value
-						mtRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, submitSm.getTempMsgId(), messageId);
+						mtRedisConsumer.redisUtil.hmRemove(SmppServerConstants.WEB_MSGID_CACHE, submitSm.getTempMsgId());
+						mtRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, messageId, submitSm.getTempMsgId());
 
 					} else {
 						//opt的短信发完后 处理通知的短信
