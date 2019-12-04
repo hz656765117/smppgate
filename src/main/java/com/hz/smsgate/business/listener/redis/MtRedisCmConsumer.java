@@ -64,7 +64,8 @@ public class MtRedisCmConsumer implements Runnable {
 						SmppSession session0 = PduUtils.getSmppSession(submitSm);
 
 						if (session0 == null) {
-							LOGGER.error("systemid({}),senderid({}),mbl（{}）获取客户端连接异常", submitSm.getSystemId(), sendId, mbl);
+							LOGGER.error("systemid({}),senderid({}),mbl（{}）获取客户端连接异常，丢弃该下行", submitSm.getSystemId(), sendId, mbl);
+							continue;
 						}
 
 						SubmitSmResp submitResp = session0.submit(submitSm, 10000);
