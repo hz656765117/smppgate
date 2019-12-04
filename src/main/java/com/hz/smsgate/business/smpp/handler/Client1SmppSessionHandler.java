@@ -158,8 +158,6 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
      */
     public static void putRedisCache(DeliverSm deliverSm) {
         try {
-//			Object obj = client1SmppSessionHandler.redisUtil.hmGetAllValues(SmppServerConstants.CM_MSGID_CACHE);
-//			List<String> realMsgIds = (List<String>) obj;
 
             //获取状态报告msgid
             String str = new String(deliverSm.getShortMessage());

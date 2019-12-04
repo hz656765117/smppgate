@@ -107,6 +107,7 @@ public class RptRedisConsumer implements Runnable {
 			return;
 		}
 
+		//重写状态报告
 		deliverSm = reWriteDeliverSm(deliverSm);
 
 		String str = new String(deliverSm.getShortMessage());
