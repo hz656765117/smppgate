@@ -71,10 +71,12 @@ public class RptRedisConsumer implements Runnable {
 
 
 	/**
-	 * @param deliverSm
-	 * @return
+	 * 重写状态报告对象
+	 *
+	 * @param deliverSm 状态报告
+	 * @return 状态报告对象
 	 */
-	public DeliverSm reWriteDeliverSm(DeliverSm deliverSm) {
+	private DeliverSm reWriteDeliverSm(DeliverSm deliverSm) {
 		//替换真实通道
 		Address destAddress = deliverSm.getDestAddress();
 		String realChannel = PduUtils.getRealChannel(deliverSm.getSystemId(), destAddress.getAddress());
@@ -97,7 +99,7 @@ public class RptRedisConsumer implements Runnable {
 	}
 
 
-	public void sendDeliverSm(DeliverSm deliverSm) {
+	private void sendDeliverSm(DeliverSm deliverSm) {
 		Map<String, String> removeMap = new LinkedHashMap<>();
 
 		SmppSession smppSession = PduUtils.getServerSmppSession(deliverSm);
@@ -107,10 +109,9 @@ public class RptRedisConsumer implements Runnable {
 
 		deliverSm = reWriteDeliverSm(deliverSm);
 
-
 		String str = new String(deliverSm.getShortMessage());
-		DeliveryReceipt deliveryReceipt = null;
-		String messageId = "";
+		DeliveryReceipt deliveryReceipt;
+		String messageId;
 		try {
 			deliveryReceipt = DeliveryReceipt.parseShortMessage(str, DateTimeZone.UTC);
 			messageId = deliveryReceipt.getMessageId();
@@ -153,7 +154,7 @@ public class RptRedisConsumer implements Runnable {
 					LOGGER.info("状态报告响应msgid为{}，缓存中key为{}，value为{}", messageId, entry.getKey(), entry.getValue());
 
 					String[] split = msgId.split("-");
-					if (split != null && split.length > 3) {
+					if (split.length > 3) {
 						//替换sequenceNumber
 						deliverSm.setSequenceNumber(Integer.valueOf(split[3]));
 					}
@@ -174,7 +175,7 @@ public class RptRedisConsumer implements Runnable {
 		}
 
 
-		if (removeMap != null && removeMap.size() > 0) {
+		if (removeMap.size() > 0) {
 			for (Map.Entry<String, String> entry : removeMap.entrySet()) {
 				rptRedisConsumer.redisUtil.hmRemove(SmppServerConstants.WEB_MSGID_CACHE, entry.getKey());
 			}

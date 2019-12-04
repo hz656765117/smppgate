@@ -25,19 +25,19 @@ import java.util.Set;
 public class TestController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestController.class);
 	@Autowired
-	public   RedisUtil redisUtil ;
+	public RedisUtil redisUtil;
 
 	@RequestMapping(value = "/push")
-	public void demoTest(){
-		redisUtil.set("1","value22222");
-		redisUtil.lPush("duilie","111");
-		redisUtil.lPush("duilie","222");
-		redisUtil.lPush("duilie","333");
+	public void demoTest() {
+		redisUtil.set("1", "value22222");
+		redisUtil.lPush("duilie", "111");
+		redisUtil.lPush("duilie", "222");
+		redisUtil.lPush("duilie", "333");
 	}
 
 
 	@RequestMapping(value = "/pop")
-	public void pop(){
+	public void pop() {
 		Object duilie = redisUtil.rPop("duilie");
 		Object duilie1 = redisUtil.rPop("duilie");
 		Object duilie2 = redisUtil.rPop("duilie");
@@ -52,29 +52,31 @@ public class TestController {
 		LOGGER.info("aaaaaaaaaaaaaaaaaaainfoinfoinfotest1111123434");
 		LOGGER.error("aaaaaaaaaaaaaaaaerrorerrorerrortest1111123434");
 		LOGGER.warn("aaaaaaaaaaaaaawarnwarnwarntest1warnwarn111123434");
-//		SmppSession session0 = ClientInit.session0;
-//		if (session0 == null) {
-//			session0 = ClientInit.clientBootstrap.bind(ClientInit.config0, ClientInit.sessionHandler);
-//		}
-//
-//		String text160 = "\u20AC Lorem [ipsum] dolor sit amet, consectetur adipiscing elit. Proin feugiat, leo id commodo tincidunt, nibh diam ornare est, vitae accumsan risus lacus sed sem metus.";
-//		byte[] textBytes = CharsetUtil.encode(text160, CharsetUtil.CHARSET_GSM);
-//		SubmitSm submit0 = new SubmitSm();
-//
-//		submit0.setSourceAddress(new Address((byte) 0x03, (byte) 0x00, "40404"));
-//		submit0.setDestAddress(new Address((byte) 0x01, (byte) 0x01, "44555519205"));
-//		try{
-//			submit0.setShortMessage(textBytes);
-//			SubmitSmResp submitResp = session0.submit(submit0, 10000);
-//		}catch (Exception e){
-//
-//		}
+		Map<SessionKey, SmppSession> sessionMap = ClientInit.sessionMap;
+		SmppSession session0 = null;
+		if (sessionMap != null && sessionMap.size() > 0) {
+			session0 = sessionMap.get(new SessionKey(StaticValue.SYSTEMID_MK_1, "7774"));
+		}
+
+
+		String text160 = "\u20AC Lorem [ipsum] dolor sit amet, consectetur adipiscing elit. Proin feugiat, leo id commodo tincidunt, nibh diam ornare est, vitae accumsan risus lacus sed sem metus.";
+		byte[] textBytes = CharsetUtil.encode(text160, CharsetUtil.CHARSET_GSM);
+		SubmitSm submit0 = new SubmitSm();
+
+		submit0.setSourceAddress(new Address((byte) 0x03, (byte) 0x00, "40404"));
+		submit0.setDestAddress(new Address((byte) 0x01, (byte) 0x01, "44555519205"));
+		try {
+			submit0.setShortMessage(textBytes);
+			SubmitSmResp submitResp = session0.submit(submit0, 10000);
+		} catch (Exception e) {
+
+		}
+		session0.unbind(10000);
+		session0.destroy();
 
 
 		return "test111";
 	}
-
-
 
 
 	@CrossOrigin
