@@ -4,6 +4,7 @@ import com.hz.smsgate.base.constants.SmppServerConstants;
 import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
+import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
@@ -58,6 +59,14 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 
 						//获取客户端session
 						SmppSession session0 = PduUtils.getSmppSession(submitSm);
+
+						if (session0 == null) {
+							String sendId = submitSm.getSourceAddress().getAddress();
+							String mbl = submitSm.getDestAddress().getAddress();
+							LOGGER.error("systemid({}),senderid({}),mbl（{}）获取客户端连接异常，丢弃该下行", submitSm.getSystemId(), sendId, mbl);
+							continue;
+						}
+
 						SubmitSmResp submitResp = session0.submit(submitSm, 15000);
 						String messageId = submitResp.getMessageId();
 
@@ -110,16 +119,23 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 	 */
 	public void putSelfQueue(SubmitSm submitSm) {
 		try {
+			if (submitSm.getSourceAddress() == null) {
+				LOGGER.error("{} 长短信 下行对象为空，将发送失败的非opt短信放入到营销中异常", Thread.currentThread().getName());
+				return;
+			}
 			String senderId = submitSm.getSourceAddress().getAddress();
-			if (!StaticValue.CHANNEL_OPT_LIST.contains(senderId)) {
+			SessionKey sessionKey = new SessionKey(submitSm.getSystemId(), senderId);
+			if (!StaticValue.CHANNEL_OPT_LIST.contains(sessionKey)) {
 				submitSm.removeSequenceNumber();
 				submitSm.calculateAndSetCommandLength();
 				longRealMtSendRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_LONG_SUBMIT_SM_YX, submitSm);
-				LOGGER.info("{} 将发送失败的非opt短信放入到营销中", Thread.currentThread().getName(), submitSm.toString());
+				LOGGER.info("{} 长短信 将发送失败的非opt短信放入到营销中", Thread.currentThread().getName(), submitSm.toString());
 				Thread.sleep(500);
+			} else {
+				LOGGER.error("systemid({}),senderid({}) 为OPT短信，丢弃该下行{}", sessionKey.getSystemId(), sessionKey.getSenderId(), submitSm.toString());
 			}
 		} catch (Exception e) {
-			LOGGER.error("{} 将发送失败的非opt短信放入到营销中异常", Thread.currentThread().getName(), e);
+			LOGGER.error("{} 长短信 将发送失败的非opt短信放入到营销中异常", Thread.currentThread().getName(), e);
 		}
 	}
 

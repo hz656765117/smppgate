@@ -7,6 +7,7 @@ import com.hz.smsgate.base.smpp.exception.RecoverablePduException;
 import com.hz.smsgate.base.smpp.exception.UnrecoverablePduException;
 import com.hz.smsgate.base.smpp.pdu.*;
 import com.hz.smsgate.base.smpp.pojo.PduAsyncResponse;
+import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.utils.PduUtil;
 import com.hz.smsgate.base.utils.RedisUtil;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.lang.ref.WeakReference;
 import java.math.BigInteger;
-
 
 
 /**
@@ -78,7 +78,6 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 		PduResponse response = pduRequest.createResponse();
 
 
-
 		// mimic how long processing could take on a slower smsc
 		try {
 			if (pduRequest.isRequest()) {
@@ -95,7 +94,6 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 						systemId = session.getConfiguration().getSystemId();
 						submitSm.setSystemId(systemId);
 					}
-
 
 
 					byte[] shortMessage = submitSm.getShortMessage();
@@ -165,23 +163,24 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 	 */
 	public void putSelfQueue(SubmitSm submitSm, int type) {
 		String senderId = submitSm.getSourceAddress().getAddress();
+		SessionKey sessionKey = new SessionKey(submitSm.getSystemId(), senderId);
 
 		//营销
-		if (StaticValue.CHANNEL_YX_LIST.contains(senderId)) {
+		if (StaticValue.CHANNEL_YX_LIST.contains(sessionKey)) {
 			if (type == 1) {
 				serverSmppSessionRedisHandler.redisUtil.lPush(SmppServerConstants.WEB_LONG_SUBMIT_SM_YX, submitSm);
 			} else {
 				serverSmppSessionRedisHandler.redisUtil.lPush(SmppServerConstants.WEB_SUBMIT_SM_YX, submitSm);
 			}
 			//通知
-		} else if (StaticValue.CHANNEL_TZ_LIST.contains(senderId)) {
+		} else if (StaticValue.CHANNEL_TZ_LIST.contains(sessionKey)) {
 			if (type == 1) {
 				serverSmppSessionRedisHandler.redisUtil.lPush(SmppServerConstants.WEB_LONG_SUBMIT_SM_TZ, submitSm);
 			} else {
 				serverSmppSessionRedisHandler.redisUtil.lPush(SmppServerConstants.WEB_SUBMIT_SM_TZ, submitSm);
 			}
 			//opt  验证码
-		} else if (StaticValue.CHANNEL_OPT_LIST.contains(senderId)) {
+		} else if (StaticValue.CHANNEL_OPT_LIST.contains(sessionKey)) {
 			if (type == 1) {
 				serverSmppSessionRedisHandler.redisUtil.lPush(SmppServerConstants.WEB_LONG_SUBMIT_SM_OPT, submitSm);
 			} else {

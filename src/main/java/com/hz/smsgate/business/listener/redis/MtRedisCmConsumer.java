@@ -128,19 +128,22 @@ public class MtRedisCmConsumer implements Runnable {
 	public void putSelfQueue(SubmitSm submitSm) {
 		try {
 			if (submitSm.getSourceAddress() == null) {
-				LOGGER.error("{} 下行对象为空，将发送失败的非opt短信放入到营销中异常", Thread.currentThread().getName());
+				LOGGER.error("{} CM短短信 下行对象为空，将发送失败的非opt短信放入到营销中异常", Thread.currentThread().getName());
 				return;
 			}
 			String senderId = submitSm.getSourceAddress().getAddress();
-			if (!StaticValue.CHANNEL_OPT_LIST.contains(senderId)) {
+			SessionKey sessionKey = new SessionKey(submitSm.getSystemId(), senderId);
+			if (!StaticValue.CHANNEL_OPT_LIST.contains(sessionKey)) {
 				submitSm.removeSequenceNumber();
 				submitSm.calculateAndSetCommandLength();
 				mtRedisConsumer.redisUtil.lPush(SmppServerConstants.CM_SUBMIT_SM_YX, submitSm);
-				LOGGER.info("{} 将发送失败的非opt短信放入到营销中", Thread.currentThread().getName(), submitSm.toString());
+				LOGGER.info("{}  CM短短信 将发送失败的非opt短信放入到营销中", Thread.currentThread().getName(), submitSm.toString());
 				Thread.sleep(500);
+			} else {
+				LOGGER.error("systemid({}),senderid({}) 为OPT短信，丢弃该下行{}", sessionKey.getSystemId(), sessionKey.getSenderId(), submitSm.toString());
 			}
 		} catch (Exception e) {
-			LOGGER.error("{} 将发送失败的非opt短信放入到营销中异常", Thread.currentThread().getName(), e);
+			LOGGER.error("{}  CM短短信 将发送失败的非opt短信放入到营销中异常", Thread.currentThread().getName(), e);
 		}
 	}
 
