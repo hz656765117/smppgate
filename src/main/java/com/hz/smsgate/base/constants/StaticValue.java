@@ -151,7 +151,7 @@ public class StaticValue {
 		CHANNL_REL.put(CHANNEL_MK_6, new SessionKey(SYSTEMID_MK_1, "Tantan"));
 		CHANNL_REL.put(CHANNEL_MK_10, new SessionKey(SYSTEMID_MK_1, "Haaloo"));
 
-		CHANNL_REL.put(CHANNEL_MK_3, new SessionKey(SYSTEMID_MK_2, "etracker"));
+		CHANNL_REL.put(CHANNEL_MK_3, new SessionKey(SYSTEMID_MK_2, "ETRACKER"));
 		CHANNL_REL.put(CHANNEL_MK_7, new SessionKey(SYSTEMID_MK_2, "Tantan"));
 
 		CHANNL_REL.put(CHANNEL_MK_4, new SessionKey(SYSTEMID_MK_3, "etracker"));

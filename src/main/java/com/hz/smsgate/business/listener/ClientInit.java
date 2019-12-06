@@ -129,14 +129,6 @@ public class ClientInit {
 
 
 	private static void initMutiThread() {
-
-//		try {
-//			Thread.sleep(15000);
-//		} catch (Exception e) {
-//			logger.error("{}-线程初始化前休眠异常异常", Thread.currentThread().getName(), e);
-//		}
-
-
 		RptConsumer rptConsumer = new RptConsumer();
 		MtConsumer mtConsumer = new MtConsumer();
 		RptRedisConsumer rptRedisConsumer = new RptRedisConsumer();
@@ -173,7 +165,7 @@ public class ClientInit {
 		ThreadPoolHelper.executeTask(syncSubmitConsumer);
 
 
-		for (int i = 0; i <= 1; i++) {
+		for (int i = 0; i <= 2; i++) {
 			//CM 短信发送线程
 			ThreadPoolHelper.executeTask(mtRedisCmConsumer);
 		}
@@ -213,7 +205,6 @@ public class ClientInit {
 			for (int i = 0; i <= 1; i++) {
 				ThreadPoolHelper.executeTask(rptRedisConsumer);
 			}
-
 
 
 		} else {
