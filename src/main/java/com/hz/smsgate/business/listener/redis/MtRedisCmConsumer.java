@@ -215,6 +215,7 @@ public class MtRedisCmConsumer implements Runnable {
 				LOGGER.info("{}  CM短短信 将发送失败的非opt短信放入到营销中", Thread.currentThread().getName(), submitSm.toString());
 				Thread.sleep(500);
 			} else {
+				mtRedisConsumer.redisUtil.hmRemove(SmppServerConstants.CM_MSGID_CACHE, submitSm.getTempMsgId());
 				LOGGER.error("systemid({}),senderid({}) 为OPT短信，丢弃该下行{}", sessionKey.getSystemId(), sessionKey.getSenderId(), submitSm.toString());
 			}
 		} catch (Exception e) {
