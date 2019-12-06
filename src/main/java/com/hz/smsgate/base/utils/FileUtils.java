@@ -80,7 +80,7 @@ public class FileUtils {
 					if (split1 != null && split1.length > 0) {
 						for (int j = 0; j < split1.length; j++) {
 							SmppSessionConfiguration config0 = new SmppSessionConfiguration();
-							config0.setWindowSize(16);
+							config0.setWindowSize(32);
 							config0.setConnectTimeout(10000);
 							config0.setRequestExpiryTimeout(30000);
 							config0.setWindowMonitorInterval(15000);
