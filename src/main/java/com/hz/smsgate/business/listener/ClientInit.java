@@ -3,7 +3,9 @@ package com.hz.smsgate.business.listener;
 import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.constants.SystemGlobals;
 import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
+import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
+import com.hz.smsgate.base.smpp.pojo.SmppBindType;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.FileUtils;
 import com.hz.smsgate.base.utils.PropertiesLoader;
@@ -17,9 +19,12 @@ import com.hz.smsgate.business.listener.redis.tz.LongTzMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.tz.LongTzMtSplitRedisConsumer;
 import com.hz.smsgate.business.listener.redis.yx.LongYxMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.yx.LongYxMtSplitRedisConsumer;
+import com.hz.smsgate.business.pojo.Operator;
+import com.hz.smsgate.business.service.SmppService;
 import com.hz.smsgate.business.smpp.handler.Client1SmppSessionHandler;
 import com.hz.smsgate.business.smpp.handler.DefaultSmppSessionHandler;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppClient;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +51,11 @@ public class ClientInit {
 	public RedisUtil redisUtil;
 
 	public static ClientInit clientInit;
+
+
+	@Autowired
+	private SmppService smppService;
+
 
 
 	public static Map<SessionKey, SmppSession> sessionMap = null;
@@ -107,7 +117,7 @@ public class ClientInit {
 	}
 
 
-	public static void initConfigs() {
+	public   void initConfigs() {
 		try {
 
 			//移除原有的配置
@@ -126,6 +136,61 @@ public class ClientInit {
 
 
 	}
+
+
+
+
+//	public   Map<SessionKey, SmppSessionConfiguration> getConfigs(String fileName) {
+//		List<Operator> allOperator = smppService.getAllOperator();
+//
+//		Map<SessionKey, SmppSessionConfiguration> configMap = new LinkedHashMap<>(strings.size());
+//		for (int i = 0; i < strings.size(); i++) {
+//			String str = strings.get(i);
+//			if (StringUtils.isBlank(str)) {
+//				continue;
+//			}
+//			String[] split = str.split("\\|");
+//			try {
+//				if (split != null && split.length > 0) {
+//					String channels = split[4].trim();
+//					String[] split1 = channels.split(",");
+//
+//					if (split1 != null && split1.length > 0) {
+//						for (int j = 0; j < split1.length; j++) {
+//							SmppSessionConfiguration config0 = new SmppSessionConfiguration();
+//							config0.setWindowSize(32);
+//							config0.setConnectTimeout(10000);
+//							config0.setRequestExpiryTimeout(30000);
+//							config0.setWindowMonitorInterval(15000);
+//							config0.setCountersEnabled(true);
+//							config0.getLoggingOptions().setLogBytes(true);
+//							config0.setType(SmppBindType.TRANSCEIVER);
+//							config0.setName("Tester.Session." + i);
+//							config0.setHost(split[0].trim());
+//							config0.setPort(Integer.parseInt(split[1].trim()));
+//							config0.setSystemId(split[2].trim());
+//							config0.setPassword(split[3].trim());
+//
+//							String channel = split1[j];
+//							config0.setAddressRange(new Address((byte) 0, (byte) 0, channel));
+//
+//							SessionKey sessionKey = new SessionKey();
+//							sessionKey.setSenderId(config0.getAddressRange().getAddress());
+//							sessionKey.setSystemId(config0.getSystemId());
+//							configMap.put(sessionKey, config0);
+//						}
+//					}
+//
+//				}
+//			} catch (Exception e) {
+//				logger.error("客户端配置对象组装异常！,过滤该配置", e);
+//				continue;
+//			}
+//
+//		}
+//		return configMap;
+//	}
+
 
 
 	private static void initMutiThread() {

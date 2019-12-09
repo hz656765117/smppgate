@@ -124,7 +124,7 @@ public class TestController {
 		strings.add(resource);
 		boolean b = FileUtils.writerTxt(strings, StaticValue.RESOURCE_HOME);
 		String[] split = resource.split("\\|");
-		openClientConnect(split[4]);
+//		openClientConnect(split[4]);
 		return b + "";
 	}
 
@@ -141,7 +141,7 @@ public class TestController {
 		closeClientConnect(split1[4]);
 
 		String[] split2 = resource.split("\\|");
-		openClientConnect(split2[4]);
+//		openClientConnect(split2[4]);
 		return b + "";
 	}
 
@@ -174,13 +174,13 @@ public class TestController {
 		ClientInit.sessionMap.remove(key);
 	}
 
-	public void openClientConnect(String key) {
-		LOGGER.info("打开客户端连接，key={}", key);
-		ClientInit.initConfigs();
-		SmppSessionConfiguration config = ClientInit.configMap.get(key);
-		ClientInit.createClient(config);
-
-	}
+//	public void openClientConnect(String key) {
+//		LOGGER.info("打开客户端连接，key={}", key);
+//		ClientInit.initConfigs();
+//		SmppSessionConfiguration config = ClientInit.configMap.get(key);
+//		ClientInit.createClient(config);
+//
+//	}
 
 
 	@RequestMapping("/login")
