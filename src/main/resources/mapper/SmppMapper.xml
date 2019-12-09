@@ -69,6 +69,7 @@
         <result column="desc" jdbcType="VARCHAR" property="desc" />
         <result column="channel" jdbcType="VARCHAR" property="channel" />
         <result column="senderid" jdbcType="VARCHAR" property="senderid" />
+        <result column="type" jdbcType="INTEGER" property="type" />
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     </resultMap>

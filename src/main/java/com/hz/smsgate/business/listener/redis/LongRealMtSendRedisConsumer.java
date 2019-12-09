@@ -8,6 +8,7 @@ import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
+import com.hz.smsgate.business.listener.ClientInit;
 import com.hz.smsgate.business.listener.je.RptConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,7 +126,7 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 			}
 			String senderId = submitSm.getSourceAddress().getAddress();
 			SessionKey sessionKey = new SessionKey(submitSm.getSystemId(), senderId);
-			if (!StaticValue.CHANNEL_OPT_LIST.contains(sessionKey)) {
+			if (!ClientInit.CHANNEL_OPT_LIST.contains(sessionKey)) {
 				submitSm.removeSequenceNumber();
 				submitSm.calculateAndSetCommandLength();
 				longRealMtSendRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_LONG_SUBMIT_SM_YX, submitSm);

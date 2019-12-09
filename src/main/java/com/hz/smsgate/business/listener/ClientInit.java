@@ -7,19 +7,21 @@ import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppBindType;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
-import com.hz.smsgate.base.utils.FileUtils;
 import com.hz.smsgate.base.utils.PropertiesLoader;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.base.utils.ThreadPoolHelper;
 import com.hz.smsgate.business.listener.je.*;
-import com.hz.smsgate.business.listener.redis.*;
+import com.hz.smsgate.business.listener.redis.LongRealMtSendRedisConsumer;
+import com.hz.smsgate.business.listener.redis.MtRedisCmConsumer;
+import com.hz.smsgate.business.listener.redis.MtRedisConsumer;
+import com.hz.smsgate.business.listener.redis.RptRedisConsumer;
 import com.hz.smsgate.business.listener.redis.opt.LongOptMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.opt.LongOptMtSplitRedisConsumer;
 import com.hz.smsgate.business.listener.redis.tz.LongTzMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.tz.LongTzMtSplitRedisConsumer;
 import com.hz.smsgate.business.listener.redis.yx.LongYxMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.yx.LongYxMtSplitRedisConsumer;
-import com.hz.smsgate.business.pojo.Operator;
+import com.hz.smsgate.business.pojo.Channel;
 import com.hz.smsgate.business.pojo.OperatorVo;
 import com.hz.smsgate.business.service.SmppService;
 import com.hz.smsgate.business.smpp.handler.Client1SmppSessionHandler;
@@ -67,6 +69,23 @@ public class ClientInit {
 	public static Map<String, DefaultSmppSessionHandler> sessionHandlerMap = null;
 
 
+	public static Map<String, SessionKey> CHANNL_REL = new LinkedHashMap<>();
+
+
+	/**
+	 * opt通道
+	 */
+	public static List<SessionKey> CHANNEL_OPT_LIST = new ArrayList<>();
+	/**
+	 * 营销通道
+	 */
+	public static List<SessionKey> CHANNEL_YX_LIST = new ArrayList<>();
+	/**
+	 * 通知通道
+	 */
+	public static List<SessionKey> CHANNEL_TZ_LIST = new ArrayList<>();
+
+
 	@PostConstruct
 	public void postConstruct() {
 
@@ -82,6 +101,10 @@ public class ClientInit {
 		clientBootstrapMap = new LinkedHashMap<>();
 		sessionHandlerMap = new LinkedHashMap<>();
 
+
+		initChannels();
+
+		initYxj();
 
 		//初始化客户端配置
 		initClientConfigs();
@@ -134,6 +157,42 @@ public class ClientInit {
 
 		//新增配置
 		clientInit.redisUtil.hmPutAll("configMap", ClientInit.configMap);
+
+
+	}
+
+
+	public void initChannels() {
+
+		Map<String, SessionKey> map = new LinkedHashMap<>();
+
+		List<OperatorVo> allOperator = smppService.getAllOperator();
+		for (OperatorVo operatorVo : allOperator) {
+			SessionKey sessionKey = new SessionKey();
+			sessionKey.setSenderId(operatorVo.getSenderid());
+			sessionKey.setSystemId(operatorVo.getSystemid());
+			map.put(operatorVo.getChannel(), sessionKey);
+		}
+
+		CHANNL_REL = map;
+	}
+
+	public void initYxj() {
+
+		List<OperatorVo> allOperator = smppService.getAllOperator();
+		for (OperatorVo operatorVo : allOperator) {
+			SessionKey sessionKey = new SessionKey(operatorVo.getSystemid(),operatorVo.getChannel());
+			if (0 == operatorVo.getType()) {
+				CHANNEL_OPT_LIST.add(sessionKey);
+				CHANNEL_OPT_LIST.add(ClientInit.CHANNL_REL.get(operatorVo.getChannel()));
+			}else if (1== operatorVo.getType()){
+				CHANNEL_TZ_LIST.add(sessionKey);
+				CHANNEL_TZ_LIST.add(ClientInit.CHANNL_REL.get(operatorVo.getChannel()));
+			}else {
+				CHANNEL_YX_LIST.add(sessionKey);
+				CHANNEL_YX_LIST.add(ClientInit.CHANNL_REL.get(operatorVo.getChannel()));
+			}
+		}
 
 
 	}

@@ -38,7 +38,7 @@ public class PduUtils {
 	 */
 	public static SubmitSm removeZero(SubmitSm sm) {
 		String channel = sm.getSourceAddress().getAddress();
-		if (channel.equals(StaticValue.CHANNL_REL.get(StaticValue.CHANNEL_1).getSenderId()) || channel.equals(StaticValue.CHANNEL_1) || StaticValue.CHANNEL_MK_LIST.contains(channel)) {
+		if (channel.equals(ClientInit.CHANNL_REL.get(StaticValue.CHANNEL_1).getSenderId()) || channel.equals(StaticValue.CHANNEL_1) || StaticValue.CHANNEL_MK_LIST.contains(channel)) {
 			Address destAddress = sm.getDestAddress();
 			if (destAddress.getAddress().startsWith("00")) {
 				String address = destAddress.getAddress().substring(2);
@@ -201,7 +201,7 @@ public class PduUtils {
 	}
 
 	public static String getKey(String systemId, String sendId) {
-		Map<String, SessionKey> channlRel = StaticValue.CHANNL_REL;
+		Map<String, SessionKey> channlRel = ClientInit.CHANNL_REL;
 		SessionKey sessionKey = new SessionKey(systemId, sendId);
 		for (Map.Entry<String, SessionKey> entry : channlRel.entrySet()) {
 			if (sessionKey.equals(entry.getValue())) {
@@ -219,7 +219,7 @@ public class PduUtils {
 			return gwChannel;
 		}
 		SessionKey sessionKey = new SessionKey(systemId, gwChannel);
-		for (Map.Entry<String, SessionKey> entry : StaticValue.CHANNL_REL.entrySet()) {
+		for (Map.Entry<String, SessionKey> entry : ClientInit.CHANNL_REL.entrySet()) {
 			if (sessionKey.equals(entry.getValue())) {
 				return entry.getKey();
 			}

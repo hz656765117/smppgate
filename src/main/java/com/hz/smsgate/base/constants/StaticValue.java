@@ -4,6 +4,7 @@ package com.hz.smsgate.base.constants;
 import com.hz.smsgate.base.emp.pojo.WGParams;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.utils.FileUtils;
+import com.hz.smsgate.business.listener.ClientInit;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -86,18 +87,18 @@ public class StaticValue {
 	public static List<String> CHANNEL_MK_LIST = new ArrayList<>();
 
 
-	/**
-	 * opt通道
-	 */
-	public static List<SessionKey> CHANNEL_OPT_LIST = new ArrayList<>();
-	/**
-	 * 营销通道
-	 */
-	public static List<SessionKey> CHANNEL_YX_LIST = new ArrayList<>();
-	/**
-	 * 通知通道
-	 */
-	public static List<SessionKey> CHANNEL_TZ_LIST = new ArrayList<>();
+//	/**
+//	 * opt通道
+//	 */
+//	public static List<SessionKey> CHANNEL_OPT_LIST = new ArrayList<>();
+//	/**
+//	 * 营销通道
+//	 */
+//	public static List<SessionKey> CHANNEL_YX_LIST = new ArrayList<>();
+//	/**
+//	 * 通知通道
+//	 */
+//	public static List<SessionKey> CHANNEL_TZ_LIST = new ArrayList<>();
 
 	//马来西亚区号
 	public static String AREA_CODE_MALAYSIA = "60";
@@ -108,7 +109,7 @@ public class StaticValue {
 	//菲律宾
 	public static String AREA_CODE_PHILIPPINES = "63";
 
-	public static Map<String, SessionKey> CHANNL_REL = null;
+//	public static Map<String, SessionKey> CHANNL_REL = null;
 
 	public static Map<SessionKey, WGParams> CHANNL_SP_REL = null;
 
@@ -130,122 +131,122 @@ public class StaticValue {
 
 		ENQUIRE_LINK_TIME = SystemGlobals.getIntValue("enquire.link.time", 20000);
 
-		CHANNL_REL = new LinkedHashMap<>();
+//		CHANNL_REL = new LinkedHashMap<>();
 
-		CHANNL_REL.put(CHANNEL_CM_1, new SessionKey(SYSTEMID_CM_1, "CMK"));
-		CHANNL_REL.put(CHANNEL_CM_2, new SessionKey(SYSTEMID_CM_1, "HAALOO"));
-		CHANNL_REL.put(CHANNEL_CM_3, new SessionKey(SYSTEMID_CM_1, "HALLOO"));
-		CHANNL_REL.put(CHANNEL_CM_4, new SessionKey(SYSTEMID_CM_1, "FINLNX"));
-		CHANNL_REL.put(CHANNEL_CM_5, new SessionKey(SYSTEMID_CM_1, "INLINX"));
-		CHANNL_REL.put(CHANNEL_CM_6, new SessionKey(SYSTEMID_CM_1, "CASHTP"));
-		CHANNL_REL.put(CHANNEL_CM_7, new SessionKey(SYSTEMID_CM_1, "MONEYB"));
-		CHANNL_REL.put(CHANNEL_CM_10, new SessionKey(SYSTEMID_CM_1, "RUPEEP"));
-		CHANNL_REL.put(CHANNEL_CM_12, new SessionKey(SYSTEMID_CM_1, "MNYMKT"));
-
-		CHANNL_REL.put(CHANNEL_CM_8, new SessionKey(SYSTEMID_CM_2, "CASHTP"));
-		CHANNL_REL.put(CHANNEL_CM_9, new SessionKey(SYSTEMID_CM_2, "MONEYB"));
-		CHANNL_REL.put(CHANNEL_CM_11, new SessionKey(SYSTEMID_CM_2, "RUPEEP"));
-		CHANNL_REL.put(CHANNEL_CM_13, new SessionKey(SYSTEMID_CM_2, "MNYMKT"));
-
-		CHANNL_REL.put(CHANNEL_1, new SessionKey("INFIPRO", "BYTDNC"));
-
-
-		CHANNL_REL.put(CHANNEL_MK_2, new SessionKey(SYSTEMID_MK_1, "etracker"));
-		CHANNL_REL.put(CHANNEL_MK_6, new SessionKey(SYSTEMID_MK_1, "Tantan"));
-		CHANNL_REL.put(CHANNEL_MK_10, new SessionKey(SYSTEMID_MK_1, "Haaloo"));
-
-		CHANNL_REL.put(CHANNEL_MK_3, new SessionKey(SYSTEMID_MK_2, "ETRACKER"));
-		CHANNL_REL.put(CHANNEL_MK_7, new SessionKey(SYSTEMID_MK_2, "Tantan"));
-
-		CHANNL_REL.put(CHANNEL_MK_4, new SessionKey(SYSTEMID_MK_3, "etracker"));
-		CHANNL_REL.put(CHANNEL_MK_8, new SessionKey(SYSTEMID_MK_3, "Tantan"));
-		CHANNL_REL.put(CHANNEL_MK_11, new SessionKey(SYSTEMID_MK_3, "Haaloo"));
-
-		CHANNL_REL.put(CHANNEL_MK_5, new SessionKey(SYSTEMID_MK_4, "etracker"));
-		CHANNL_REL.put(CHANNEL_MK_9, new SessionKey(SYSTEMID_MK_4, "Tantan"));
-
-		CHANNL_REL.put(CHANNEL_MK_12, new SessionKey(SYSTEMID_MK_5, "etracker"));
-		CHANNL_REL.put(CHANNEL_MK_13, new SessionKey(SYSTEMID_MK_5, "Tantan"));
-		CHANNL_REL.put(CHANNEL_MK_14, new SessionKey(SYSTEMID_MK_5, "Haaloo"));
-
-
-		CHANNL_REL.put(CHANNEL_YN_1, new SessionKey(SYSTEMID_ALEX, "Alex"));
+//		CHANNL_REL.put(CHANNEL_CM_1, new SessionKey(SYSTEMID_CM_1, "CMK"));
+//		CHANNL_REL.put(CHANNEL_CM_2, new SessionKey(SYSTEMID_CM_1, "HAALOO"));
+//		CHANNL_REL.put(CHANNEL_CM_3, new SessionKey(SYSTEMID_CM_1, "HALLOO"));
+//		CHANNL_REL.put(CHANNEL_CM_4, new SessionKey(SYSTEMID_CM_1, "FINLNX"));
+//		CHANNL_REL.put(CHANNEL_CM_5, new SessionKey(SYSTEMID_CM_1, "INLINX"));
+//		CHANNL_REL.put(CHANNEL_CM_6, new SessionKey(SYSTEMID_CM_1, "CASHTP"));
+//		CHANNL_REL.put(CHANNEL_CM_7, new SessionKey(SYSTEMID_CM_1, "MONEYB"));
+//		CHANNL_REL.put(CHANNEL_CM_10, new SessionKey(SYSTEMID_CM_1, "RUPEEP"));
+//		CHANNL_REL.put(CHANNEL_CM_12, new SessionKey(SYSTEMID_CM_1, "MNYMKT"));
+//
+//		CHANNL_REL.put(CHANNEL_CM_8, new SessionKey(SYSTEMID_CM_2, "CASHTP"));
+//		CHANNL_REL.put(CHANNEL_CM_9, new SessionKey(SYSTEMID_CM_2, "MONEYB"));
+//		CHANNL_REL.put(CHANNEL_CM_11, new SessionKey(SYSTEMID_CM_2, "RUPEEP"));
+//		CHANNL_REL.put(CHANNEL_CM_13, new SessionKey(SYSTEMID_CM_2, "MNYMKT"));
+//
+//		CHANNL_REL.put(CHANNEL_1, new SessionKey("INFIPRO", "BYTDNC"));
+//
+//
+//		CHANNL_REL.put(CHANNEL_MK_2, new SessionKey(SYSTEMID_MK_1, "etracker"));
+//		CHANNL_REL.put(CHANNEL_MK_6, new SessionKey(SYSTEMID_MK_1, "Tantan"));
+//		CHANNL_REL.put(CHANNEL_MK_10, new SessionKey(SYSTEMID_MK_1, "Haaloo"));
+//
+//		CHANNL_REL.put(CHANNEL_MK_3, new SessionKey(SYSTEMID_MK_2, "ETRACKER"));
+//		CHANNL_REL.put(CHANNEL_MK_7, new SessionKey(SYSTEMID_MK_2, "Tantan"));
+//
+//		CHANNL_REL.put(CHANNEL_MK_4, new SessionKey(SYSTEMID_MK_3, "etracker"));
+//		CHANNL_REL.put(CHANNEL_MK_8, new SessionKey(SYSTEMID_MK_3, "Tantan"));
+//		CHANNL_REL.put(CHANNEL_MK_11, new SessionKey(SYSTEMID_MK_3, "Haaloo"));
+//
+//		CHANNL_REL.put(CHANNEL_MK_5, new SessionKey(SYSTEMID_MK_4, "etracker"));
+//		CHANNL_REL.put(CHANNEL_MK_9, new SessionKey(SYSTEMID_MK_4, "Tantan"));
+//
+//		CHANNL_REL.put(CHANNEL_MK_12, new SessionKey(SYSTEMID_MK_5, "etracker"));
+//		CHANNL_REL.put(CHANNEL_MK_13, new SessionKey(SYSTEMID_MK_5, "Tantan"));
+//		CHANNL_REL.put(CHANNEL_MK_14, new SessionKey(SYSTEMID_MK_5, "Haaloo"));
+//
+//
+//		CHANNL_REL.put(CHANNEL_YN_1, new SessionKey(SYSTEMID_ALEX, "Alex"));
 
 
 		CHANNEL_MK_LIST.add(CHANNEL_MK_1);
 
 		CHANNEL_MK_LIST.add(CHANNEL_MK_2);
-		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_2).getSenderId());
+		CHANNEL_MK_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_2).getSenderId());
 
 		CHANNEL_MK_LIST.add(CHANNEL_MK_3);
-		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_3).getSenderId());
+		CHANNEL_MK_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_3).getSenderId());
 
 		CHANNEL_MK_LIST.add(CHANNEL_MK_4);
-		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_4).getSenderId());
+		CHANNEL_MK_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_4).getSenderId());
 
 		CHANNEL_MK_LIST.add(CHANNEL_MK_5);
-		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_5).getSenderId());
+		CHANNEL_MK_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_5).getSenderId());
 
 
 		CHANNEL_MK_LIST.add(CHANNEL_MK_6);
-		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_6).getSenderId());
+		CHANNEL_MK_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_6).getSenderId());
 
 		CHANNEL_MK_LIST.add(CHANNEL_MK_7);
-		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_7).getSenderId());
+		CHANNEL_MK_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_7).getSenderId());
 
 		CHANNEL_MK_LIST.add(CHANNEL_MK_8);
-		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_8).getSenderId());
+		CHANNEL_MK_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_8).getSenderId());
 
 		CHANNEL_MK_LIST.add(CHANNEL_MK_9);
-		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_9).getSenderId());
+		CHANNEL_MK_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_9).getSenderId());
 
 		CHANNEL_MK_LIST.add(CHANNEL_MK_10);
-		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_10).getSenderId());
+		CHANNEL_MK_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_10).getSenderId());
 
 		CHANNEL_MK_LIST.add(CHANNEL_MK_11);
-		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_11).getSenderId());
+		CHANNEL_MK_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_11).getSenderId());
 
 
-		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_1));
-		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_1));
-		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_2));
-		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_2));
-		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_3));
-		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_3));
-		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_4));
-		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_4));
-		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_5));
-		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_5));
-		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_6));
-		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_6));
-		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_7));
-		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_7));
-		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_8));
-		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_8));
-		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_9));
-		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_9));
-		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_10));
-		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_10));
-		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_12));
-		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_12));
-
-		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_MK_1, CHANNEL_MK_2));
-		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_MK_2));
-		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_MK_2, CHANNEL_MK_3));
-		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_MK_3));
-		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_MK_1, CHANNEL_MK_6));
-		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_MK_6));
-		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_MK_2, CHANNEL_MK_7));
-		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_MK_7));
-		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_MK_1, CHANNEL_MK_10));
-		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_MK_10));
-
-
-		CHANNEL_YX_LIST.add(new SessionKey(SYSTEMID_SA, CHANNEL_YN_2));
-
-
-		CHANNEL_TZ_LIST.add(new SessionKey(SYSTEMID_ALEX, CHANNEL_YN_1));
-		CHANNEL_TZ_LIST.add(CHANNL_REL.get(CHANNEL_YN_1));
+//		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_1));
+//		CHANNEL_OPT_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_CM_1));
+//		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_2));
+//		CHANNEL_OPT_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_CM_2));
+//		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_3));
+//		CHANNEL_OPT_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_CM_3));
+//		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_4));
+//		CHANNEL_OPT_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_CM_4));
+//		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_5));
+//		CHANNEL_OPT_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_CM_5));
+//		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_6));
+//		CHANNEL_OPT_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_CM_6));
+//		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_7));
+//		CHANNEL_OPT_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_CM_7));
+//		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_8));
+//		CHANNEL_OPT_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_CM_8));
+//		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_9));
+//		CHANNEL_OPT_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_CM_9));
+//		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_10));
+//		CHANNEL_OPT_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_CM_10));
+//		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_12));
+//		CHANNEL_OPT_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_CM_12));
+//
+//		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_MK_1, CHANNEL_MK_2));
+//		CHANNEL_OPT_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_2));
+//		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_MK_2, CHANNEL_MK_3));
+//		CHANNEL_OPT_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_3));
+//		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_MK_1, CHANNEL_MK_6));
+//		CHANNEL_OPT_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_6));
+//		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_MK_2, CHANNEL_MK_7));
+//		CHANNEL_OPT_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_7));
+//		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_MK_1, CHANNEL_MK_10));
+//		CHANNEL_OPT_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_10));
+//
+//
+//		CHANNEL_YX_LIST.add(new SessionKey(SYSTEMID_SA, CHANNEL_YN_2));
+//
+//
+//		CHANNEL_TZ_LIST.add(new SessionKey(SYSTEMID_ALEX, CHANNEL_YN_1));
+//		CHANNEL_TZ_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_YN_1));
 
 
 		CHANNL_SP_REL = new LinkedHashMap<>();

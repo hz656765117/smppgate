@@ -79,6 +79,12 @@ public class OperatorVo implements Serializable {
 	private String senderid;
 
 	/**
+	 * INTEGER(10)<br>
+	 * 通道类型 0 opt  1 通知   2 营销
+	 */
+	private Integer type;
+
+	/**
 	 * INTEGER(10) 必填<br>
 	 * 获得 主键id
 	 */
@@ -254,4 +260,12 @@ public class OperatorVo implements Serializable {
 		this.senderid = senderid;
 	}
 
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
 }

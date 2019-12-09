@@ -26,6 +26,7 @@ import com.hz.smsgate.base.smpp.constants.SmppConstants;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
+import com.hz.smsgate.business.listener.ClientInit;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -76,7 +77,7 @@ public class PduUtil {
 	public static SubmitSm rewriteSmSourceAddress(SubmitSm sm) {
 		Address sourceAddress = sm.getSourceAddress();
 		int beforeLen = PduUtil.calculateByteSizeOfAddress(sourceAddress);
-		SessionKey sessionKey = StaticValue.CHANNL_REL.get(sourceAddress.getAddress());
+		SessionKey sessionKey = ClientInit.CHANNL_REL.get(sourceAddress.getAddress());
 		if (sessionKey == null) {
 			return sm;
 		}

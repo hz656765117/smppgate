@@ -8,6 +8,7 @@ import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
+import com.hz.smsgate.business.listener.ClientInit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,7 +120,7 @@ public class MtRedisConsumer implements Runnable {
 
 			String senderId = submitSm.getSourceAddress().getAddress();
 			SessionKey sessionKey = new SessionKey(submitSm.getSystemId(), senderId);
-			if (!StaticValue.CHANNEL_OPT_LIST.contains(sessionKey)) {
+			if (!ClientInit.CHANNEL_OPT_LIST.contains(sessionKey)) {
 				submitSm.removeSequenceNumber();
 				submitSm.calculateAndSetCommandLength();
 				mtRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_SUBMIT_SM_YX, submitSm);

@@ -32,6 +32,12 @@ public class Channel implements Serializable {
     private String senderid;
 
     /**
+     * INTEGER(10)<br>
+     * 通道类型 0 opt  1 通知   2 营销
+     */
+    private Integer type;
+
+    /**
      * TIMESTAMP(19)<br>
      * 创建时间
      */
@@ -110,6 +116,22 @@ public class Channel implements Serializable {
     }
 
     /**
+     * INTEGER(10)<br>
+     * 获得 通道类型 0 opt  1 通知   2 营销
+     */
+    public Integer getType() {
+        return type;
+    }
+
+    /**
+     * INTEGER(10)<br>
+     * 设置 通道类型 0 opt  1 通知   2 营销
+     */
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    /**
      * TIMESTAMP(19)<br>
      * 获得 创建时间
      */
@@ -151,6 +173,7 @@ public class Channel implements Serializable {
         sb.append(", name=").append(name);
         sb.append(", channel=").append(channel);
         sb.append(", senderid=").append(senderid);
+        sb.append(", type=").append(type);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
         sb.append("]");
@@ -173,6 +196,7 @@ public class Channel implements Serializable {
             && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
             && (this.getChannel() == null ? other.getChannel() == null : this.getChannel().equals(other.getChannel()))
             && (this.getSenderid() == null ? other.getSenderid() == null : this.getSenderid().equals(other.getSenderid()))
+            && (this.getType() == null ? other.getType() == null : this.getType().equals(other.getType()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()));
     }
@@ -185,6 +209,7 @@ public class Channel implements Serializable {
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
         result = prime * result + ((getChannel() == null) ? 0 : getChannel().hashCode());
         result = prime * result + ((getSenderid() == null) ? 0 : getSenderid().hashCode());
+        result = prime * result + ((getType() == null) ? 0 : getType().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
         return result;
