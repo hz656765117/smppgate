@@ -20,6 +20,7 @@ import com.hz.smsgate.business.listener.redis.tz.LongTzMtSplitRedisConsumer;
 import com.hz.smsgate.business.listener.redis.yx.LongYxMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.yx.LongYxMtSplitRedisConsumer;
 import com.hz.smsgate.business.pojo.Operator;
+import com.hz.smsgate.business.pojo.OperatorVo;
 import com.hz.smsgate.business.service.SmppService;
 import com.hz.smsgate.business.smpp.handler.Client1SmppSessionHandler;
 import com.hz.smsgate.business.smpp.handler.DefaultSmppSessionHandler;
@@ -57,7 +58,6 @@ public class ClientInit {
 	private SmppService smppService;
 
 
-
 	public static Map<SessionKey, SmppSession> sessionMap = null;
 
 	public static Map<SessionKey, SmppSessionConfiguration> configMap = null;
@@ -84,7 +84,7 @@ public class ClientInit {
 
 
 		//初始化客户端配置
-		initConfigs();
+		initClientConfigs();
 
 		Map<String, SmppSession> existSystemId1s = new LinkedHashMap<>();
 		//启动客户端
@@ -117,7 +117,7 @@ public class ClientInit {
 	}
 
 
-	public   void initConfigs() {
+	public void initClientConfigs() {
 		try {
 
 			//移除原有的配置
@@ -130,7 +130,8 @@ public class ClientInit {
 			logger.error("初始化通道配置异常", e);
 		}
 
-		ClientInit.configMap = FileUtils.getConfigs(StaticValue.RESOURCE_HOME);
+		ClientInit.configMap = getConfigs();
+
 		//新增配置
 		clientInit.redisUtil.hmPutAll("configMap", ClientInit.configMap);
 
@@ -138,59 +139,46 @@ public class ClientInit {
 	}
 
 
+	public Map<SessionKey, SmppSessionConfiguration> getConfigs() {
+		List<OperatorVo> allOperator = smppService.getAllOperator();
+
+		Map<SessionKey, SmppSessionConfiguration> configMap = new LinkedHashMap<>(allOperator.size());
+		for (int i = 0; i < allOperator.size(); i++) {
+			OperatorVo operatorVo = allOperator.get(i);
+			if (StringUtils.isBlank(operatorVo.getIp())) {
+				continue;
+			}
+			try {
+				SmppSessionConfiguration config0 = new SmppSessionConfiguration();
+				config0.setWindowSize(32);
+				config0.setConnectTimeout(10000);
+				config0.setRequestExpiryTimeout(30000);
+				config0.setWindowMonitorInterval(15000);
+				config0.setCountersEnabled(true);
+				config0.getLoggingOptions().setLogBytes(true);
+				config0.setType(SmppBindType.TRANSCEIVER);
+				config0.setName("Tester.Session." + i);
+				config0.setHost(operatorVo.getIp());
+				config0.setPort(Integer.parseInt(operatorVo.getPort().trim()));
+				config0.setSystemId(operatorVo.getSystemid().trim());
+				config0.setPassword(operatorVo.getPassword().trim());
+
+				String channel = operatorVo.getSenderid();
+				config0.setAddressRange(new Address((byte) 0, (byte) 0, channel));
+
+				SessionKey sessionKey = new SessionKey();
+				sessionKey.setSenderId(config0.getAddressRange().getAddress());
+				sessionKey.setSystemId(config0.getSystemId());
+				configMap.put(sessionKey, config0);
+			} catch (Exception e) {
+				logger.error("客户端配置对象组装异常！,过滤该配置", e);
+				continue;
+			}
 
 
-//	public   Map<SessionKey, SmppSessionConfiguration> getConfigs(String fileName) {
-//		List<Operator> allOperator = smppService.getAllOperator();
-//
-//		Map<SessionKey, SmppSessionConfiguration> configMap = new LinkedHashMap<>(strings.size());
-//		for (int i = 0; i < strings.size(); i++) {
-//			String str = strings.get(i);
-//			if (StringUtils.isBlank(str)) {
-//				continue;
-//			}
-//			String[] split = str.split("\\|");
-//			try {
-//				if (split != null && split.length > 0) {
-//					String channels = split[4].trim();
-//					String[] split1 = channels.split(",");
-//
-//					if (split1 != null && split1.length > 0) {
-//						for (int j = 0; j < split1.length; j++) {
-//							SmppSessionConfiguration config0 = new SmppSessionConfiguration();
-//							config0.setWindowSize(32);
-//							config0.setConnectTimeout(10000);
-//							config0.setRequestExpiryTimeout(30000);
-//							config0.setWindowMonitorInterval(15000);
-//							config0.setCountersEnabled(true);
-//							config0.getLoggingOptions().setLogBytes(true);
-//							config0.setType(SmppBindType.TRANSCEIVER);
-//							config0.setName("Tester.Session." + i);
-//							config0.setHost(split[0].trim());
-//							config0.setPort(Integer.parseInt(split[1].trim()));
-//							config0.setSystemId(split[2].trim());
-//							config0.setPassword(split[3].trim());
-//
-//							String channel = split1[j];
-//							config0.setAddressRange(new Address((byte) 0, (byte) 0, channel));
-//
-//							SessionKey sessionKey = new SessionKey();
-//							sessionKey.setSenderId(config0.getAddressRange().getAddress());
-//							sessionKey.setSystemId(config0.getSystemId());
-//							configMap.put(sessionKey, config0);
-//						}
-//					}
-//
-//				}
-//			} catch (Exception e) {
-//				logger.error("客户端配置对象组装异常！,过滤该配置", e);
-//				continue;
-//			}
-//
-//		}
-//		return configMap;
-//	}
-
+		}
+		return configMap;
+	}
 
 
 	private static void initMutiThread() {

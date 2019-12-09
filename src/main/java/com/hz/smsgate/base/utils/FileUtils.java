@@ -63,55 +63,55 @@ public class FileUtils {
 //		getConfigs("C:/Users/Administrator.SC-201812271516/Desktop/resource.txt");
 	}
 
-	public static Map<SessionKey, SmppSessionConfiguration> getConfigs(String fileName) {
-		List<String> strings = readFileByLines(fileName);
-		Map<SessionKey, SmppSessionConfiguration> configMap = new LinkedHashMap<>(strings.size());
-		for (int i = 0; i < strings.size(); i++) {
-			String str = strings.get(i);
-			if (StringUtils.isBlank(str)) {
-				continue;
-			}
-			String[] split = str.split("\\|");
-			try {
-				if (split != null && split.length > 0) {
-					String channels = split[4].trim();
-					String[] split1 = channels.split(",");
-
-					if (split1 != null && split1.length > 0) {
-						for (int j = 0; j < split1.length; j++) {
-							SmppSessionConfiguration config0 = new SmppSessionConfiguration();
-							config0.setWindowSize(32);
-							config0.setConnectTimeout(10000);
-							config0.setRequestExpiryTimeout(30000);
-							config0.setWindowMonitorInterval(15000);
-							config0.setCountersEnabled(true);
-							config0.getLoggingOptions().setLogBytes(true);
-							config0.setType(SmppBindType.TRANSCEIVER);
-							config0.setName("Tester.Session." + i);
-							config0.setHost(split[0].trim());
-							config0.setPort(Integer.parseInt(split[1].trim()));
-							config0.setSystemId(split[2].trim());
-							config0.setPassword(split[3].trim());
-
-							String channel = split1[j];
-							config0.setAddressRange(new Address((byte) 0, (byte) 0, channel));
-
-							SessionKey sessionKey = new SessionKey();
-							sessionKey.setSenderId(config0.getAddressRange().getAddress());
-							sessionKey.setSystemId(config0.getSystemId());
-							configMap.put(sessionKey, config0);
-						}
-					}
-
-				}
-			} catch (Exception e) {
-				logger.error("客户端配置对象组装异常！,过滤该配置", e);
-				continue;
-			}
-
-		}
-		return configMap;
-	}
+//	public static Map<SessionKey, SmppSessionConfiguration> getConfigs(String fileName) {
+//		List<String> strings = readFileByLines(fileName);
+//		Map<SessionKey, SmppSessionConfiguration> configMap = new LinkedHashMap<>(strings.size());
+//		for (int i = 0; i < strings.size(); i++) {
+//			String str = strings.get(i);
+//			if (StringUtils.isBlank(str)) {
+//				continue;
+//			}
+//			String[] split = str.split("\\|");
+//			try {
+//				if (split != null && split.length > 0) {
+//					String channels = split[4].trim();
+//					String[] split1 = channels.split(",");
+//
+//					if (split1 != null && split1.length > 0) {
+//						for (int j = 0; j < split1.length; j++) {
+//							SmppSessionConfiguration config0 = new SmppSessionConfiguration();
+//							config0.setWindowSize(32);
+//							config0.setConnectTimeout(10000);
+//							config0.setRequestExpiryTimeout(30000);
+//							config0.setWindowMonitorInterval(15000);
+//							config0.setCountersEnabled(true);
+//							config0.getLoggingOptions().setLogBytes(true);
+//							config0.setType(SmppBindType.TRANSCEIVER);
+//							config0.setName("Tester.Session." + i);
+//							config0.setHost(split[0].trim());
+//							config0.setPort(Integer.parseInt(split[1].trim()));
+//							config0.setSystemId(split[2].trim());
+//							config0.setPassword(split[3].trim());
+//
+//							String channel = split1[j];
+//							config0.setAddressRange(new Address((byte) 0, (byte) 0, channel));
+//
+//							SessionKey sessionKey = new SessionKey();
+//							sessionKey.setSenderId(config0.getAddressRange().getAddress());
+//							sessionKey.setSystemId(config0.getSystemId());
+//							configMap.put(sessionKey, config0);
+//						}
+//					}
+//
+//				}
+//			} catch (Exception e) {
+//				logger.error("客户端配置对象组装异常！,过滤该配置", e);
+//				continue;
+//			}
+//
+//		}
+//		return configMap;
+//	}
 
 
 	public static Map<SessionKey, WGParams> getSpConfigs(String fileName) {

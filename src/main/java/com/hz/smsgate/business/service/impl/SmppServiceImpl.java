@@ -66,11 +66,9 @@ public class SmppServiceImpl implements SmppService {
 	}
 
 	@Override
-	public List<Operator> getAllOperator() {
-		OperatorExample example = new OperatorExample();
-		example.createCriteria().andFlagEqualTo(0);
-		List<Operator> operators = operatorMapper.selectByExample(example);
-		return operators;
+	public List<OperatorVo> getAllOperator() {
+		List<OperatorVo> operatorVos = smppMapper.selectOperator();
+		return operatorVos;
 	}
 
 
