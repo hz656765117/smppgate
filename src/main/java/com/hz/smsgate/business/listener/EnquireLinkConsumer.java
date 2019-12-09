@@ -40,14 +40,12 @@ public class EnquireLinkConsumer implements Runnable {
 						isEnquireLink.add(systemId);
 
 						SmppSession session0 = entry.getValue();
-						boolean bound = session0.isBound();
 						try {
 							LOGGER.info("-----------------------------systemId（{}）开始心跳......", systemId);
-							EnquireLinkResp enquireLinkResp = session0.enquireLink(new EnquireLink(), 10000);
+							EnquireLinkResp enquireLinkResp = session0.enquireLink(new EnquireLink(), 3000);
 							if (enquireLinkResp.getCommandStatus() != 0) {
 								reBind(session0, systemId, null, entry.getKey());
 							}
-							System.out.println(enquireLinkResp.getCommandStatus());
 						} catch (Exception e) {
 							reBind(session0, systemId, e, entry.getKey());
 						}
