@@ -42,6 +42,8 @@ public class StaticValue {
 	public static String CHANNEL_CM_9 = "8883";
 	public static String CHANNEL_CM_10 = "8884";
 	public static String CHANNEL_CM_11 = "8885";
+	public static String CHANNEL_CM_12 = "8886";
+	public static String CHANNEL_CM_13 = "8887";
 
 	public static String SYSTEMID_CM_1 = "HaloPushingLtd";
 	public static String SYSTEMID_CM_2 = "HaloMakreting";
@@ -138,11 +140,12 @@ public class StaticValue {
 		CHANNL_REL.put(CHANNEL_CM_6, new SessionKey(SYSTEMID_CM_1, "CASHTP"));
 		CHANNL_REL.put(CHANNEL_CM_7, new SessionKey(SYSTEMID_CM_1, "MONEYB"));
 		CHANNL_REL.put(CHANNEL_CM_10, new SessionKey(SYSTEMID_CM_1, "RUPEEP"));
+		CHANNL_REL.put(CHANNEL_CM_12, new SessionKey(SYSTEMID_CM_1, "MNYMKT"));
 
 		CHANNL_REL.put(CHANNEL_CM_8, new SessionKey(SYSTEMID_CM_2, "CASHTP"));
 		CHANNL_REL.put(CHANNEL_CM_9, new SessionKey(SYSTEMID_CM_2, "MONEYB"));
 		CHANNL_REL.put(CHANNEL_CM_11, new SessionKey(SYSTEMID_CM_2, "RUPEEP"));
-
+		CHANNL_REL.put(CHANNEL_CM_13, new SessionKey(SYSTEMID_CM_2, "MNYMKT"));
 
 		CHANNL_REL.put(CHANNEL_1, new SessionKey("INFIPRO", "BYTDNC"));
 
@@ -223,7 +226,8 @@ public class StaticValue {
 		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_9));
 		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_10));
 		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_10));
-
+		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_CM_1, CHANNEL_CM_12));
+		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_12));
 
 		CHANNEL_OPT_LIST.add(new SessionKey(SYSTEMID_MK_1, CHANNEL_MK_2));
 		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_MK_2));
