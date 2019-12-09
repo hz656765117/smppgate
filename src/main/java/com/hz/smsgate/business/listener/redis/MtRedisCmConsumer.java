@@ -171,7 +171,7 @@ public class MtRedisCmConsumer implements Runnable {
 			sendId = submitSm.getSourceAddress().getAddress();
 			mbl = submitSm.getDestAddress().getAddress();
 
-			LOGGER.info("{}-读取到短信下行信息 手机号码（{}），短信内容（{}）", Thread.currentThread().getName(), submitSm.getDestAddress().getAddress(), new String(submitSm.getShortMessage(), "UTF-8"));
+			LOGGER.info("{}-读取到短信下行信息 手机号码（{}），短信内容（{}），短信内容（{}）", Thread.currentThread().getName(), submitSm.getDestAddress().getAddress(), new String(submitSm.getShortMessage(), "UTF-8"), new String(submitSm.getShortMessage(), "GBK"));
 			//获取客户端session
 			SmppSession session0 = PduUtils.getSmppSession(submitSm);
 
