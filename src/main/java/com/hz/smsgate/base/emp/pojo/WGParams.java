@@ -409,4 +409,14 @@ public class WGParams implements Serializable {
 	}
 
 
+	@Override
+	public String toString() {
+		return "WGParams{" +
+				"spid='" + spid + '\'' +
+				", sppassword='" + sppassword + '\'' +
+				", sa='" + sa + '\'' +
+				", das='" + das + '\'' +
+				", sm='" + sm + '\'' +
+				'}';
+	}
 }
