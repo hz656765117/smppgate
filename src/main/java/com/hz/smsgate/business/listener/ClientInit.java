@@ -72,7 +72,7 @@ public class ClientInit {
 	public static Map<String, SessionKey> CHANNL_REL = new LinkedHashMap<>();
 
 
-	public static List<String> CHANNEL_MK_LIST = new ArrayList<>();
+	public static List<SessionKey> CHANNEL_MK_LIST = new ArrayList<>();
 
 
 	/**
@@ -108,6 +108,8 @@ public class ClientInit {
 		initChannels();
 
 		initYxj();
+
+		initMkList();
 
 		//初始化客户端配置
 		initClientConfigs();
@@ -166,7 +168,6 @@ public class ClientInit {
 
 
 	public void initChannels() {
-
 		Map<String, SessionKey> map = new LinkedHashMap<>();
 
 		List<OperatorVo> allOperator = smppService.getAllOperator();
@@ -176,8 +177,20 @@ public class ClientInit {
 			sessionKey.setSystemId(operatorVo.getSystemid());
 			map.put(operatorVo.getChannel(), sessionKey);
 		}
-
 		CHANNL_REL = map;
+	}
+
+	public void initMkList() {
+
+		List<OperatorVo> allOperator = smppService.getAllOperator();
+		for (OperatorVo operatorVo : allOperator) {
+			if ("HP01".equals(operatorVo.getSystemid()) || "HP02".equals(operatorVo.getSystemid()) || "HP03".equals(operatorVo.getSystemid()) || "HP04".equals(operatorVo.getSystemid())) {
+				SessionKey sessionKey = new SessionKey(operatorVo.getSystemid(), operatorVo.getChannel());
+				SessionKey sessionKey1 = ClientInit.CHANNL_REL.get(operatorVo.getChannel());
+				CHANNEL_MK_LIST.add(sessionKey);
+				CHANNEL_MK_LIST.add(sessionKey1);
+			}
+		}
 	}
 
 	public void initYxj() {

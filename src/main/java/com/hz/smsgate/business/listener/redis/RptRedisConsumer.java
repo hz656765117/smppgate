@@ -5,10 +5,12 @@ import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.smpp.constants.SmppConstants;
 import com.hz.smsgate.base.smpp.pdu.DeliverSm;
 import com.hz.smsgate.base.smpp.pojo.Address;
+import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
 import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
+import com.hz.smsgate.business.listener.ClientInit;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,8 +129,9 @@ public class RptRedisConsumer implements Runnable {
 			return;
 		}
 
+		SessionKey sessionKey = new SessionKey(deliverSm.getSystemId(), deliverSm.getDestAddress().getAddress());
 		//这个通道的运营商会返回两个状态报告 忽略掉accepted  只处理Delivered
-		if (StaticValue.CHANNEL_MK_LIST.contains(deliverSm.getDestAddress().getAddress())) {
+		if (ClientInit.CHANNEL_MK_LIST.contains(sessionKey)) {
 			String mbl = deliverSm.getSourceAddress().getAddress();
 			String areaCode = PduUtils.getAreaCode(mbl);
 			//马来西亚和越南 只有accepted
@@ -142,7 +145,6 @@ public class RptRedisConsumer implements Runnable {
 					return;
 				}
 			}
-
 		}
 
 		//key为 msgid + 后缀     value 为 运营商的真实msgid

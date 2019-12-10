@@ -9,6 +9,7 @@ import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
 import com.hz.smsgate.base.utils.PduUtils;
+import com.hz.smsgate.business.listener.ClientInit;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
@@ -112,9 +113,9 @@ public class RptConsumer implements Runnable {
 			LOGGER.error("{}-处理长短信状态报告内容解析异常", Thread.currentThread().getName(), e);
 			return;
 		}
-
+		SessionKey sessionKey = new SessionKey(deliverSm.getSystemId(), deliverSm.getDestAddress().getAddress());
 		//这个通道的运营商会返回两个状态报告 忽略掉accepted  只处理Delivered
-		if (StaticValue.CHANNEL_MK_LIST.contains(deliverSm.getDestAddress().getAddress())) {
+		if (ClientInit.CHANNEL_MK_LIST.contains(sessionKey)) {
 			String mbl = deliverSm.getSourceAddress().getAddress();
 			String areaCode = PduUtils.getAreaCode(mbl);
 			//马来西亚和越南 只有accepted

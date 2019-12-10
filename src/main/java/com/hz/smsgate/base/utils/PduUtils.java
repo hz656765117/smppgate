@@ -38,7 +38,8 @@ public class PduUtils {
 	 */
 	public static SubmitSm removeZero(SubmitSm sm) {
 		String channel = sm.getSourceAddress().getAddress();
-		if (channel.equals(ClientInit.CHANNL_REL.get(StaticValue.CHANNEL_1).getSenderId()) || channel.equals(StaticValue.CHANNEL_1) || StaticValue.CHANNEL_MK_LIST.contains(channel)) {
+		SessionKey sessionKey = new SessionKey(sm.getSystemId(), channel);
+		if (channel.equals(ClientInit.CHANNL_REL.get(StaticValue.CHANNEL_1).getSenderId()) || channel.equals(StaticValue.CHANNEL_1) || ClientInit.CHANNEL_MK_LIST.contains(sessionKey)) {
 			Address destAddress = sm.getDestAddress();
 			if (destAddress.getAddress().startsWith("00")) {
 				String address = destAddress.getAddress().substring(2);
