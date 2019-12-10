@@ -77,7 +77,7 @@ public class ClientInit {
 	public static List<SessionKey> CHANNEL_MK_LIST = new ArrayList<>();
 
 
-	public static Map<SessionKey, WGParams> CHANNL_SP_REL = null;
+	public static Map<SessionKey, WGParams> CHANNL_SP_REL =  new LinkedHashMap<>();
 
 	/**
 	 * opt通道
@@ -108,13 +108,13 @@ public class ClientInit {
 		clientBootstrapMap = new LinkedHashMap<>();
 		sessionHandlerMap = new LinkedHashMap<>();
 
-
+		//初始化通道
 		initChannels();
-
+		//初始化优先级
 		initYxj();
-
+		//初始化mk集合
 		initMkList();
-
+		//初始化sp账号
 		initSpList();
 
 		//初始化客户端配置
@@ -174,6 +174,7 @@ public class ClientInit {
 
 
 	public void initChannels() {
+		CHANNL_REL.clear();
 		Map<String, SessionKey> map = new LinkedHashMap<>();
 
 		List<OperatorVo> allOperator = smppService.getAllOperator();
@@ -187,6 +188,7 @@ public class ClientInit {
 	}
 
 	public void initSpList() {
+		CHANNL_SP_REL.clear();
 		List<SmppUserVo> allSmppUser = smppService.getAllSmppUser();
 		if (allSmppUser == null || allSmppUser.size() <= 0) {
 			logger.error("未加载到sp账号");
@@ -218,7 +220,7 @@ public class ClientInit {
 	}
 
 	public void initMkList() {
-
+		CHANNEL_MK_LIST.clear();
 		List<OperatorVo> allOperator = smppService.getAllOperator();
 		for (OperatorVo operatorVo : allOperator) {
 			if ("HP01".equals(operatorVo.getSystemid()) || "HP02".equals(operatorVo.getSystemid()) || "HP03".equals(operatorVo.getSystemid()) || "HP04".equals(operatorVo.getSystemid())) {
@@ -231,7 +233,9 @@ public class ClientInit {
 	}
 
 	public void initYxj() {
-
+		CHANNEL_OPT_LIST.clear();
+		CHANNEL_TZ_LIST.clear();
+		CHANNEL_YX_LIST.clear();
 		List<OperatorVo> allOperator = smppService.getAllOperator();
 		for (OperatorVo operatorVo : allOperator) {
 			SessionKey sessionKey = new SessionKey(operatorVo.getSystemid(), operatorVo.getChannel());
@@ -286,14 +290,16 @@ public class ClientInit {
 				logger.error("客户端配置对象组装异常！,过滤该配置", e);
 				continue;
 			}
-
-
 		}
 		return configMap;
 	}
 
 
 	private static void initMutiThread() {
+
+		ConfigLoadThread configLoadThread = new ConfigLoadThread();
+		ThreadPoolHelper.executeTask(configLoadThread);
+
 		RptConsumer rptConsumer = new RptConsumer();
 		MtConsumer mtConsumer = new MtConsumer();
 		RptRedisConsumer rptRedisConsumer = new RptRedisConsumer();
