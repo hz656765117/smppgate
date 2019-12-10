@@ -111,7 +111,7 @@ public class StaticValue {
 
 //	public static Map<String, SessionKey> CHANNL_REL = null;
 
-	public static Map<SessionKey, WGParams> CHANNL_SP_REL = null;
+//	public static Map<SessionKey, WGParams> CHANNL_SP_REL = null;
 
 
 	public static String WEB_GATE = "";
@@ -249,11 +249,11 @@ public class StaticValue {
 //		CHANNEL_TZ_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_YN_1));
 
 
-		CHANNL_SP_REL = new LinkedHashMap<>();
-
-		WEB_GATE = SystemGlobals.getValue("montnets.webgate");
-
-		CHANNL_SP_REL = FileUtils.getSpConfigs(StaticValue.SP_RESOURCE_HOME);
+//		CHANNL_SP_REL = new LinkedHashMap<>();
+//
+//		WEB_GATE = SystemGlobals.getValue("montnets.webgate");
+//
+//		CHANNL_SP_REL = FileUtils.getSpConfigs(StaticValue.SP_RESOURCE_HOME);
 	}
 
 

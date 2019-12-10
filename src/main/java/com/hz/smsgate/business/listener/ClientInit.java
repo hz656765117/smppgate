@@ -2,6 +2,7 @@ package com.hz.smsgate.business.listener;
 
 import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.constants.SystemGlobals;
+import com.hz.smsgate.base.emp.pojo.WGParams;
 import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
@@ -23,6 +24,7 @@ import com.hz.smsgate.business.listener.redis.yx.LongYxMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.yx.LongYxMtSplitRedisConsumer;
 import com.hz.smsgate.business.pojo.Channel;
 import com.hz.smsgate.business.pojo.OperatorVo;
+import com.hz.smsgate.business.pojo.SmppUserVo;
 import com.hz.smsgate.business.service.SmppService;
 import com.hz.smsgate.business.smpp.handler.Client1SmppSessionHandler;
 import com.hz.smsgate.business.smpp.handler.DefaultSmppSessionHandler;
@@ -75,6 +77,8 @@ public class ClientInit {
 	public static List<SessionKey> CHANNEL_MK_LIST = new ArrayList<>();
 
 
+	public static Map<SessionKey, WGParams> CHANNL_SP_REL = null;
+
 	/**
 	 * opt通道
 	 */
@@ -110,6 +114,8 @@ public class ClientInit {
 		initYxj();
 
 		initMkList();
+
+		initSpList();
 
 		//初始化客户端配置
 		initClientConfigs();
@@ -178,6 +184,37 @@ public class ClientInit {
 			map.put(operatorVo.getChannel(), sessionKey);
 		}
 		CHANNL_REL = map;
+	}
+
+	public void initSpList() {
+		List<SmppUserVo> allSmppUser = smppService.getAllSmppUser();
+		if (allSmppUser == null || allSmppUser.size() <= 0) {
+			logger.error("未加载到sp账号");
+			return;
+		}
+
+		Map<SessionKey, WGParams> configMap = new LinkedHashMap<>(allSmppUser.size());
+		WGParams wgParams;
+		SessionKey sessionKey;
+		for (SmppUserVo smppUserVo : allSmppUser) {
+			try {
+
+				sessionKey = new SessionKey();
+				sessionKey.setSenderId(smppUserVo.getSenderid());
+				sessionKey.setSystemId(smppUserVo.getSmppUser());
+
+				wgParams = new WGParams();
+				wgParams.setSpid(smppUserVo.getSpUser());
+				wgParams.setSppassword(smppUserVo.getSpPwd());
+
+				configMap.put(sessionKey, wgParams);
+			} catch (Exception e) {
+				logger.error("sp账号解析异常！,过滤该配置", e);
+				continue;
+			}
+		}
+		CHANNL_SP_REL = configMap;
+
 	}
 
 	public void initMkList() {

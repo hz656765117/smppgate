@@ -140,7 +140,7 @@ public class MtRedisCmConsumer implements Runnable {
 			sessionKey.setSenderId(msgVo.getSenderId());
 		}
 
-		WGParams wgParams = StaticValue.CHANNL_SP_REL.get(sessionKey);
+		WGParams wgParams = ClientInit.CHANNL_SP_REL.get(sessionKey);
 		if (wgParams != null) {
 			wgParams.setDas(submitSm.getDestAddress().getAddress());
 			String sm = new String(submitSm.getShortMessage());
@@ -149,7 +149,6 @@ public class MtRedisCmConsumer implements Runnable {
 		} else {
 			LOGGER.error("{}- {} -{}短信记录异常，未能获取到sp账号", Thread.currentThread().getName(), submitSm.getSystemId(), submitSm.getSourceAddress().getAddress());
 		}
-
 
 	}
 
