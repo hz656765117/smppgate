@@ -137,7 +137,7 @@ public class MtRedisCmConsumer implements Runnable {
 		if (obj != null) {
 			MsgVo msgVo = (MsgVo) obj;
 			sessionKey.setSystemId(msgVo.getSmppUser());
-			sessionKey.setSenderId(msgVo.getSenderId());
+			sessionKey.setSenderId(msgVo.getSmppPwd());
 		}
 
 		WGParams wgParams = ClientInit.CHANNL_SP_REL.get(sessionKey);
@@ -147,7 +147,7 @@ public class MtRedisCmConsumer implements Runnable {
 			wgParams.setSm(sm);
 			mtRedisConsumer.redisUtil.lPush(SmppServerConstants.SYNC_SUBMIT, wgParams);
 		} else {
-			LOGGER.error("{}- {} -{}短信记录异常，未能获取到sp账号", Thread.currentThread().getName(), submitSm.getSystemId(), submitSm.getSourceAddress().getAddress());
+			LOGGER.error("{}- {} -{}-{}短信记录异常，未能获取到sp账号", Thread.currentThread().getName(), submitSm.getSystemId(), submitSm.getSourceAddress().getAddress(),submitSm.getDestAddress().getAddress());
 		}
 
 	}

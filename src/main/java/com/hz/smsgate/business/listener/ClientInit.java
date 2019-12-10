@@ -77,7 +77,7 @@ public class ClientInit {
 	public static List<SessionKey> CHANNEL_MK_LIST = new ArrayList<>();
 
 
-	public static Map<SessionKey, WGParams> CHANNL_SP_REL =  new LinkedHashMap<>();
+	public static Map<SessionKey, WGParams> CHANNL_SP_REL = new LinkedHashMap<>();
 
 	/**
 	 * opt通道
@@ -174,9 +174,7 @@ public class ClientInit {
 
 
 	public void initChannels() {
-		CHANNL_REL.clear();
 		Map<String, SessionKey> map = new LinkedHashMap<>();
-
 		List<OperatorVo> allOperator = smppService.getAllOperator();
 		for (OperatorVo operatorVo : allOperator) {
 			SessionKey sessionKey = new SessionKey();
@@ -184,11 +182,11 @@ public class ClientInit {
 			sessionKey.setSystemId(operatorVo.getSystemid());
 			map.put(operatorVo.getChannel(), sessionKey);
 		}
+		CHANNL_REL.clear();
 		CHANNL_REL = map;
 	}
 
 	public void initSpList() {
-		CHANNL_SP_REL.clear();
 		List<SmppUserVo> allSmppUser = smppService.getAllSmppUser();
 		if (allSmppUser == null || allSmppUser.size() <= 0) {
 			logger.error("未加载到sp账号");
@@ -202,7 +200,7 @@ public class ClientInit {
 			try {
 
 				sessionKey = new SessionKey();
-				sessionKey.setSenderId(smppUserVo.getSenderid());
+				sessionKey.setSenderId(smppUserVo.getSmppPwd());
 				sessionKey.setSystemId(smppUserVo.getSmppUser());
 
 				wgParams = new WGParams();
@@ -215,13 +213,13 @@ public class ClientInit {
 				continue;
 			}
 		}
+		CHANNL_SP_REL.clear();
 		CHANNL_SP_REL = configMap;
-
 	}
 
 	public void initMkList() {
-		CHANNEL_MK_LIST.clear();
 		List<OperatorVo> allOperator = smppService.getAllOperator();
+		CHANNEL_MK_LIST.clear();
 		for (OperatorVo operatorVo : allOperator) {
 			if ("HP01".equals(operatorVo.getSystemid()) || "HP02".equals(operatorVo.getSystemid()) || "HP03".equals(operatorVo.getSystemid()) || "HP04".equals(operatorVo.getSystemid())) {
 				SessionKey sessionKey = new SessionKey(operatorVo.getSystemid(), operatorVo.getChannel());
@@ -233,10 +231,10 @@ public class ClientInit {
 	}
 
 	public void initYxj() {
+		List<OperatorVo> allOperator = smppService.getAllOperator();
 		CHANNEL_OPT_LIST.clear();
 		CHANNEL_TZ_LIST.clear();
 		CHANNEL_YX_LIST.clear();
-		List<OperatorVo> allOperator = smppService.getAllOperator();
 		for (OperatorVo operatorVo : allOperator) {
 			SessionKey sessionKey = new SessionKey(operatorVo.getSystemid(), operatorVo.getChannel());
 			if (operatorVo.getType() != null && 0 == operatorVo.getType()) {

@@ -53,7 +53,7 @@ public class ConfigLoadThread implements Runnable {
 		while (true) {
 
 			try {
-				Thread.sleep(300000);
+				Thread.sleep(30000);
 
 				//初始化通道
 				configLoadThread.clientInit.initChannels();
@@ -63,6 +63,10 @@ public class ConfigLoadThread implements Runnable {
 				configLoadThread.clientInit.initMkList();
 				//初始化sp账号
 				configLoadThread.clientInit.initSpList();
+
+
+				configLoadThread.clientInit.initClientConfigs();
+
 
 
 			} catch (Exception e) {
