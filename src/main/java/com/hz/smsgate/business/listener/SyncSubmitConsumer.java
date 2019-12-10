@@ -39,7 +39,7 @@ public class SyncSubmitConsumer implements Runnable {
 
 
 		try {
-			Thread.sleep(5000);
+			Thread.sleep(3000);
 		} catch (Exception e) {
 			LOGGER.error("{}-处理同步短信信息异常", Thread.currentThread().getName(), e);
 		}

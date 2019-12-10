@@ -23,6 +23,13 @@ public class EnquireLinkConsumer implements Runnable {
 
 	@Override
 	public void run() {
+
+		try {
+			Thread.sleep(3000);
+		} catch (Exception e) {
+			LOGGER.error("{}-线程启动异常", Thread.currentThread().getName(), e);
+		}
+
 		List<String> isEnquireLink = new ArrayList<>();
 
 		while (true) {

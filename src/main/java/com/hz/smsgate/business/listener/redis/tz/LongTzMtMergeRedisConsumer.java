@@ -39,6 +39,11 @@ public class LongTzMtMergeRedisConsumer implements Runnable {
 
 	@Override
 	public void run() {
+		try {
+			Thread.sleep(3000);
+		} catch (Exception e) {
+			LOGGER.error("{}-线程启动异常", Thread.currentThread().getName(), e);
+		}
 		SubmitSm submitSm;
 		LOGGER.info("{}-长短信（redis）合并线程开始工作......", Thread.currentThread().getName());
 

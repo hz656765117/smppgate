@@ -72,6 +72,9 @@ public class ClientInit {
 	public static Map<String, SessionKey> CHANNL_REL = new LinkedHashMap<>();
 
 
+	public static List<String> CHANNEL_MK_LIST = new ArrayList<>();
+
+
 	/**
 	 * opt通道
 	 */
@@ -181,14 +184,14 @@ public class ClientInit {
 
 		List<OperatorVo> allOperator = smppService.getAllOperator();
 		for (OperatorVo operatorVo : allOperator) {
-			SessionKey sessionKey = new SessionKey(operatorVo.getSystemid(),operatorVo.getChannel());
-			if (0 == operatorVo.getType()) {
+			SessionKey sessionKey = new SessionKey(operatorVo.getSystemid(), operatorVo.getChannel());
+			if (operatorVo.getType() != null && 0 == operatorVo.getType()) {
 				CHANNEL_OPT_LIST.add(sessionKey);
 				CHANNEL_OPT_LIST.add(ClientInit.CHANNL_REL.get(operatorVo.getChannel()));
-			}else if (1== operatorVo.getType()){
+			} else if (operatorVo.getType() != null && 1 == operatorVo.getType()) {
 				CHANNEL_TZ_LIST.add(sessionKey);
 				CHANNEL_TZ_LIST.add(ClientInit.CHANNL_REL.get(operatorVo.getChannel()));
-			}else {
+			} else {
 				CHANNEL_YX_LIST.add(sessionKey);
 				CHANNEL_YX_LIST.add(ClientInit.CHANNL_REL.get(operatorVo.getChannel()));
 			}

@@ -37,6 +37,11 @@ public class LongYxMtSplitRedisConsumer implements Runnable {
 
 	@Override
 	public void run() {
+		try {
+			Thread.sleep(3000);
+		} catch (Exception e) {
+			LOGGER.error("{}-线程启动异常", Thread.currentThread().getName(), e);
+		}
 		SubmitSm submitSm;
 		LOGGER.info("{}-处理将长短信拆分并放到真正的发送队列中(通知消息类型)线程（redis）开始工作......", Thread.currentThread().getName());
 

@@ -42,7 +42,12 @@ public class MtRedisCmConsumer implements Runnable {
 
 	@Override
 	public void run() {
-		SubmitSm submitSm = new SubmitSm();
+		try {
+			Thread.sleep(3000);
+		} catch (Exception e) {
+			LOGGER.error("{}-线程启动异常", Thread.currentThread().getName(), e);
+		}
+		SubmitSm submitSm;
 		LOGGER.info("{}-处理短信（redis）-cm下行线程开始工作......", Thread.currentThread().getName());
 		SubmitSmResp submitResp;
 		while (true) {

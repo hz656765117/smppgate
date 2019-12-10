@@ -184,21 +184,21 @@ public class StaticValue {
 		CHANNEL_MK_LIST.add(CHANNEL_MK_4);
 		CHANNEL_MK_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_4).getSenderId());
 
-		CHANNEL_MK_LIST.add(CHANNEL_MK_5);
-		CHANNEL_MK_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_5).getSenderId());
+//		CHANNEL_MK_LIST.add(CHANNEL_MK_5);
+//		CHANNEL_MK_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_5).getSenderId());
 
 
 		CHANNEL_MK_LIST.add(CHANNEL_MK_6);
 		CHANNEL_MK_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_6).getSenderId());
 
-		CHANNEL_MK_LIST.add(CHANNEL_MK_7);
-		CHANNEL_MK_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_7).getSenderId());
+//		CHANNEL_MK_LIST.add(CHANNEL_MK_7);
+//		CHANNEL_MK_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_7).getSenderId());
 
 		CHANNEL_MK_LIST.add(CHANNEL_MK_8);
 		CHANNEL_MK_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_8).getSenderId());
 
-		CHANNEL_MK_LIST.add(CHANNEL_MK_9);
-		CHANNEL_MK_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_9).getSenderId());
+//		CHANNEL_MK_LIST.add(CHANNEL_MK_9);
+//		CHANNEL_MK_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_9).getSenderId());
 
 		CHANNEL_MK_LIST.add(CHANNEL_MK_10);
 		CHANNEL_MK_LIST.add(ClientInit.CHANNL_REL.get(CHANNEL_MK_10).getSenderId());

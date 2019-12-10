@@ -41,6 +41,12 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 
 	@Override
 	public void run() {
+		try {
+			Thread.sleep(3000);
+		} catch (Exception e) {
+			LOGGER.error("{}-线程启动异常", Thread.currentThread().getName(), e);
+		}
+
 		SubmitSm submitSm = new SubmitSm();
 		LOGGER.info("{}-长短信（redis）真实发送线程开始工作......", Thread.currentThread().getName());
 

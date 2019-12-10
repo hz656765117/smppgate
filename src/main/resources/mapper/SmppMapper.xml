@@ -78,6 +78,7 @@
 
         SELECT
         op.*,
+        ch.type,
         ch.senderid,
         ch.channel
         FROM
