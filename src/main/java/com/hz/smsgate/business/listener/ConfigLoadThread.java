@@ -1,23 +1,11 @@
 package com.hz.smsgate.business.listener;
 
-import com.hz.smsgate.base.constants.StaticValue;
-import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
-import com.hz.smsgate.base.smpp.pdu.EnquireLink;
-import com.hz.smsgate.base.smpp.pdu.EnquireLinkResp;
-import com.hz.smsgate.base.smpp.pojo.SessionKey;
-import com.hz.smsgate.base.smpp.pojo.SmppSession;
-import com.hz.smsgate.business.listener.redis.LongRealMtSendRedisConsumer;
-import com.hz.smsgate.business.pojo.OperatorVo;
-import com.hz.smsgate.business.service.SmppService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -53,7 +41,7 @@ public class ConfigLoadThread implements Runnable {
 		while (true) {
 
 			try {
-				Thread.sleep(30000);
+				Thread.sleep(300000);
 
 				//初始化通道
 				configLoadThread.clientInit.initChannels();
