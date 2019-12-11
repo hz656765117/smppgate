@@ -172,6 +172,8 @@ public class RptRedisConsumer implements Runnable {
 					deliveryReceipt.setMessageId(split[0]);
 					byte[] bytes = deliveryReceipt.toShortMessage().getBytes();
 					deliverSm.setShortMessage(bytes);
+
+					deliverSm.removeSequenceNumber();
 					deliverSm.calculateAndSetCommandLength();
 
 					removeMap.put(entry.getKey(), entry.getValue());
