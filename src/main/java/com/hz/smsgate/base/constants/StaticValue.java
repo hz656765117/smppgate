@@ -251,7 +251,7 @@ public class StaticValue {
 
 //		CHANNL_SP_REL = new LinkedHashMap<>();
 //
-//		WEB_GATE = SystemGlobals.getValue("montnets.webgate");
+		WEB_GATE = SystemGlobals.getValue("montnets.webgate");
 //
 //		CHANNL_SP_REL = FileUtils.getSpConfigs(StaticValue.SP_RESOURCE_HOME);
 	}

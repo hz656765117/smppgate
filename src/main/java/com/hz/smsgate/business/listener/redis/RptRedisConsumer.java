@@ -48,7 +48,7 @@ public class RptRedisConsumer implements Runnable {
 	@Override
 	public void run() {
 		try {
-			Thread.sleep(3000);
+			Thread.sleep(30000);
 		} catch (Exception e) {
 			LOGGER.error("{}-线程启动异常", Thread.currentThread().getName(), e);
 		}
@@ -160,7 +160,7 @@ public class RptRedisConsumer implements Runnable {
 			try {
 
 				if (address.equals(messageId)) {
-					LOGGER.info("状态报告响应msgid为{}，缓存中key为{}，value为{}", messageId, entry.getKey(), entry.getValue());
+					LOGGER.info("{}-{}状态报告响应msgid为{}，缓存中key为{}，value为{}", deliverSm.getSystemId(), deliverSm.getDestAddress().getAddress(), deliverSm.getSourceAddress().getAddress(), messageId, entry.getKey(), entry.getValue());
 
 					String[] split = msgId.split("-");
 					if (split.length > 3) {
@@ -178,7 +178,7 @@ public class RptRedisConsumer implements Runnable {
 					smppSession.sendRequestPdu(deliverSm, 10000, true);
 				}
 			} catch (Exception e) {
-				LOGGER.error("{}-  systemid为{}，msgid={}  ，处理长短信状态报告转发异常", Thread.currentThread().getName(), deliverSm.getSystemId(), messageId, e);
+				LOGGER.error("{}-  systemid为{},{}-{}，msgid={}  ，处理长短信状态报告转发异常", Thread.currentThread().getName(), deliverSm.getSystemId(), deliverSm.getSystemId(), deliverSm.getDestAddress().getAddress(), deliverSm.getSourceAddress().getAddress(), messageId, e);
 			}
 
 		}
@@ -190,14 +190,14 @@ public class RptRedisConsumer implements Runnable {
 			}
 		} else {
 			try {
-				LOGGER.error("{}- systemid为{}，msgid={}，未能匹配到对应的下行记录", Thread.currentThread().getName(), deliverSm.getSystemId(), messageId);
+				LOGGER.error("{}- systemid为{},{}-{}，msgid={}，未能匹配到对应的下行记录", Thread.currentThread().getName(), deliverSm.getSystemId(), deliverSm.getDestAddress().getAddress(), deliverSm.getSourceAddress().getAddress(), messageId);
 				byte[] bytes = deliveryReceipt.toShortMessage().getBytes();
 				deliverSm.setShortMessage(bytes);
 				deliverSm.calculateAndSetCommandLength();
 
 				smppSession.sendRequestPdu(deliverSm, 10000, true);
 			} catch (Exception e) {
-				LOGGER.error("{}-  systemid为{}，msgid={}，处理短短信状态报告转发异常", Thread.currentThread().getName(), deliverSm.getSystemId(), messageId, e);
+				LOGGER.error("{}-  systemid为{},{}-{}，msgid={}，处理短短信状态报告转发异常", Thread.currentThread().getName(), deliverSm.getSystemId(), deliverSm.getDestAddress().getAddress(), deliverSm.getSourceAddress().getAddress(), messageId, e);
 			}
 		}
 
