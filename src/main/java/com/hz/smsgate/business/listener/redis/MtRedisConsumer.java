@@ -119,7 +119,7 @@ public class MtRedisConsumer implements Runnable {
 			//获取客户端session
 			SmppSession session0 = PduUtils.getSmppSession(submitSm);
 			if (session0 == null) {
-				mtRedisConsumer.redisUtil.hmRemove(SmppServerConstants.WEB_MSGID_CACHE, submitSm.getTempMsgId());
+//				mtRedisConsumer.redisUtil.hmRemove(SmppServerConstants.WEB_MSGID_CACHE, submitSm.getTempMsgId());
 				LOGGER.error("systemid({}),senderid({}),mbl（{}）获取客户端连接异常，丢弃该下行", submitSm.getSystemId(), sendId, mbl);
 				return submitResp;
 			}

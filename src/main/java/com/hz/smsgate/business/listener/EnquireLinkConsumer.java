@@ -84,7 +84,7 @@ public class EnquireLinkConsumer implements Runnable {
 		}
 
 
-		session0.unbind(10000);
+		session0.unbind(3000);
 		//如果心跳失败，则重新绑定一次，绑定失败 则移除该session
 		SmppSessionConfiguration smppSessionConfiguration = ClientInit.configMap.get(key);
 		SmppSession client = ClientInit.createClient(smppSessionConfiguration);

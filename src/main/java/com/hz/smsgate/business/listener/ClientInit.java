@@ -262,7 +262,7 @@ public class ClientInit {
 			}
 			try {
 				SmppSessionConfiguration config0 = new SmppSessionConfiguration();
-				config0.setWindowSize(32);
+				config0.setWindowSize(50);
 				config0.setConnectTimeout(10000);
 				config0.setRequestExpiryTimeout(30000);
 				config0.setWindowMonitorInterval(15000);
@@ -357,7 +357,7 @@ public class ClientInit {
 		}
 
 		//redis状态报告处理线程
-		for (int i = 0; i <= 1; i++) {
+		for (int i = 0; i <= 3; i++) {
 			ThreadPoolHelper.executeTask(rptRedisConsumer);
 		}
 
