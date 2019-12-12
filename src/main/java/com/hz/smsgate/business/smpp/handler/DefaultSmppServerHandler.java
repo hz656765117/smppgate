@@ -33,12 +33,9 @@ public class DefaultSmppServerHandler implements SmppServerHandler {
 		logger.info("Session created: {}", session);
 		// need to do something it now (flag we're ready)
 		SmppSessionHandler smppSessionHandler;
+
 		//0 je   1 redis
-		if ("1".equals(StaticValue.TYPE)) {
-			smppSessionHandler = new ServerSmppSessionRedisHandler(session);
-		} else {
-			smppSessionHandler = new ServerSmppSessionHandler(session);
-		}
+		smppSessionHandler = new ServerSmppSessionRedisHandler(session);
 
 
 		session.serverReady(smppSessionHandler);

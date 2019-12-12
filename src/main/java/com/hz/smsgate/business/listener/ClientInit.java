@@ -11,7 +11,6 @@ import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.PropertiesLoader;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.base.utils.ThreadPoolHelper;
-import com.hz.smsgate.business.listener.je.*;
 import com.hz.smsgate.business.listener.redis.LongRealMtSendRedisConsumer;
 import com.hz.smsgate.business.listener.redis.MtRedisCmConsumer;
 import com.hz.smsgate.business.listener.redis.MtRedisConsumer;
@@ -22,7 +21,6 @@ import com.hz.smsgate.business.listener.redis.tz.LongTzMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.tz.LongTzMtSplitRedisConsumer;
 import com.hz.smsgate.business.listener.redis.yx.LongYxMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.yx.LongYxMtSplitRedisConsumer;
-import com.hz.smsgate.business.pojo.Channel;
 import com.hz.smsgate.business.pojo.OperatorVo;
 import com.hz.smsgate.business.pojo.SmppUserVo;
 import com.hz.smsgate.business.service.SmppService;
@@ -298,8 +296,7 @@ public class ClientInit {
 		ConfigLoadThread configLoadThread = new ConfigLoadThread();
 		ThreadPoolHelper.executeTask(configLoadThread);
 
-		RptConsumer rptConsumer = new RptConsumer();
-		MtConsumer mtConsumer = new MtConsumer();
+
 		RptRedisConsumer rptRedisConsumer = new RptRedisConsumer();
 
 		LongOptMtMergeRedisConsumer longOptMtMergeRedisConsumer = new LongOptMtMergeRedisConsumer();
@@ -320,12 +317,6 @@ public class ClientInit {
 		EnquireLinkConsumer enquireLinkConsumer = new EnquireLinkConsumer();
 		SyncSubmitConsumer syncSubmitConsumer = new SyncSubmitConsumer();
 
-		LongMtMergeConsumer longMtMergeConsumer = new LongMtMergeConsumer();
-		LongMtSendConsumer longMtSendConsumer = new LongMtSendConsumer();
-
-
-		LongRealMtSendConsumer longRealMtSendConsumer = new LongRealMtSendConsumer();
-
 
 		//心跳线程
 		ThreadPoolHelper.executeTask(enquireLinkConsumer);
@@ -340,59 +331,34 @@ public class ClientInit {
 		}
 
 
-		//0 je   1 redis
-		if ("1".equals(StaticValue.TYPE)) {
+		//redis长短信合并   opt
+		ThreadPoolHelper.executeTask(longOptMtMergeRedisConsumer);
+		//redis长短信拆分   opt
+		ThreadPoolHelper.executeTask(longOptMtSplitRedisConsumer);
 
+		//redis长短信合并   通知
+		ThreadPoolHelper.executeTask(longTzMtMergeRedisConsumer);
+		//redis长短信拆分  通知
+		ThreadPoolHelper.executeTask(longTzMtSplitRedisConsumer);
 
-			//redis长短信合并   opt
-			ThreadPoolHelper.executeTask(longOptMtMergeRedisConsumer);
-			//redis长短信拆分   opt
-			ThreadPoolHelper.executeTask(longOptMtSplitRedisConsumer);
+		//redis长短信合并   营销
+		ThreadPoolHelper.executeTask(longYxMtMergeRedisConsumer);
+		//redis长短信拆分   营销
+		ThreadPoolHelper.executeTask(longYxMtSplitRedisConsumer);
 
-			//redis长短信合并   通知
-			ThreadPoolHelper.executeTask(longTzMtMergeRedisConsumer);
-			//redis长短信拆分  通知
-			ThreadPoolHelper.executeTask(longTzMtSplitRedisConsumer);
+		for (int i = 0; i <= 5; i++) {
+			//redis长短信发送
+			ThreadPoolHelper.executeTask(longRealMtSendRedisConsumer);
+		}
 
-			//redis长短信合并   营销
-			ThreadPoolHelper.executeTask(longYxMtMergeRedisConsumer);
-			//redis长短信拆分   营销
-			ThreadPoolHelper.executeTask(longYxMtSplitRedisConsumer);
+		for (int i = 0; i <= 3; i++) {
+			//redis短短信下行线程
+			ThreadPoolHelper.executeTask(mtRedisConsumer);
+		}
 
-
-			for (int i = 0; i <= 5; i++) {
-				//redis长短信发送
-				ThreadPoolHelper.executeTask(longRealMtSendRedisConsumer);
-			}
-
-			for (int i = 0; i <= 3; i++) {
-				//redis短短信下行线程
-				ThreadPoolHelper.executeTask(mtRedisConsumer);
-			}
-
-			//redis状态报告处理线程
-			for (int i = 0; i <= 1; i++) {
-				ThreadPoolHelper.executeTask(rptRedisConsumer);
-			}
-
-
-		} else {
-			//je长短信合并
-			ThreadPoolHelper.executeTask(longMtMergeConsumer);
-			//长短信拆分线程
-			ThreadPoolHelper.executeTask(longMtSendConsumer);
-			//长短信发送线程
-			ThreadPoolHelper.executeTask(longRealMtSendConsumer);
-
-			for (int i = 0; i <= 3; i++) {
-				//je短短信下行线程
-				ThreadPoolHelper.executeTask(mtConsumer);
-			}
-
-			//je状态报告处理线程
-			ThreadPoolHelper.executeTask(rptConsumer);
-
-
+		//redis状态报告处理线程
+		for (int i = 0; i <= 1; i++) {
+			ThreadPoolHelper.executeTask(rptRedisConsumer);
 		}
 
 

@@ -1,7 +1,6 @@
 package com.hz.smsgate.business.listener.redis;
 
 import com.hz.smsgate.base.constants.SmppServerConstants;
-import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
@@ -9,7 +8,6 @@ import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.business.listener.ClientInit;
-import com.hz.smsgate.business.listener.je.RptConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,13 +77,7 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 
 						//更新缓存中的value
 						for (String key : tempMsgIds) {
-							//0 je   1 redis
-							if ("1".equals(StaticValue.TYPE)) {
 								longRealMtSendRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, key, messageId);
-							} else {
-								RptConsumer.CACHE_MAP.put(key, messageId);
-							}
-
 						}
 					} else {
 

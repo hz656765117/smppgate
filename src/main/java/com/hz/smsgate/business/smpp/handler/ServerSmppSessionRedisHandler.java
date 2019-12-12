@@ -13,6 +13,7 @@ import com.hz.smsgate.base.smpp.utils.PduUtil;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.base.utils.SmppUtils;
 import com.hz.smsgate.business.listener.ClientInit;
+import com.hz.smsgate.business.pojo.MsgVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,6 +108,9 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 						//临时流水id
 						String tempMsgId = submitResp.getMessageId() + SmppUtils.getSuffixKeyBySm(submitSm);
 						submitSm.setTempMsgId(tempMsgId);
+
+						MsgVo msgVo = new MsgVo(msgid, session.getConfiguration().getSystemId(), session.getConfiguration().getPassword(), submitSm.getSourceAddress().getAddress());
+
 
 						try {
 							serverSmppSessionRedisHandler.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, tempMsgId, tempMsgId);
