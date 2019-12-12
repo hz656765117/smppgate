@@ -95,6 +95,8 @@ public class LongYxMtSplitRedisConsumer implements Runnable {
 			int allMsgNum = lastMsgSize > 0 ? msgNum + 1 : msgNum;
 			int index = 0;
 
+			String[] tempMsgIds = submitSm.getTempMsgId().split("\\|");
+
 			for (int i = 0; i < allMsgNum; i++) {
 				SubmitSm ss = submitSm;
 				byte[] shortMsg;
@@ -117,6 +119,14 @@ public class LongYxMtSplitRedisConsumer implements Runnable {
 				index += realMsgLen;
 				ss.setShortMessage(shortMsg);
 				ss.setEsmClass((byte) 00000100);
+
+
+				if (i < tempMsgIds.length) {
+					String tempMsgId = tempMsgIds[i];
+					ss.setTempMsgId(tempMsgId);
+				}
+
+
 				ss.calculateAndSetCommandLength();
 				LOGGER.info("{}-长短信拆分{}-{}下行信息{}", Thread.currentThread().getName(), allMsgNum, (i + 1), ss.toString());
 				longMtSplitRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_REL_LONG_SUBMIT_SM_SEND_YX, submitSm);

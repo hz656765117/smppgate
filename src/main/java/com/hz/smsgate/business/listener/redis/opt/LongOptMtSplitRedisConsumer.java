@@ -90,6 +90,8 @@ public class LongOptMtSplitRedisConsumer implements Runnable {
 				return;
 			}
 
+			String[] tempMsgIds = submitSm.getTempMsgId().split("\\|");
+
 			int msgNum = msgLen / 153;
 			int lastMsgSize = msgLen % 153;
 			int allMsgNum = lastMsgSize > 0 ? msgNum + 1 : msgNum;
@@ -117,8 +119,18 @@ public class LongOptMtSplitRedisConsumer implements Runnable {
 				index += realMsgLen;
 				ss.setShortMessage(shortMsg);
 				ss.setEsmClass((byte) 00000100);
+
+
+				if (i < tempMsgIds.length) {
+					String tempMsgId = tempMsgIds[i];
+					ss.setTempMsgId(tempMsgId);
+				}
+
+
 				ss.calculateAndSetCommandLength();
 				LOGGER.info("{}-长短信拆分{}-{}下行信息{}", Thread.currentThread().getName(), allMsgNum, (i + 1), ss.toString());
+
+
 				longMtSplitRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_REL_LONG_SUBMIT_SM_SEND_OPT, submitSm);
 			}
 		} catch (Exception e) {

@@ -51,9 +51,6 @@ public class MtRedisCmConsumer implements Runnable {
 		LOGGER.info("{}-处理短信（redis）-cm下行线程开始工作......", Thread.currentThread().getName());
 		SubmitSmResp submitResp;
 		while (true) {
-			SessionKey sessionKey;
-			String sendId = "";
-			String mbl = "";
 			try {
 				//redis对象为空休眠一秒
 				if (mtRedisConsumer.redisUtil == null) {
@@ -97,7 +94,7 @@ public class MtRedisCmConsumer implements Runnable {
 
 
 			} catch (Exception e) {
-				LOGGER.error("{}-{}- {} 处理短信下行异常", Thread.currentThread().getName(), sendId, mbl, e);
+				LOGGER.error("{}- 处理短信下行异常", Thread.currentThread().getName(), e);
 			}
 
 
@@ -105,30 +102,6 @@ public class MtRedisCmConsumer implements Runnable {
 
 	}
 
-//	public boolean getOpt() {
-//		boolean flag = false;
-//		try {
-//			//opt的短信发完后 处理通知的短信
-//			Object tzObj = mtRedisConsumer.redisUtil.rPop(SmppServerConstants.CM_SUBMIT_SM_TZ);
-//			if (tzObj != null) {
-//				mtRedisConsumer.redisUtil.lPush(SmppServerConstants.CM_SUBMIT_SM_OPT, tzObj);
-//				return flag;
-//			}
-//
-//			//通知的短信发完后 处理营销的短信
-//			Object yxObj = mtRedisConsumer.redisUtil.rPop(SmppServerConstants.CM_SUBMIT_SM_YX);
-//			if (yxObj != null) {
-//				mtRedisConsumer.redisUtil.lPush(SmppServerConstants.CM_SUBMIT_SM_OPT, yxObj);
-//				return flag;
-//			}
-//
-//			//三个通道都没消息 则休眠1s
-//			Thread.sleep(1000);
-//		} catch (Exception e) {
-//
-//		}
-//		return flag;
-//	}
 
 
 	public void sendToWg(SubmitSm submitSm) {
