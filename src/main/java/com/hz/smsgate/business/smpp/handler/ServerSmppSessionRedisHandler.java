@@ -97,7 +97,7 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 						submitSm.setSystemId(systemId);
 					}
 
-					MsgVo msgVo = new MsgVo(msgid, session.getConfiguration().getSystemId(), session.getConfiguration().getPassword(), submitSm.getSourceAddress().getAddress());
+
 					byte[] shortMessage = submitSm.getShortMessage();
 					if (shortMessage[0] == 5 && shortMessage[1] == 0 && shortMessage[2] == 3) {
 
@@ -109,7 +109,7 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 						String tempMsgId = submitResp.getMessageId() + SmppUtils.getSuffixKeyBySm(submitSm);
 						submitSm.setTempMsgId(tempMsgId);
 
-
+						MsgVo msgVo = new MsgVo(tempMsgId, session.getConfiguration().getSystemId(), session.getConfiguration().getPassword(), submitSm.getSourceAddress().getAddress());
 						try {
 							serverSmppSessionRedisHandler.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, tempMsgId, msgVo);
 							putSelfQueue(submitSm, 1);
@@ -124,6 +124,8 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 					} else {
 						submitSm.setTempMsgId(msgid);
 						logger.info("这是短短信,systemid为{},msgid为:{}", systemId, msgid);
+						MsgVo msgVo = new MsgVo(msgid, session.getConfiguration().getSystemId(), session.getConfiguration().getPassword(), submitSm.getSourceAddress().getAddress());
+
 						try {
 							serverSmppSessionRedisHandler.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, msgid, msgVo);
 

@@ -11,6 +11,7 @@ import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
 import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.business.listener.ClientInit;
+import com.hz.smsgate.business.pojo.MsgVo;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,13 +111,6 @@ public class RptRedisConsumer implements Runnable {
 	private void sendDeliverSm(DeliverSm deliverSm) {
 		Map<String, String> removeMap = new LinkedHashMap<>();
 
-		SmppSession smppSession = PduUtils.getServerSmppSession(deliverSm);
-		if (smppSession == null) {
-			return;
-		}
-
-		//重写状态报告
-		deliverSm = reWriteDeliverSm(deliverSm);
 
 		String str = new String(deliverSm.getShortMessage());
 		DeliveryReceipt deliveryReceipt;
@@ -129,78 +123,77 @@ public class RptRedisConsumer implements Runnable {
 			return;
 		}
 
-		SessionKey sessionKey = new SessionKey(deliverSm.getSystemId(), deliverSm.getDestAddress().getAddress());
-		//这个通道的运营商会返回两个状态报告 忽略掉accepted  只处理Delivered
-		if (ClientInit.CHANNEL_MK_LIST.contains(sessionKey)) {
-			String mbl = deliverSm.getSourceAddress().getAddress();
-			String areaCode = PduUtils.getAreaCode(mbl);
-			//马来西亚和越南 只有accepted
-			if (StaticValue.AREA_CODE_MALAYSIA.equals(areaCode) || StaticValue.AREA_CODE_VIETNAM.equals(areaCode) || StaticValue.AREA_CODE_PHILIPPINES.equals(areaCode)) {
-				if (deliveryReceipt.getState() == SmppConstants.STATE_ACCEPTED) {
-					deliveryReceipt.setState(SmppConstants.STATE_DELIVERED);
-				}
-			} else {
-				if (deliveryReceipt.getState() == SmppConstants.STATE_ACCEPTED) {
-					LOGGER.info("渠道为：{}的状态报告，状态为：{}的丢弃,状态报告信息为：{}", deliverSm.getDestAddress().getAddress(), deliveryReceipt.getState(), deliveryReceipt.toString());
+
+		Object obj = rptRedisConsumer.redisUtil.hmGet(SmppServerConstants.WEB_MSGID_CACHE, messageId);
+		if (obj != null) {
+			try {
+				MsgVo msgVo = (MsgVo) obj;
+				String preMsgId = msgVo.getMsgId();
+
+				SmppSession smppSession = PduUtils.getServerSmppSession(deliverSm);
+				if (smppSession == null) {
 					return;
 				}
-			}
-		}
 
-		//key为 msgid + 后缀     value 为 运营商的真实msgid
-		Map<String, String> msgidCache = (Map<String, String>) rptRedisConsumer.redisUtil.hmGetAll(SmppServerConstants.WEB_MSGID_CACHE);
 
-		for (Map.Entry<String, String> entry : msgidCache.entrySet()) {
-			//生成的Msgid
-			String msgId = entry.getKey();
-
-			//资源处下行响应时更新的MsgId
-			String address = entry.getValue();
-
-			try {
-
-				if (address.equals(messageId)) {
-					LOGGER.info("{}-{}状态报告响应msgid为{}，缓存中key为{}，value为{}", deliverSm.getSystemId(), deliverSm.getDestAddress().getAddress(), deliverSm.getSourceAddress().getAddress(), messageId, entry.getKey(), entry.getValue());
-
-					String[] split = msgId.split("-");
-					if (split.length > 3) {
-						//替换sequenceNumber
-						deliverSm.setSequenceNumber(Integer.valueOf(split[3]));
+				SessionKey sessionKey = new SessionKey(deliverSm.getSystemId(), msgVo.getSenderId());
+				//这个通道的运营商会返回两个状态报告 忽略掉accepted  只处理Delivered
+				if (ClientInit.CHANNEL_MK_LIST.contains(sessionKey)) {
+					String mbl = deliverSm.getSourceAddress().getAddress();
+					String areaCode = PduUtils.getAreaCode(mbl);
+					//马来西亚和越南 只有accepted
+					if (StaticValue.AREA_CODE_MALAYSIA.equals(areaCode) || StaticValue.AREA_CODE_VIETNAM.equals(areaCode) || StaticValue.AREA_CODE_PHILIPPINES.equals(areaCode)) {
+						if (deliveryReceipt.getState() == SmppConstants.STATE_ACCEPTED) {
+							deliveryReceipt.setState(SmppConstants.STATE_DELIVERED);
+						}
+					} else {
+						if (deliveryReceipt.getState() == SmppConstants.STATE_ACCEPTED) {
+							LOGGER.info("渠道为：{}的状态报告，状态为：{}的丢弃,状态报告信息为：{}", deliverSm.getDestAddress().getAddress(), deliveryReceipt.getState(), deliveryReceipt.toString());
+							return;
+						}
 					}
+				}
+				LOGGER.info("{}-{}状态报告响应msgid为{}，缓存中key为{}，value为{}", deliverSm.getSystemId(), deliverSm.getDestAddress().getAddress(), deliverSm.getSourceAddress().getAddress(), messageId, messageId, preMsgId);
+				String[] tempMsgIds;
+				if (preMsgId.contains("|")) {
+					tempMsgIds = preMsgId.split("\\|");
+				} else {
+					tempMsgIds = new String[1];
+					tempMsgIds[0] = preMsgId;
+				}
+				removeMap.put(messageId, preMsgId);
 
+				for (String curMsgId : tempMsgIds) {
+					String[] split = curMsgId.split("-");
 					//替换messageId
 					deliveryReceipt.setMessageId(split[0]);
 					byte[] bytes = deliveryReceipt.toShortMessage().getBytes();
 					deliverSm.setShortMessage(bytes);
-
 					deliverSm.removeSequenceNumber();
+					Address destAddress = deliverSm.getDestAddress();
+					destAddress.setAddress(msgVo.getSenderId());
+					deliverSm.setDestAddress(destAddress);
 					deliverSm.calculateAndSetCommandLength();
 
-					removeMap.put(entry.getKey(), entry.getValue());
+					//重写状态报告
+					deliverSm = reWriteDeliverSm(deliverSm);
+
 					smppSession.sendRequestPdu(deliverSm, 10000, true);
 				}
+
+
 			} catch (Exception e) {
 				LOGGER.error("{}-  systemid为{},{}-{}，msgid={}  ，处理长短信状态报告转发异常", Thread.currentThread().getName(), deliverSm.getSystemId(), deliverSm.getSystemId(), deliverSm.getDestAddress().getAddress(), deliverSm.getSourceAddress().getAddress(), messageId, e);
 			}
 
-		}
-
-
-		if (removeMap.size() > 0) {
-			for (Map.Entry<String, String> entry : removeMap.entrySet()) {
-				rptRedisConsumer.redisUtil.hmRemove(SmppServerConstants.WEB_MSGID_CACHE, entry.getKey());
+			if (removeMap.size() > 0) {
+				for (Map.Entry<String, String> entry : removeMap.entrySet()) {
+					rptRedisConsumer.redisUtil.hmRemove(SmppServerConstants.WEB_MSGID_CACHE, entry.getKey());
+				}
 			}
+
 		} else {
-			try {
-				LOGGER.error("{}- systemid为{},{}-{}，msgid={}，未能匹配到对应的下行记录", Thread.currentThread().getName(), deliverSm.getSystemId(), deliverSm.getDestAddress().getAddress(), deliverSm.getSourceAddress().getAddress(), messageId);
-				byte[] bytes = deliveryReceipt.toShortMessage().getBytes();
-				deliverSm.setShortMessage(bytes);
-				deliverSm.calculateAndSetCommandLength();
-
-				smppSession.sendRequestPdu(deliverSm, 10000, true);
-			} catch (Exception e) {
-				LOGGER.error("{}-  systemid为{},{}-{}，msgid={}，处理短短信状态报告转发异常", Thread.currentThread().getName(), deliverSm.getSystemId(), deliverSm.getDestAddress().getAddress(), deliverSm.getSourceAddress().getAddress(), messageId, e);
-			}
+			LOGGER.error("{}- systemid为{},{}-{}，msgid={}，未能匹配到对应的下行记录", Thread.currentThread().getName(), deliverSm.getSystemId(), deliverSm.getDestAddress().getAddress(), deliverSm.getSourceAddress().getAddress(), messageId);
 		}
 
 

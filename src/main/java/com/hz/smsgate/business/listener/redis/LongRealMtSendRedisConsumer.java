@@ -53,7 +53,7 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 		while (true) {
 
 			try {
-				if (longRealMtSendRedisConsumer.redisUtil != null) {
+				if (longRealMtSendRedisConsumer.redisUtil == null) {
 					Thread.sleep(1000);
 					continue;
 				}
@@ -138,22 +138,32 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 			return;
 		}
 		String messageId = submitResp.getMessageId();
-		//更新缓存中的value
-		Object msgVo = longRealMtSendRedisConsumer.redisUtil.hmGet(SmppServerConstants.WEB_MSGID_CACHE, msgId);
-		longRealMtSendRedisConsumer.redisUtil.hmRemove(SmppServerConstants.WEB_MSGID_CACHE, msgId);
-
-		Object msgVo1 = longRealMtSendRedisConsumer.redisUtil.hmGet(SmppServerConstants.WEB_MSGID_CACHE, messageId);
-		if (msgVo1 == null) {
-			longRealMtSendRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, messageId, msgVo);
+		String[] split;
+		if (msgId.contains("|")) {
+			split = msgId.split("\\|");
 		} else {
-			MsgVo msg = (MsgVo) msgVo;
-			String msgId2 = msg.getMsgId();
+			split = new String[1];
+			split[0] = msgId;
+		}
 
-			MsgVo msg1 = (MsgVo) msgVo1;
-			String msgId1 = msg1.getMsgId();
+		for (String curMsgId : split) {
+			//更新缓存中的value
+			Object msgVo = longRealMtSendRedisConsumer.redisUtil.hmGet(SmppServerConstants.WEB_MSGID_CACHE, curMsgId);
+			longRealMtSendRedisConsumer.redisUtil.hmRemove(SmppServerConstants.WEB_MSGID_CACHE, curMsgId);
 
-			msg1.setMsgId(msgId1 + "|" + msgId2);
-			longRealMtSendRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, messageId, msg1);
+			Object msgVo1 = longRealMtSendRedisConsumer.redisUtil.hmGet(SmppServerConstants.WEB_MSGID_CACHE, messageId);
+			if (msgVo1 == null) {
+				longRealMtSendRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, messageId, msgVo);
+			} else {
+				MsgVo msg = (MsgVo) msgVo;
+				String msgId2 = msg.getMsgId();
+
+				MsgVo msg1 = (MsgVo) msgVo1;
+				String msgId1 = msg1.getMsgId();
+
+				msg1.setMsgId(msgId1 + "|" + msgId2);
+				longRealMtSendRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, messageId, msg1);
+			}
 		}
 
 
