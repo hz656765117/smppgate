@@ -135,4 +135,10 @@ public class SmppServerConstants {
     public static final String WEB_DELIVER_SM = "webDeliverSm";
 
 
+    /**
+     * 重新绑定客户端
+     */
+    public static final String WEB_BIND_AGAIN = "webBindAgain";
+
+
 }

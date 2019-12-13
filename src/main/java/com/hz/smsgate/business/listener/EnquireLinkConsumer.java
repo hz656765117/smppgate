@@ -1,14 +1,17 @@
 package com.hz.smsgate.business.listener;
 
+import com.hz.smsgate.base.constants.SmppServerConstants;
 import com.hz.smsgate.base.constants.StaticValue;
-import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.pdu.EnquireLink;
 import com.hz.smsgate.base.smpp.pdu.EnquireLinkResp;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
+import com.hz.smsgate.base.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +23,18 @@ import java.util.Map;
  */
 public class EnquireLinkConsumer implements Runnable {
 	private static Logger LOGGER = LoggerFactory.getLogger(EnquireLinkConsumer.class);
+
+
+	@Autowired
+	public RedisUtil redisUtil;
+
+	public static EnquireLinkConsumer enquireLinkConsumer;
+
+	@PostConstruct
+	public void init() {
+		enquireLinkConsumer = this;
+		enquireLinkConsumer.redisUtil = this.redisUtil;
+	}
 
 	@Override
 	public void run() {
@@ -44,17 +59,20 @@ public class EnquireLinkConsumer implements Runnable {
 						if (isEnquireLink.contains(systemId)) {
 							continue;
 						}
-						isEnquireLink.add(systemId);
 
+						isEnquireLink.add(systemId);
+						
 						SmppSession session0 = entry.getValue();
 						try {
 							LOGGER.info("-----------------------------systemId（{}）开始心跳......", systemId);
-							EnquireLinkResp enquireLinkResp = session0.enquireLink(new EnquireLink(), 3000);
+							EnquireLinkResp enquireLinkResp = session0.enquireLink(new EnquireLink(), 5000);
 							if (enquireLinkResp.getCommandStatus() != 0) {
-								reBind(session0, systemId, null, entry.getKey());
+								reBind(null, entry.getKey());
+								continue;
 							}
+
 						} catch (Exception e) {
-							reBind(session0, systemId, e, entry.getKey());
+							reBind(e, entry.getKey());
 						}
 						Thread.sleep(1000);
 					}
@@ -76,21 +94,13 @@ public class EnquireLinkConsumer implements Runnable {
 	}
 
 
-	public static void reBind(SmppSession session0, String systemId, Exception e, SessionKey key) {
+	public static void reBind(Exception e, SessionKey key) {
 		if (e == null) {
-			LOGGER.error("{}-{}心跳异常异常", Thread.currentThread().getName(), systemId);
+			LOGGER.error("{}-{}心跳异常异常", Thread.currentThread().getName(), key.getSystemId());
 		} else {
-			LOGGER.error("{}-{}心跳异常异常", Thread.currentThread().getName(), systemId, e);
+			LOGGER.error("{}-{}心跳异常异常", Thread.currentThread().getName(), key.getSystemId(), e);
 		}
-
-
-		session0.unbind(3000);
-		//如果心跳失败，则重新绑定一次，绑定失败 则移除该session
-		SmppSessionConfiguration smppSessionConfiguration = ClientInit.configMap.get(key);
-		SmppSession client = ClientInit.createClient(smppSessionConfiguration);
-		if (client == null) {
-			LOGGER.error("{}-{}心跳异常异常且重新绑定失败", Thread.currentThread().getName(), systemId);
-		}
+		enquireLinkConsumer.redisUtil.lPush(SmppServerConstants.WEB_BIND_AGAIN, key);
 	}
 
 

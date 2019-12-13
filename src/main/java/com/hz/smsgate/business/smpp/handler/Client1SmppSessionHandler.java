@@ -35,6 +35,7 @@ import com.hz.smsgate.base.smpp.pojo.PduAsyncResponse;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
 import com.hz.smsgate.base.utils.RedisUtil;
+import com.hz.smsgate.business.smpp.impl.DefaultSmppSession;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,6 +98,8 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
     public PduResponse firePduRequestReceived(PduRequest pduRequest) {
         PduResponse response = pduRequest.createResponse();
         SmppSession session = this.sessionRef.get();
+//		DefaultSmppSession defaultSmppSession = (DefaultSmppSession) session;
+
         String systemId = "";
         if (session != null) {
             systemId = session.getConfiguration().getSystemId();

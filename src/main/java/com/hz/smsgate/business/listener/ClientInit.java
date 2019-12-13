@@ -296,6 +296,9 @@ public class ClientInit {
 		ConfigLoadThread configLoadThread = new ConfigLoadThread();
 		ThreadPoolHelper.executeTask(configLoadThread);
 
+		ClientBindConsumer clientBindConsumer = new ClientBindConsumer();
+		ThreadPoolHelper.executeTask(clientBindConsumer);
+
 
 		RptRedisConsumer rptRedisConsumer = new RptRedisConsumer();
 
