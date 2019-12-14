@@ -365,19 +365,20 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 	@Override
 	public void unbind(long timeoutInMillis) {
 		// is this channel still open?
-		if (this.channel.isConnected()) {
-			this.state.set(STATE_UNBINDING);
 
-			// try a "graceful" unbind by sending an "unbind" request
-			try {
-				sendRequestAndGetResponse(new Unbind(), timeoutInMillis);
-			} catch (Exception e) {
-				// not sure if an exception while attempting to unbind matters...
-				// we are going to just print out a warning
-				logger.warn("Did not cleanly receive an unbind response to our unbind request, safe to ignore: " + e.getMessage());
-			}
-		} else {
-			logger.info("Session channel is already closed, not going to unbind");
+		if (!this.channel.isConnected()) {
+			logger.error("Session channel is already closed, not going to unbind");
+		}
+
+		this.state.set(STATE_UNBINDING);
+
+		// try a "graceful" unbind by sending an "unbind" request
+		try {
+			sendRequestAndGetResponse(new Unbind(), timeoutInMillis);
+		} catch (Exception e) {
+			// not sure if an exception while attempting to unbind matters...
+			// we are going to just print out a warning
+			logger.warn("Did not cleanly receive an unbind response to our unbind request, safe to ignore: " + e.getMessage());
 		}
 
 		// always delegate the unbind to finish up with a "close"
@@ -391,15 +392,20 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 
 	@Override
 	public void close(long timeoutInMillis) {
-		if (channel.isConnected()) {
+//		if (channel.isConnected()) {
+//
+//		}
+		try{
 			// temporarily set to "unbinding" for now
 			this.state.set(STATE_UNBINDING);
 			// make sure the channel is always closed
 			if (channel.close().awaitUninterruptibly(timeoutInMillis)) {
 				logger.info("Successfully closed");
 			} else {
-				logger.warn("Unable to cleanly close channel");
+				logger.error("Unable to cleanly close channel1111");
 			}
+		}catch (Exception e){
+			logger.error("Unable to cleanly close channel222");
 		}
 		this.state.set(STATE_CLOSED);
 	}
@@ -565,7 +571,7 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 
 		if (!channel.isConnected()) {
 			logger.error("Failed to write any response because the channel is not connected any more. Maybe the client has closed the connection? ");
-			return ;
+			return;
 		}
 		// write the pdu out & wait timeout amount of time
 		ChannelFuture channelFuture = this.channel.write(buffer).await();
