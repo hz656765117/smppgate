@@ -183,7 +183,9 @@ public class RptRedisConsumer implements Runnable {
 
 
 			} catch (Exception e) {
+				rptRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_DELIVER_SM,deliverSm);
 				LOGGER.error("{}-  systemid为{},{}-{}，msgid={}  ，处理长短信状态报告转发异常", Thread.currentThread().getName(), deliverSm.getSystemId(), deliverSm.getSystemId(), deliverSm.getDestAddress().getAddress(), deliverSm.getSourceAddress().getAddress(), messageId, e);
+				return;
 			}
 
 			if (removeMap.size() > 0) {

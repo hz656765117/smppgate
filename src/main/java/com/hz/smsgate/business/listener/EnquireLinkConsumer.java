@@ -10,6 +10,7 @@ import com.hz.smsgate.base.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import java.util.Map;
  * @author huangzhuo
  * @date 2019/9/11 14:27
  */
+@Component
 public class EnquireLinkConsumer implements Runnable {
 	private static Logger LOGGER = LoggerFactory.getLogger(EnquireLinkConsumer.class);
 
@@ -61,7 +63,7 @@ public class EnquireLinkConsumer implements Runnable {
 						}
 
 						isEnquireLink.add(systemId);
-						
+
 						SmppSession session0 = entry.getValue();
 						try {
 							LOGGER.info("-----------------------------systemId（{}）开始心跳......", systemId);
