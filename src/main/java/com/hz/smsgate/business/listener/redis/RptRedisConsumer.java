@@ -130,8 +130,10 @@ public class RptRedisConsumer implements Runnable {
 				MsgVo msgVo = (MsgVo) obj;
 				String preMsgId = msgVo.getMsgId();
 
-				SmppSession smppSession = PduUtils.getServerSmppSession(deliverSm);
+				SmppSession smppSession = PduUtils.getServerSmppSession(msgVo.getSmppUser());
 				if (smppSession == null) {
+					String msgId = PduUtils.getMsgId(deliverSm);
+					LOGGER.error("{}-处理状态报告异常，未能匹配到服务端连接(通道为：{}，systemId为：{},msgId为：({}))-------", Thread.currentThread().getName(), msgVo.getSenderId(), msgVo.getSmppUser(), msgId);
 					return;
 				}
 
@@ -142,7 +144,7 @@ public class RptRedisConsumer implements Runnable {
 					String mbl = deliverSm.getSourceAddress().getAddress();
 					String areaCode = PduUtils.getAreaCode(mbl);
 					//马来西亚和菲律宾 只有accepted  || StaticValue.AREA_CODE_VIETNAM.equals(areaCode)
-					if (StaticValue.AREA_CODE_MALAYSIA.equals(areaCode)  || StaticValue.AREA_CODE_PHILIPPINES.equals(areaCode)) {
+					if (StaticValue.AREA_CODE_MALAYSIA.equals(areaCode) || StaticValue.AREA_CODE_PHILIPPINES.equals(areaCode)) {
 						if (deliveryReceipt.getState() == SmppConstants.STATE_ACCEPTED) {
 							deliveryReceipt.setState(SmppConstants.STATE_DELIVERED);
 						}
@@ -183,7 +185,7 @@ public class RptRedisConsumer implements Runnable {
 
 
 			} catch (Exception e) {
-				rptRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_DELIVER_SM,deliverSm);
+				rptRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_DELIVER_SM, deliverSm);
 				LOGGER.error("{}-  systemid为{},{}-{}，msgid={}  ，处理长短信状态报告转发异常", Thread.currentThread().getName(), deliverSm.getSystemId(), deliverSm.getSystemId(), deliverSm.getDestAddress().getAddress(), deliverSm.getSourceAddress().getAddress(), messageId, e);
 				return;
 			}

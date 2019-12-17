@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 @Configuration
 public class DruidConfiguration {
     
-	//web可视化sql监控链接  http://localhost:8088/druid        账号 hz  密码 hz
+	//web可视化sql监控链接  http://localhost:8814/druid        账号 hz  密码 hz
 	
     @Bean(name="druidDataSource")
     public DataSource druidDataSource(@Value("${spring.datasource.driver-class-name}") String driver,

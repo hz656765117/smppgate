@@ -51,10 +51,10 @@ public class ConfigLoadThread implements Runnable {
 				configLoadThread.clientInit.initMkList();
 				//初始化sp账号
 				configLoadThread.clientInit.initSpList();
-
+				//初始化http接入账号
+				configLoadThread.clientInit.initHttpSmppUser();
 
 				configLoadThread.clientInit.initClientConfigs();
-
 
 
 			} catch (Exception e) {

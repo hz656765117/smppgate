@@ -90,6 +90,9 @@ public class ClientInit {
 	public static List<SessionKey> CHANNEL_TZ_LIST = new ArrayList<>();
 
 
+	public static List<SmppUserVo> HTTP_SMPP_USER = new LinkedList<>();
+
+
 	@PostConstruct
 	public void postConstruct() {
 
@@ -113,6 +116,8 @@ public class ClientInit {
 		initMkList();
 		//初始化sp账号
 		initSpList();
+		//初始化http接入账号
+		initHttpSmppUser();
 
 		//初始化客户端配置
 		initClientConfigs();
@@ -147,6 +152,10 @@ public class ClientInit {
 
 	}
 
+	public void initHttpSmppUser() {
+		HTTP_SMPP_USER.clear();
+		HTTP_SMPP_USER = smppService.getHttpAllSmppUser();
+	}
 
 	public void initClientConfigs() {
 		try {
@@ -184,7 +193,7 @@ public class ClientInit {
 	}
 
 	public void initSpList() {
-		List<SmppUserVo> allSmppUser = smppService.getAllSmppUser();
+		List<SmppUserVo> allSmppUser = smppService.getCmAllSmppUser();
 		if (allSmppUser == null || allSmppUser.size() <= 0) {
 			logger.error("未加载到sp账号");
 			return;
@@ -213,6 +222,7 @@ public class ClientInit {
 		CHANNL_SP_REL.clear();
 		CHANNL_SP_REL = configMap;
 	}
+
 
 	public void initMkList() {
 		List<OperatorVo> allOperator = smppService.getAllOperator();

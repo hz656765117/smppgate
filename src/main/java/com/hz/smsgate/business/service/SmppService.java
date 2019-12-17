@@ -13,8 +13,23 @@ public interface SmppService {
 
     List<Channel> getAllChannels();
 
-    List<SmppUserVo> getAllSmppUser();
+    /**
+     * 查询所有cm的接入账号
+     * @return cm的接入账号集合
+     */
+    List<SmppUserVo> getCmAllSmppUser();
 
+
+    /**
+     * 查询所有http的接入账号
+     * @return http的接入账号集合
+     */
+    List<SmppUserVo> getHttpAllSmppUser();
+
+    /**
+     * 查询所有的运营商
+     * @return 运营商集合
+     */
     List<OperatorVo> getAllOperator();
 
 }

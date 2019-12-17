@@ -6,14 +6,18 @@ import com.hz.smsgate.base.smpp.constants.SmppConstants;
 import com.hz.smsgate.base.smpp.exception.RecoverablePduException;
 import com.hz.smsgate.base.smpp.exception.UnrecoverablePduException;
 import com.hz.smsgate.base.smpp.pdu.*;
+import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.PduAsyncResponse;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.utils.PduUtil;
+import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.base.utils.SmppUtils;
 import com.hz.smsgate.business.listener.ClientInit;
 import com.hz.smsgate.business.pojo.MsgVo;
+import com.hz.smsgate.business.pojo.SmppUserVo;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +26,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.lang.ref.WeakReference;
 import java.math.BigInteger;
+import java.util.LinkedList;
+import java.util.List;
 
 
 /**
@@ -112,7 +118,7 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 						MsgVo msgVo = new MsgVo(tempMsgId, session.getConfiguration().getSystemId(), session.getConfiguration().getPassword(), submitSm.getSourceAddress().getAddress());
 						try {
 							serverSmppSessionRedisHandler.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, tempMsgId, msgVo);
-							putSelfQueue(submitSm, 1);
+							putSelfQueue(getRealSubmitSm(submitSm, session), 1);
 						} catch (Exception e) {
 							logger.error("-----------长短信下行接收，加入队列异常。------------- {}", e);
 						}
@@ -129,7 +135,7 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 						try {
 							serverSmppSessionRedisHandler.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, msgid, msgVo);
 
-							putSelfQueue(submitSm, 0);
+							putSelfQueue(getRealSubmitSm(submitSm, session), 0);
 						} catch (Exception e) {
 							logger.error("-----------短短信下行接收，加入队列异常。------------- {}", e);
 						}
@@ -167,6 +173,8 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 	 * @param type     短信类型  0 短短信  1 长短信
 	 */
 	public void putSelfQueue(SubmitSm submitSm, int type) {
+
+
 		String senderId = submitSm.getSourceAddress().getAddress();
 		SessionKey sessionKey = new SessionKey(submitSm.getSystemId(), senderId);
 
@@ -201,6 +209,88 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 		}
 
 	}
+
+
+	/**
+	 * 父账号，替换真实的systemId和senderId
+	 *
+	 * @param submitSm 下行对象
+	 * @return 下行对象
+	 */
+	public SubmitSm getRealSubmitSm(SubmitSm submitSm, SmppSession session) {
+		if (session == null) {
+			return submitSm;
+		}
+
+		try {
+			SmppUserVo smppUserFather = PduUtils.getSmppUserByUserPwd(session.getConfiguration().getSystemId(), session.getConfiguration().getPassword());
+			//如果查不到账号，走原有的逻辑
+			if (smppUserFather == null) {
+				return submitSm;
+			}
+
+			Address sourceAddress = submitSm.getSourceAddress();
+
+			List<SmppUserVo> list = smppUserFather.getList();
+			if (list == null || list.size() <= 0) {
+				submitSm.setSystemId(smppUserFather.getSystemid());
+				sourceAddress.setAddress(smppUserFather.getSenderid());
+				submitSm.setSourceAddress(sourceAddress);
+				return submitSm;
+			}
+
+			String mbl = submitSm.getDestAddress().getAddress();
+			//获取区号
+			String areaCode = PduUtils.getAreaCode(mbl);
+
+			String systemId = null;
+			String senderId = null;
+
+			List<SmppUserVo> areaList = new LinkedList<>();
+
+			for (SmppUserVo smppUser : list) {
+				if (areaCode.equals(smppUser.getAreaCode())) {
+					areaList.add(smppUser);
+				}
+			}
+
+
+			if (areaList == null || areaList.size() <= 0) {
+				return submitSm;
+			}
+
+			if (areaList.size() == 1) {
+				systemId = areaList.get(0).getSystemid();
+				senderId = areaList.get(0).getSenderid();
+			} else {
+				//如果同一个国家配置了两个国家，则根据号段匹配发送
+				String numSeg = PduUtils.getNumSeg(mbl);
+
+				for (SmppUserVo smppUser : areaList) {
+					if (StringUtils.isNotBlank(smppUser.getNumSegment()) && smppUser.getNumSegment().contains(numSeg)) {
+						systemId = smppUser.getSystemid();
+						senderId = smppUser.getSenderid();
+						break;
+					}
+				}
+			}
+
+			if (StringUtils.isNotBlank(systemId) && StringUtils.isNotBlank(senderId)) {
+				logger.info("systemId({}),senderId({})  获取真实systemId({})和senderId({})成功------------- ", submitSm.getSystemId(), sourceAddress.getAddress(), systemId, senderId);
+				submitSm.setSystemId(systemId);
+				sourceAddress.setAddress(senderId);
+				submitSm.setSourceAddress(sourceAddress);
+
+			} else {
+				logger.error("systemId({}),senderId({})  获取真实systemId和senderId 失败------------- ", submitSm.getSystemId(), sourceAddress.getAddress());
+			}
+		} catch (Exception e) {
+			logger.error("systemId({}),senderId({})  获取真实systemId和senderId 异常------------- ", submitSm.getSystemId(), submitSm.getSourceAddress().getAddress(), e);
+		}
+
+		return submitSm;
+	}
+
 
 	@Override
 	public void fireExpectedPduResponseReceived(PduAsyncResponse pduAsyncResponse) {

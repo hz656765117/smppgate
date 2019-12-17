@@ -11,6 +11,8 @@ import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
 import com.hz.smsgate.base.smpp.utils.PduUtil;
 import com.hz.smsgate.business.listener.ClientInit;
+import com.hz.smsgate.business.listener.SmppServerInit;
+import com.hz.smsgate.business.pojo.SmppUserVo;
 import com.hz.smsgate.business.smpp.handler.DefaultSmppSessionHandler;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppClient;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppServer;
@@ -19,6 +21,7 @@ import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -57,8 +60,8 @@ public class PduUtils {
 	/**
 	 * 获取区号
 	 *
-	 * @param mbl
-	 * @return
+	 * @param mbl 手机号码
+	 * @return 区号
 	 */
 	public static String getAreaCode(String mbl) {
 		String areaCode = "";
@@ -73,6 +76,25 @@ public class PduUtils {
 		}
 
 		return areaCode;
+	}
+
+	/**
+	 * 获取号段
+	 *
+	 * @param mbl 手机号码
+	 * @return 号段
+	 */
+	public static String getNumSeg(String mbl) {
+		String numSeg = "";
+		if (StringUtils.isBlank(mbl)) {
+			return numSeg;
+		}
+		if (mbl.startsWith("00")) {
+			numSeg = mbl.substring(0, 7);
+		} else {
+			numSeg = 00 + mbl.substring(0, 5);
+		}
+		return numSeg;
 	}
 
 
@@ -245,16 +267,40 @@ public class PduUtils {
 	}
 
 
-	public static SmppSession getServerSmppSession(DeliverSm deliverSm) {
+//	public static SmppSession getServerSmppSession(DeliverSm deliverSm) {
+//		SmppSession smppSession = null;
+//		//根据通道获取session
+//		String channel = deliverSm.getDestAddress().getAddress();
+//		String systemId = deliverSm.getSystemId();
+//
+//
+//		if (DefaultSmppServer.smppSessionList == null || DefaultSmppServer.smppSessionList.size() < 1) {
+//			String msgId = getMsgId(deliverSm);
+//			LOGGER.error("{}-处理状态报告异常，未能获取到服务端连接(通道为：{}，systemId为：{},msgId为：({}))-------", Thread.currentThread().getName(), channel, systemId, msgId);
+//			return smppSession;
+//		}
+//
+//		for (SmppSession session : DefaultSmppServer.smppSessionList) {
+//			if (session.getConfiguration().getSystemId().equals(systemId)) {
+//				smppSession = session;
+//				break;
+//			}
+//		}
+//
+//		if (smppSession == null) {
+//			String msgId = getMsgId(deliverSm);
+//			LOGGER.error("{}-处理状态报告异常，未能匹配到服务端连接(通道为：{}，systemId为：{},msgId为：({}))-------", Thread.currentThread().getName(), channel, systemId, msgId);
+//			return smppSession;
+//		}
+//		return smppSession;
+//	}
+
+
+	public static SmppSession getServerSmppSession(String systemId) {
 		SmppSession smppSession = null;
 		//根据通道获取session
-		String channel = deliverSm.getDestAddress().getAddress();
-		String systemId = deliverSm.getSystemId();
-
 
 		if (DefaultSmppServer.smppSessionList == null || DefaultSmppServer.smppSessionList.size() < 1) {
-			String msgId = getMsgId(deliverSm);
-			LOGGER.error("{}-处理状态报告异常，未能获取到服务端连接(通道为：{}，systemId为：{},msgId为：({}))-------", Thread.currentThread().getName(), channel, systemId, msgId);
 			return smppSession;
 		}
 
@@ -266,11 +312,24 @@ public class PduUtils {
 		}
 
 		if (smppSession == null) {
-			String msgId = getMsgId(deliverSm);
-			LOGGER.error("{}-处理状态报告异常，未能匹配到服务端连接(通道为：{}，systemId为：{},msgId为：({}))-------", Thread.currentThread().getName(), channel, systemId, msgId);
 			return smppSession;
 		}
 		return smppSession;
+	}
+
+
+	public static SmppUserVo getSmppUserByUserPwd(String smppUser, String smppPwd) {
+		if (StringUtils.isBlank(smppUser) || StringUtils.isBlank(smppPwd)) {
+			return null;
+		}
+		List<SmppUserVo> smppUser1 = ClientInit.HTTP_SMPP_USER;
+		for (SmppUserVo smppUserVo : smppUser1) {
+			if (smppUser.equals(smppUserVo.getSmppUser()) && smppPwd.equals(smppUserVo.getSmppPwd())) {
+				return smppUserVo;
+			}
+
+		}
+		return null;
 	}
 
 }

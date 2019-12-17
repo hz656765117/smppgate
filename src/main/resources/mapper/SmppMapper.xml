@@ -15,6 +15,8 @@
     <result column="sys_channel_id" jdbcType="VARCHAR" property="sysChannelId" />
     <result column="flag" jdbcType="INTEGER" property="flag" />
     <result column="user_ids" jdbcType="VARCHAR" property="userIds" />
+    <result column="user_type" jdbcType="INTEGER" property="userType" />
+    <result column="num_segment" jdbcType="VARCHAR" property="numSegment" />
     <result column="desc" jdbcType="VARCHAR" property="desc" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
@@ -24,7 +26,7 @@
 
 
 
-  <select id="selectUser"   parameterType="java.util.List"  resultMap="BaseResultMap">
+  <select id="selectUser"     resultMap="BaseResultMap">
 
       SELECT
           su.id,
@@ -35,6 +37,8 @@
           su.area_code,
           su.msg_type,
           su.user_ids,
+          su.num_segment,
+          su.user_type,
           su.desc,
           op.systemid,
           ch.senderid,
@@ -52,8 +56,14 @@
                   #{item, jdbcType=INTEGER}
               </foreach>
           </if>
-
+          <if test="userType != null">
+              and su.user_type =  #{userType, jdbcType=INTEGER}
+          </if>
   </select>
+
+
+
+
 
 
 

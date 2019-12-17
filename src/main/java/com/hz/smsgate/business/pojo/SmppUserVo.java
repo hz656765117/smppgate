@@ -93,6 +93,13 @@ public class SmppUserVo implements Serializable {
      */
     private String userIds;
 
+
+    private Integer userType;
+
+
+    private String numSegment;
+
+
     /**
      * VARCHAR(255)<br>
      * 描述
@@ -347,5 +354,22 @@ public class SmppUserVo implements Serializable {
 
     public void setMsgType(Integer msgType) {
         this.msgType = msgType;
+    }
+
+
+    public Integer getUserType() {
+        return userType;
+    }
+
+    public void setUserType(Integer userType) {
+        this.userType = userType;
+    }
+
+    public String getNumSegment() {
+        return numSegment;
+    }
+
+    public void setNumSegment(String numSegment) {
+        this.numSegment = numSegment;
     }
 }
