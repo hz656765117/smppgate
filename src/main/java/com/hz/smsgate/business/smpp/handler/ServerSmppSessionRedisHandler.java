@@ -273,6 +273,14 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 						break;
 					}
 				}
+
+				//如果号段都没匹配上，拿第一个账号发送
+				if (StringUtils.isBlank(systemId) || StringUtils.isBlank(senderId)) {
+					systemId = areaList.get(0).getSystemid();
+					senderId = areaList.get(0).getSenderid();
+					logger.error("手机号（{}），号段({})未配置到具体发送账号上,使用systemId（{}）和senderId（{}）发送", mbl, numSeg, systemId, senderId);
+				}
+
 			}
 
 			if (StringUtils.isNotBlank(systemId) && StringUtils.isNotBlank(senderId)) {
