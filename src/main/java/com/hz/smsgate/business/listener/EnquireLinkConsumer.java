@@ -67,7 +67,7 @@ public class EnquireLinkConsumer implements Runnable {
 						SmppSession session0 = entry.getValue();
 						try {
 							LOGGER.info("-----------------------------systemId（{}）开始心跳......", systemId);
-							EnquireLinkResp enquireLinkResp = session0.enquireLink(new EnquireLink(), 5000);
+							EnquireLinkResp enquireLinkResp = session0.enquireLink(new EnquireLink(), 10000);
 							if (enquireLinkResp.getCommandStatus() != 0) {
 								reBind(null, entry.getKey());
 								continue;
