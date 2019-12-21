@@ -1,6 +1,7 @@
 package com.hz.smsgate.business.listener.redis;
 
 import com.hz.smsgate.base.constants.SmppServerConstants;
+import com.hz.smsgate.base.smpp.exception.SmppTimeoutException;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
@@ -122,7 +123,14 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 				return submitResp;
 			}
 
-			submitResp = session0.submit(submitSm, 10000);
+			try {
+				submitResp = session0.submit(submitSm, 10000);
+			} catch (SmppTimeoutException e) {
+				LOGGER.error("{}-{}- {} 处理短信下行异常1111", Thread.currentThread().getName(), sendId, mbl, e);
+				if (e.getMessage().contains("SmppTimeoutException")) {
+					LOGGER.error("{}-{}- {} 处理短信下行异常2222", Thread.currentThread().getName(), sendId, mbl, e);
+				}
+			}
 		} catch (Exception e) {
 			putSelfQueue(submitSm);
 			LOGGER.error("{}-{}-{}- {} 处理短信下行异常", Thread.currentThread().getName(), submitSm.getSystemId(), sendId, mbl, e);

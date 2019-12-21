@@ -3,6 +3,7 @@ package com.hz.smsgate.business.listener.redis;
 import com.hz.smsgate.base.constants.SmppServerConstants;
 import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.emp.pojo.WGParams;
+import com.hz.smsgate.base.smpp.exception.SmppTimeoutException;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
@@ -97,7 +98,7 @@ public class MtRedisCmConsumer implements Runnable {
 				LOGGER.error("{}- 处理短信下行异常", Thread.currentThread().getName(), e);
 				try {
 					Thread.sleep(10000);
-				}catch (Exception E){
+				} catch (Exception E) {
 
 				}
 			}
@@ -166,8 +167,15 @@ public class MtRedisCmConsumer implements Runnable {
 			submitSm.removeSequenceNumber();
 			submitSm.calculateAndSetCommandLength();
 
+			try {
+				submitResp = session0.submit(submitSm, 10000);
+			} catch (SmppTimeoutException e) {
+				LOGGER.error("{}-{}- {} 处理短信下行异常1111", Thread.currentThread().getName(), sendId, mbl, e);
+				if (e.getMessage().contains("SmppTimeoutException")) {
+					LOGGER.error("{}-{}- {} 处理短信下行异常2222", Thread.currentThread().getName(), sendId, mbl, e);
+				}
+			}
 
-			submitResp = session0.submit(submitSm, 10000);
 		} catch (Exception e) {
 			putSelfQueue(submitSm);
 			LOGGER.error("{}-{}- {} 处理短信下行异常", Thread.currentThread().getName(), sendId, mbl, e);
@@ -212,7 +220,7 @@ public class MtRedisCmConsumer implements Runnable {
 				msgVo.setSendSize(sendSize++);
 				mtRedisConsumer.redisUtil.hmSet(SmppServerConstants.CM_MSGID_CACHE, submitSm.getTempMsgId(), msgVo);
 				mtRedisConsumer.redisUtil.lPush(SmppServerConstants.CM_SUBMIT_SM_OPT, submitSm);
-				LOGGER.info("{}  CM短短信 将发送失败的opt短信放入到OPT中", Thread.currentThread().getName(), submitSm.toString());
+				LOGGER.info("{}  CM短短信 将发送失败的opt短信放入到OPT中{}", Thread.currentThread().getName(), submitSm.toString());
 			}
 		} catch (Exception e) {
 			LOGGER.error("{}  CM短短信 将发送失败的非opt短信放入到营销中异常", Thread.currentThread().getName(), e);
