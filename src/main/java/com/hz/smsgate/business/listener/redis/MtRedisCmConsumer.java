@@ -95,6 +95,11 @@ public class MtRedisCmConsumer implements Runnable {
 
 			} catch (Exception e) {
 				LOGGER.error("{}- 处理短信下行异常", Thread.currentThread().getName(), e);
+				try {
+					Thread.sleep(10000);
+				}catch (Exception E){
+
+				}
 			}
 
 

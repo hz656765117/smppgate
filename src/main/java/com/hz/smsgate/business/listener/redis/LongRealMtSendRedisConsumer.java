@@ -88,6 +88,11 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 
 			} catch (Exception e) {
 				LOGGER.error("{}-长短信分段下发异常", Thread.currentThread().getName(), e);
+				try {
+					Thread.sleep(10000);
+				}catch (Exception E){
+
+				}
 			}
 
 		}

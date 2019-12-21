@@ -65,6 +65,11 @@ public class LongTzMtSplitRedisConsumer implements Runnable {
 				}
 			} catch (Exception e) {
 				LOGGER.error("{}-处理将长短信拆分并放到真正的发送队列中(通知消息类型)异常", Thread.currentThread().getName(), e);
+				try {
+					Thread.sleep(10000);
+				}catch (Exception E){
+
+				}
 			}
 
 		}

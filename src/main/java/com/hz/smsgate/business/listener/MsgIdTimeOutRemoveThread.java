@@ -78,6 +78,11 @@ public class MsgIdTimeOutRemoveThread implements Runnable {
 				}
 			} catch (Exception e) {
 				LOGGER.error("{}-处理WEB_MSGID_CACHE超时移除线程异常", Thread.currentThread().getName(), e);
+				try {
+					Thread.sleep(10000);
+				}catch (Exception E){
+
+				}
 			}
 
 		}
