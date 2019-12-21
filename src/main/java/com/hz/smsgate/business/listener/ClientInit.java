@@ -312,6 +312,10 @@ public class ClientInit {
 		MsgIdTimeOutRemoveThread msgIdTimeOutRemoveThread = new MsgIdTimeOutRemoveThread();
 		ThreadPoolHelper.executeTask(msgIdTimeOutRemoveThread);
 
+
+		CleanLogThread cleanLogThread = new CleanLogThread();
+		ThreadPoolHelper.executeTask(cleanLogThread);
+
 		RptRedisConsumer rptRedisConsumer = new RptRedisConsumer();
 
 		LongOptMtMergeRedisConsumer longOptMtMergeRedisConsumer = new LongOptMtMergeRedisConsumer();
