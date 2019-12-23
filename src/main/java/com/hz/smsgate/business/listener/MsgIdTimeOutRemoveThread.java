@@ -57,6 +57,10 @@ public class MsgIdTimeOutRemoveThread implements Runnable {
 						Map<String, MsgVo> msgMap = (Map<String, MsgVo>) obj;
 						for (Map.Entry<String, MsgVo> entry : msgMap.entrySet()) {
 							MsgVo msgVo = entry.getValue();
+							if (msgVo == null) {
+								LOGGER.error("{}-处理WEB_MSGID_CACHE超时移除线程异常,msgid为 {}", Thread.currentThread().getName(), entry.getKey());
+								continue;
+							}
 							long sendTime = msgVo.getSendTime();
 							long curTime = System.currentTimeMillis();
 							long betTime = curTime - sendTime;
@@ -80,7 +84,7 @@ public class MsgIdTimeOutRemoveThread implements Runnable {
 				LOGGER.error("{}-处理WEB_MSGID_CACHE超时移除线程异常", Thread.currentThread().getName(), e);
 				try {
 					Thread.sleep(10000);
-				}catch (Exception E){
+				} catch (Exception E) {
 
 				}
 			}
