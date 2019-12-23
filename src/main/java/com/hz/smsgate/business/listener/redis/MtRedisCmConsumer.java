@@ -84,10 +84,10 @@ public class MtRedisCmConsumer implements Runnable {
 				//发送短信
 				submitResp = realSend(submitSm);
 
-				if (submitResp != null) {
-					//发送到网关
-					sendToWg(submitSm);
-				}
+//				if (submitResp != null) {
+//					//发送到网关
+//					sendToWg(submitSm);
+//				}
 
 
 				//处理msgid
@@ -177,11 +177,11 @@ public class MtRedisCmConsumer implements Runnable {
 				submitResp = session0.submit(submitSm, 10000);
 			} catch (SmppTimeoutException e) {
 				LOGGER.error("{}-{}- {} 处理短信下行异常1111", Thread.currentThread().getName(), sendId, mbl, e);
-				if (e.getMessage().contains("SmppTimeoutException")) {
+				if (e.getMessage().contains("Unable to get response")) {
 					LOGGER.error("{}-{}- {} 处理短信下行异常2222", Thread.currentThread().getName(), sendId, mbl, e);
 				}
 			}
-
+			sendToWg(submitSm);
 		} catch (Exception e) {
 			putSelfQueue(submitSm);
 			LOGGER.error("{}-{}- {} 处理短信下行异常", Thread.currentThread().getName(), sendId, mbl, e);

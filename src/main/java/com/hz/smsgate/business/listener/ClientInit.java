@@ -313,8 +313,8 @@ public class ClientInit {
 		ThreadPoolHelper.executeTask(msgIdTimeOutRemoveThread);
 
 
-		CleanLogThread cleanLogThread = new CleanLogThread();
-		ThreadPoolHelper.executeTask(cleanLogThread);
+//		CleanLogThread cleanLogThread = new CleanLogThread();
+//		ThreadPoolHelper.executeTask(cleanLogThread);
 
 		RptRedisConsumer rptRedisConsumer = new RptRedisConsumer();
 
