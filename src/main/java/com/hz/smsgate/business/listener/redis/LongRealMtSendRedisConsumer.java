@@ -91,7 +91,7 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 				LOGGER.error("{}-长短信分段下发异常", Thread.currentThread().getName(), e);
 				try {
 					Thread.sleep(10000);
-				}catch (Exception E){
+				} catch (Exception E) {
 
 				}
 			}
@@ -150,33 +150,38 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 		if (submitResp == null) {
 			return;
 		}
-		String messageId = submitResp.getMessageId();
-		String[] split;
-		if (msgId.contains("|")) {
-			split = msgId.split("\\|");
-		} else {
-			split = new String[1];
-			split[0] = msgId;
-		}
 
-		for (String curMsgId : split) {
-			//更新缓存中的value
-			Object msgVo = longRealMtSendRedisConsumer.redisUtil.hmGet(SmppServerConstants.WEB_MSGID_CACHE, curMsgId);
-			longRealMtSendRedisConsumer.redisUtil.hmRemove(SmppServerConstants.WEB_MSGID_CACHE, curMsgId);
-
-			Object msgVo1 = longRealMtSendRedisConsumer.redisUtil.hmGet(SmppServerConstants.WEB_MSGID_CACHE, messageId);
-			if (msgVo1 == null) {
-				longRealMtSendRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, messageId, msgVo);
+		try {
+			String messageId = submitResp.getMessageId();
+			String[] split;
+			if (msgId.contains("|")) {
+				split = msgId.split("\\|");
 			} else {
-				MsgVo msg = (MsgVo) msgVo;
-				String msgId2 = msg.getMsgId();
-
-				MsgVo msg1 = (MsgVo) msgVo1;
-				String msgId1 = msg1.getMsgId();
-
-				msg1.setMsgId(msgId1 + "|" + msgId2);
-				longRealMtSendRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, messageId, msg1);
+				split = new String[1];
+				split[0] = msgId;
 			}
+
+			for (String curMsgId : split) {
+				//更新缓存中的value
+				Object msgVo = longRealMtSendRedisConsumer.redisUtil.hmGet(SmppServerConstants.WEB_MSGID_CACHE, curMsgId);
+				longRealMtSendRedisConsumer.redisUtil.hmRemove(SmppServerConstants.WEB_MSGID_CACHE, curMsgId);
+
+				Object msgVo1 = longRealMtSendRedisConsumer.redisUtil.hmGet(SmppServerConstants.WEB_MSGID_CACHE, messageId);
+				if (msgVo1 == null) {
+					longRealMtSendRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, messageId, msgVo);
+				} else {
+					MsgVo msg = (MsgVo) msgVo;
+					String msgId2 = msg.getMsgId();
+
+					MsgVo msg1 = (MsgVo) msgVo1;
+					String msgId1 = msg1.getMsgId();
+
+					msg1.setMsgId(msgId1 + "|" + msgId2);
+					longRealMtSendRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, messageId, msg1);
+				}
+			}
+		} catch (Exception e) {
+			LOGGER.error("{}- 替换msgid异常", Thread.currentThread().getName(), e);
 		}
 
 

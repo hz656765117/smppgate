@@ -135,16 +135,21 @@ public class MtRedisCmConsumer implements Runnable {
 		if (submitResp == null) {
 			return;
 		}
-		String messageId = submitResp.getMessageId();
-		//更新缓存中的value
-		Object msgVo = mtRedisConsumer.redisUtil.hmGet(SmppServerConstants.CM_MSGID_CACHE, msgId);
-		if (msgVo != null) {
-			mtRedisConsumer.redisUtil.hmRemove(SmppServerConstants.CM_MSGID_CACHE, msgId);
-			mtRedisConsumer.redisUtil.hmSet(SmppServerConstants.CM_MSGID_CACHE, messageId, msgVo);
-		} else {
-			LOGGER.error("{}- {} -{}-{}短信记录异常，msgVo对象为空，删除该条msgid: {} - {}", Thread.currentThread().getName(), submitSm.getSystemId(), submitSm.getSourceAddress().getAddress(), submitSm.getDestAddress().getAddress(), msgId, messageId);
-			mtRedisConsumer.redisUtil.hmRemove(SmppServerConstants.CM_MSGID_CACHE, msgId);
+		try {
+			String messageId = submitResp.getMessageId();
+			//更新缓存中的value
+			Object msgVo = mtRedisConsumer.redisUtil.hmGet(SmppServerConstants.CM_MSGID_CACHE, msgId);
+			if (msgVo != null) {
+				mtRedisConsumer.redisUtil.hmRemove(SmppServerConstants.CM_MSGID_CACHE, msgId);
+				mtRedisConsumer.redisUtil.hmSet(SmppServerConstants.CM_MSGID_CACHE, messageId, msgVo);
+			} else {
+				LOGGER.error("{}- {} -{}-{}短信记录异常，msgVo对象为空，删除该条msgid: {} - {}", Thread.currentThread().getName(), submitSm.getSystemId(), submitSm.getSourceAddress().getAddress(), submitSm.getDestAddress().getAddress(), msgId, messageId);
+				mtRedisConsumer.redisUtil.hmRemove(SmppServerConstants.CM_MSGID_CACHE, msgId);
+			}
+		} catch (Exception e) {
+			LOGGER.error("{}- 替换msgid异常", Thread.currentThread().getName(), e);
 		}
+
 
 	}
 

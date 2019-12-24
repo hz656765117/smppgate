@@ -157,11 +157,18 @@ public class MtRedisConsumer implements Runnable {
 		if (submitResp == null) {
 			return;
 		}
-		String messageId = submitResp.getMessageId();
-		//更新缓存中的value
-		Object msgVo = mtRedisConsumer.redisUtil.hmGet(SmppServerConstants.WEB_MSGID_CACHE, msgId);
-		mtRedisConsumer.redisUtil.hmRemove(SmppServerConstants.WEB_MSGID_CACHE, msgId);
-		mtRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, messageId, msgVo);
+
+		try {
+			String messageId = submitResp.getMessageId();
+			//更新缓存中的value
+			Object msgVo = mtRedisConsumer.redisUtil.hmGet(SmppServerConstants.WEB_MSGID_CACHE, msgId);
+			mtRedisConsumer.redisUtil.hmRemove(SmppServerConstants.WEB_MSGID_CACHE, msgId);
+			mtRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, messageId, msgVo);
+		} catch (Exception e) {
+			LOGGER.error("{}- 替换msgid异常", Thread.currentThread().getName(), e);
+		}
+
+
 	}
 
 

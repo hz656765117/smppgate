@@ -120,7 +120,6 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 	 * @param channel        The channel associated with this session. The channel
 	 *                       needs to already be opened.
 	 * @param sessionHandler The handler for session events
-	 * @param executor       The executor that window monitoring and potentially
 	 *                       statistics will be periodically executed under.  If null, monitoring
 	 *                       will be disabled.
 	 */
@@ -366,9 +365,9 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 	public void unbind(long timeoutInMillis) {
 		// is this channel still open?
 
-		if (!this.channel.isConnected()) {
-			logger.error("Session channel is already closed, not going to unbind");
-		}
+//		if (!this.channel.isConnected()) {
+//			logger.error("Session channel is already closed, not going to unbind");
+//		}
 
 		this.state.set(STATE_UNBINDING);
 
@@ -395,7 +394,7 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 //		if (channel.isConnected()) {
 //
 //		}
-		try{
+		try {
 			// temporarily set to "unbinding" for now
 			this.state.set(STATE_UNBINDING);
 			// make sure the channel is always closed
@@ -404,7 +403,7 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 			} else {
 				logger.error("Unable to cleanly close channel1111");
 			}
-		}catch (Exception e){
+		} catch (Exception e) {
 			logger.error("Unable to cleanly close channel222");
 		}
 		this.state.set(STATE_CLOSED);
@@ -516,12 +515,16 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 				logger.info("async send PDU: {}", pdu);
 			}
 		}
-
-
-		if (!channel.isConnected()) {
-			logger.error("Failed to write any response because the channel is not connected any more. Maybe the client has closed the connection? ");
-			return future;
+		if (SmppConstants.CMD_ID_UNBIND == pdu.getCommandId()) {
+			logger.error("unbind不判断channel.isConnected");
+		}else{
+			if (!channel.isConnected()) {
+				logger.error("Failed to write any response because the channel is not connected any more. Maybe the client has closed the connection? ");
+				return future;
+			}
 		}
+
+
 		// write the pdu out & wait timeout amount of time
 		ChannelFuture channelFuture = this.channel.write(buffer).await();
 
@@ -541,8 +544,6 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 	 * This method will wait for the PDU to be written to the underlying channel.
 	 *
 	 * @param pdu The PDU to send (can be either a response or request)
-	 * @throws RecoverablePduEncodingException
-	 * @throws UnrecoverablePduEncodingException
 	 * @throws SmppChannelException
 	 * @throws InterruptedException
 	 */
