@@ -12,6 +12,7 @@ import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.business.listener.ClientInit;
 import com.hz.smsgate.business.pojo.MsgVo;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,12 +140,11 @@ public class MtRedisCmConsumer implements Runnable {
 			String messageId = submitResp.getMessageId();
 			//更新缓存中的value
 			Object msgVo = mtRedisConsumer.redisUtil.hmGet(SmppServerConstants.CM_MSGID_CACHE, msgId);
-			if (msgVo != null) {
-				mtRedisConsumer.redisUtil.hmRemove(SmppServerConstants.CM_MSGID_CACHE, msgId);
+			mtRedisConsumer.redisUtil.hmRemove(SmppServerConstants.CM_MSGID_CACHE, msgId);
+			if (msgVo != null && StringUtils.isNotBlank(messageId)) {
 				mtRedisConsumer.redisUtil.hmSet(SmppServerConstants.CM_MSGID_CACHE, messageId, msgVo);
 			} else {
-				LOGGER.error("{}- {} -{}-{}短信记录异常，msgVo对象为空，删除该条msgid: {} - {}", Thread.currentThread().getName(), submitSm.getSystemId(), submitSm.getSourceAddress().getAddress(), submitSm.getDestAddress().getAddress(), msgId, messageId);
-				mtRedisConsumer.redisUtil.hmRemove(SmppServerConstants.CM_MSGID_CACHE, msgId);
+				LOGGER.error("{}- {} -{}-{}短信记录异常，msgVo对象为空或者响应msgid为空，删除该条msgid: {} - {}", Thread.currentThread().getName(), submitSm.getSystemId(), submitSm.getSourceAddress().getAddress(), submitSm.getDestAddress().getAddress(), msgId, messageId);
 			}
 		} catch (Exception e) {
 			LOGGER.error("{}- 替换msgid异常", Thread.currentThread().getName(), e);
