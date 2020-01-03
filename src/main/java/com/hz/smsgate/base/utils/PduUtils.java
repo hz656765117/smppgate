@@ -11,10 +11,7 @@ import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
 import com.hz.smsgate.base.smpp.utils.PduUtil;
 import com.hz.smsgate.business.listener.ClientInit;
-import com.hz.smsgate.business.listener.SmppServerInit;
 import com.hz.smsgate.business.pojo.SmppUserVo;
-import com.hz.smsgate.business.smpp.handler.DefaultSmppSessionHandler;
-import com.hz.smsgate.business.smpp.impl.DefaultSmppClient;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppServer;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTimeZone;
@@ -23,7 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @Auther: huangzhuo
@@ -98,24 +94,7 @@ public class PduUtils {
 	}
 
 
-	/**
-	 * 根据通道获取用户名
-	 *
-	 * @param sendId 通道id
-	 * @return
-	 */
-//	public static String getSystemIdBySendId(String sendId) {
-//		SmppSessionConfiguration smppSessionConfiguration = ClientInit.configMap.get(sendId);
-//		if (smppSessionConfiguration == null) {
-//			String key = getKey(sendId);
-//			smppSessionConfiguration = ClientInit.configMap.get(key);
-//		}
-//		if (smppSessionConfiguration == null) {
-//			return null;
-//		}
-//		String systemId = smppSessionConfiguration.getSystemId();
-//		return systemId;
-//	}
+
 
 
 	/**
@@ -265,35 +244,6 @@ public class PduUtils {
 		}
 		return messageId;
 	}
-
-
-//	public static SmppSession getServerSmppSession(DeliverSm deliverSm) {
-//		SmppSession smppSession = null;
-//		//根据通道获取session
-//		String channel = deliverSm.getDestAddress().getAddress();
-//		String systemId = deliverSm.getSystemId();
-//
-//
-//		if (DefaultSmppServer.smppSessionList == null || DefaultSmppServer.smppSessionList.size() < 1) {
-//			String msgId = getMsgId(deliverSm);
-//			LOGGER.error("{}-处理状态报告异常，未能获取到服务端连接(通道为：{}，systemId为：{},msgId为：({}))-------", Thread.currentThread().getName(), channel, systemId, msgId);
-//			return smppSession;
-//		}
-//
-//		for (SmppSession session : DefaultSmppServer.smppSessionList) {
-//			if (session.getConfiguration().getSystemId().equals(systemId)) {
-//				smppSession = session;
-//				break;
-//			}
-//		}
-//
-//		if (smppSession == null) {
-//			String msgId = getMsgId(deliverSm);
-//			LOGGER.error("{}-处理状态报告异常，未能匹配到服务端连接(通道为：{}，systemId为：{},msgId为：({}))-------", Thread.currentThread().getName(), channel, systemId, msgId);
-//			return smppSession;
-//		}
-//		return smppSession;
-//	}
 
 
 	public static SmppSession getServerSmppSession(String systemId) {
