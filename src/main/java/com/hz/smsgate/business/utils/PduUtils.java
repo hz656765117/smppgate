@@ -1,4 +1,4 @@
-package com.hz.smsgate.base.utils;
+package com.hz.smsgate.business.utils;
 
 import com.cloudhopper.commons.charset.CharsetUtil;
 import com.hz.smsgate.base.constants.StaticValue;
@@ -144,7 +144,7 @@ public class PduUtils {
 	public static SubmitSm rewriteSubmitSm(SubmitSm sm) {
 
 		//通道替换
-		sm = PduUtil.rewriteSmSourceAddress(sm);
+		sm = PduUtils.rewriteSmSourceAddress(sm);
 
 		//短信下行内容编码
 		sm = PduUtils.encodeGsm(sm);
@@ -280,6 +280,25 @@ public class PduUtils {
 
 		}
 		return null;
+	}
+
+	//重写下行对象，将通道更改为正确的
+	public static SubmitSm rewriteSmSourceAddress(SubmitSm sm) {
+		Address sourceAddress = sm.getSourceAddress();
+		int beforeLen = PduUtil.calculateByteSizeOfAddress(sourceAddress);
+		SessionKey sessionKey = ClientInit.CHANNL_REL.get(sourceAddress.getAddress());
+		if (sessionKey == null) {
+			return sm;
+		}
+		String gwChannel = sessionKey.getSenderId();
+		if (!StringUtils.isBlank(gwChannel)) {
+			sourceAddress.setAddress(gwChannel);
+		}
+
+		int afterLen = PduUtil.calculateByteSizeOfAddress(sourceAddress);
+		sm.setCommandLength(sm.getCommandLength() - beforeLen + afterLen);
+		sm.setSourceAddress(sourceAddress);
+		return sm;
 	}
 
 }

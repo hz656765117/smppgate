@@ -21,7 +21,6 @@ package com.hz.smsgate.base.smpp.utils;
  */
 
 
-import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.smpp.constants.SmppConstants;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pojo.Address;
@@ -73,23 +72,6 @@ public class PduUtil {
 		return ((commandId & SmppConstants.PDU_CMD_ID_RESP_MASK) == SmppConstants.PDU_CMD_ID_RESP_MASK);
 	}
 
-	//重写下行对象，将通道更改为正确的
-	public static SubmitSm rewriteSmSourceAddress(SubmitSm sm) {
-		Address sourceAddress = sm.getSourceAddress();
-		int beforeLen = PduUtil.calculateByteSizeOfAddress(sourceAddress);
-		SessionKey sessionKey = ClientInit.CHANNL_REL.get(sourceAddress.getAddress());
-		if (sessionKey == null) {
-			return sm;
-		}
-		String gwChannel = sessionKey.getSenderId();
-		if (!StringUtils.isBlank(gwChannel)) {
-			sourceAddress.setAddress(gwChannel);
-		}
 
-		int afterLen = PduUtil.calculateByteSizeOfAddress(sourceAddress);
-		sm.setCommandLength(sm.getCommandLength() - beforeLen + afterLen);
-		sm.setSourceAddress(sourceAddress);
-		return sm;
-	}
 
 }

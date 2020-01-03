@@ -1,7 +1,6 @@
 package com.hz.smsgate.business.smpp.handler;
 
 import com.hz.smsgate.base.constants.SmppServerConstants;
-import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.smpp.constants.SmppConstants;
 import com.hz.smsgate.base.smpp.exception.RecoverablePduException;
 import com.hz.smsgate.base.smpp.exception.UnrecoverablePduException;
@@ -10,13 +9,12 @@ import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.PduAsyncResponse;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
-import com.hz.smsgate.base.smpp.utils.PduUtil;
-import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.base.utils.SmppUtils;
 import com.hz.smsgate.business.listener.ClientInit;
 import com.hz.smsgate.business.pojo.MsgVo;
 import com.hz.smsgate.business.pojo.SmppUserVo;
+import com.hz.smsgate.business.utils.PduUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,7 +91,7 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 					SubmitSmResp submitResp = (SubmitSmResp) response;
 					SubmitSm submitSm = (SubmitSm) pduRequest;
 					//通道替换
-					submitSm = PduUtil.rewriteSmSourceAddress(submitSm);
+					submitSm = PduUtils.rewriteSmSourceAddress(submitSm);
 
 					String msgid = SmppUtils.getMsgId();
 					String systemId = "";
