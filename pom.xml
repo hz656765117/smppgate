@@ -10,6 +10,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>base</module>
+        <module>entrancegate</module>
     </modules>
 
     <parent>
@@ -28,6 +29,47 @@
         <ch-commons-gsm.version>3.0.0</ch-commons-gsm.version>
         <netty.version>4.1.33.Final</netty.version>
     </properties>
+
+<!--    <dependencyManagement>
+
+
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>&lt;!&ndash; 该依赖必加，里面有sping对schedule的支持 &ndash;&gt;
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
+                <version>5.0.5.RELEASE</version>
+            </dependency>
+
+            &lt;!&ndash;  cache &ndash;&gt;
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-cache</artifactId>
+            </dependency>
+            &lt;!&ndash;  redis &ndash;&gt;
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-redis</artifactId>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>-->
+
+
 
 
     <dependencies>
@@ -95,8 +137,6 @@
         </dependency>
 
 
-
-
         <!-- mysql开始 -->
         <dependency>
             <groupId>mysql</groupId>
@@ -134,7 +174,6 @@
         <!-- 数据库连接池druid结束 -->
 
 
-
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
@@ -146,7 +185,6 @@
         </dependency>
 
 
-
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
@@ -154,22 +192,20 @@
         </dependency>
 
 
-
-<!--        &lt;!&ndash; log &ndash;&gt;
-        &lt;!&ndash; https://mvnrepository.com/artifact/org.slf4j/slf4j-api &ndash;&gt;
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
-        </dependency>
-        &lt;!&ndash; https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 &ndash;&gt;
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.25</version>
-            &lt;!&ndash; <scope>test</scope> &ndash;&gt;
-        </dependency>-->
-
+        <!--        &lt;!&ndash; log &ndash;&gt;
+                &lt;!&ndash; https://mvnrepository.com/artifact/org.slf4j/slf4j-api &ndash;&gt;
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                    <version>1.7.25</version>
+                </dependency>
+                &lt;!&ndash; https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 &ndash;&gt;
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                    <version>1.7.25</version>
+                    &lt;!&ndash; <scope>test</scope> &ndash;&gt;
+                </dependency>-->
 
 
         <dependency>
@@ -310,36 +346,19 @@
 
     </dependencies>
 
-<!--    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>-->
-    <build>
-        <finalName>${project.artifactId}</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>com.hz.smsgate.SmsGateApplication</mainClass>
-                    <jvmArguments>-Xms256M -Xmx1024M -XX:+UseConcMarkSweepGC</jvmArguments>
-                    <executable>true</executable>
-                    <includeSystemScope>true</includeSystemScope>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
 
-    </build>
+
+
+
+
+    <!--    <build>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                </plugin>
+            </plugins>
+        </build>-->
+
 
 </project>
