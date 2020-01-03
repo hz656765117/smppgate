@@ -91,7 +91,7 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 				LOGGER.error("{}-长短信分段下发异常", Thread.currentThread().getName(), e);
 				try {
 					Thread.sleep(10000);
-				} catch (Exception E) {
+				} catch (Exception ex) {
 
 				}
 			}
@@ -146,7 +146,7 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 	 * @param submitResp 上游返回下行响应
 	 * @param msgId      自定义的msgid
 	 */
-	public void handleMsgId(SubmitSmResp submitResp, String msgId) {
+	private void handleMsgId(SubmitSmResp submitResp, String msgId) {
 		if (submitResp == null) {
 			return;
 		}
@@ -193,7 +193,7 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 	 *
 	 * @param submitSm 下行短信对象
 	 */
-	public void putSelfQueue(SubmitSm submitSm) {
+	private void putSelfQueue(SubmitSm submitSm) {
 		try {
 			if (submitSm.getSourceAddress() == null) {
 				LOGGER.error("{} 长短信 下行对象为空，将发送失败的非opt短信放入到营销中异常", Thread.currentThread().getName());
@@ -205,7 +205,7 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 				submitSm.removeSequenceNumber();
 				submitSm.calculateAndSetCommandLength();
 				longRealMtSendRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_LONG_SUBMIT_SM_YX, submitSm);
-				LOGGER.info("{} 长短信 将发送失败的非opt短信放入到营销中", Thread.currentThread().getName(), submitSm.toString());
+				LOGGER.info("{}长短信 将发送失败的非opt短信放入到营销中{}", Thread.currentThread().getName(), submitSm.toString());
 				Thread.sleep(500);
 			} else {
 				LOGGER.error("systemid({}),senderid({}) 为OPT短信，丢弃该下行{}", sessionKey.getSystemId(), sessionKey.getSenderId(), submitSm.toString());

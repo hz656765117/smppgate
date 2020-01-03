@@ -33,7 +33,7 @@ public class CleanLogThread implements Runnable {
 				LOGGER.error("{}-处理定时加载数据库中的配置到内存中异常", Thread.currentThread().getName(), e);
 				try {
 					Thread.sleep(10000);
-				}catch (Exception E){
+				}catch (Exception ex){
 
 				}
 			}
@@ -84,8 +84,9 @@ public class CleanLogThread implements Runnable {
 	public static String getPrintSize(long size) {
 
 		try {
+			int k = 1024;
 			// 如果字节数少于1024，则直接以B为单位，否则先除于1024，后3位因太少无意义
-			if (size < 1024) {
+			if (size < k) {
 				return String.valueOf(size) + "B";
 			} else {
 				size = size / 1024;
@@ -93,12 +94,12 @@ public class CleanLogThread implements Runnable {
 			// 如果原字节数除于1024之后，少于1024，则可以直接以KB作为单位
 			// 因为还没有到达要使用另一个单位的时候
 			// 接下去以此类推
-			if (size < 1024) {
+			if (size < k) {
 				return String.valueOf(size) + "KB";
 			} else {
 				size = size / 1024;
 			}
-			if (size < 1024) {
+			if (size < k) {
 				// 因为如果以MB为单位的话，要保留最后1位小数，
 				// 因此，把此数乘以100之后再取余
 				size = size * 100;

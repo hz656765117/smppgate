@@ -84,7 +84,7 @@ public class ClientBindConsumer implements Runnable {
 				LOGGER.error("{}-处理重新绑定的客户端异常", Thread.currentThread().getName(), e);
 				try {
 					Thread.sleep(10000);
-				}catch (Exception E){
+				}catch (Exception ex){
 
 				}
 

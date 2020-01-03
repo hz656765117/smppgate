@@ -75,7 +75,7 @@ public class SyncSubmitConsumer implements Runnable {
 				LOGGER.error("{}-处理同步短信信息异常", Thread.currentThread().getName(), e);
 				try {
 					Thread.sleep(10000);
-				}catch (Exception E){
+				}catch (Exception ex){
 
 				}
 			}

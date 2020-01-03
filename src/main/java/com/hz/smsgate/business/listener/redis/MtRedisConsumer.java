@@ -1,7 +1,6 @@
 package com.hz.smsgate.business.listener.redis;
 
 import com.hz.smsgate.base.constants.SmppServerConstants;
-import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.smpp.exception.SmppTimeoutException;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
@@ -10,7 +9,6 @@ import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.business.listener.ClientInit;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +91,7 @@ public class MtRedisConsumer implements Runnable {
 				LOGGER.error("{}-{}-{} 处理短信下行异常", Thread.currentThread().getName(), submitSm.getSystemId(), sendId, e);
 				try {
 					Thread.sleep(10000);
-				} catch (Exception E) {
+				} catch (Exception ex) {
 
 				}
 			}
@@ -153,7 +151,7 @@ public class MtRedisConsumer implements Runnable {
 	 * @param submitResp 上游返回下行响应
 	 * @param msgId      自定义的msgid
 	 */
-	public void handleMsgId(SubmitSmResp submitResp, String msgId) {
+	private void handleMsgId(SubmitSmResp submitResp, String msgId) {
 		if (submitResp == null) {
 			return;
 		}
@@ -177,7 +175,7 @@ public class MtRedisConsumer implements Runnable {
 	 *
 	 * @param submitSm 下行短信对象
 	 */
-	public void putSelfQueue(SubmitSm submitSm) {
+	private void putSelfQueue(SubmitSm submitSm) {
 		try {
 			if (submitSm.getSourceAddress() == null) {
 				LOGGER.error("{}  短短信 下行对象为空，将发送失败的非opt短信放入到营销中异常", Thread.currentThread().getName());
@@ -190,7 +188,7 @@ public class MtRedisConsumer implements Runnable {
 				submitSm.removeSequenceNumber();
 				submitSm.calculateAndSetCommandLength();
 				mtRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_SUBMIT_SM_YX, submitSm);
-				LOGGER.info("{} 短短信 将发送失败的非opt短信放入到营销中", Thread.currentThread().getName(), submitSm.toString());
+				LOGGER.info("{} 短短信 将发送失败的非opt短信放入到营销中{}", Thread.currentThread().getName(), submitSm.toString());
 				Thread.sleep(500);
 			} else {
 				LOGGER.error("systemid({}),senderid({}) 为OPT短信，丢弃该下行{}", sessionKey.getSystemId(), sessionKey.getSenderId(), submitSm.toString());

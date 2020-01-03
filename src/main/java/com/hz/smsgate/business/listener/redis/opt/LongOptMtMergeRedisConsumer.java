@@ -69,7 +69,7 @@ public class LongOptMtMergeRedisConsumer implements Runnable {
 				LOGGER.error("{}-长短信（redis）合并异常", Thread.currentThread().getName(), e);
 				try {
 					Thread.sleep(10000);
-				}catch (Exception E){
+				}catch (Exception ex){
 
 				}
 			}
