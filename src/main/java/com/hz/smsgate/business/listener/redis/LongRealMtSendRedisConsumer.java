@@ -4,6 +4,7 @@ import com.hz.smsgate.base.constants.SmppServerConstants;
 import com.hz.smsgate.base.smpp.exception.SmppTimeoutException;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
+import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.PduUtils;
@@ -114,14 +115,26 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 			//获取客户端session
 			SmppSession session0 = PduUtils.getSmppSession(submitSm);
 
-			submitSm.removeSequenceNumber();
-			submitSm.calculateAndSetCommandLength();
+
 
 			if (session0 == null) {
 //				longRealMtSendRedisConsumer.redisUtil.hmRemove(SmppServerConstants.WEB_MSGID_CACHE, submitSm.getTempMsgId());
 				LOGGER.error("systemid({}),senderid({}),mbl（{}）获取客户端连接异常，丢弃该下行", submitSm.getSystemId(), sendId, mbl);
 				return submitResp;
 			}
+
+			if( "infinotp".equals(session0.getConfiguration().getSystemId()) ){
+				Address destAddress = submitSm.getDestAddress();
+				destAddress.setTon((byte) 1);
+				destAddress.setNpi((byte) 1);
+				submitSm.setDestAddress(destAddress);
+				Address sourceAddress = submitSm.getSourceAddress();
+				sourceAddress.setTon((byte) 5);
+				sourceAddress.setNpi((byte) 1);
+				submitSm.setSourceAddress(sourceAddress);
+			}
+			submitSm.removeSequenceNumber();
+			submitSm.calculateAndSetCommandLength();
 
 			try {
 				submitResp = session0.submit(submitSm, 10000);
