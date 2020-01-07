@@ -48,6 +48,11 @@ public class OperatorVo implements Serializable {
 	 */
 	private Integer flag;
 
+	private Integer bindSize;
+
+	private Integer operatorType;
+
+
 	/**
 	 * VARCHAR(255)<br>
 	 * 描述
@@ -267,5 +272,22 @@ public class OperatorVo implements Serializable {
 
 	public void setType(Integer type) {
 		this.type = type;
+	}
+
+
+	public Integer getBindSize() {
+		return bindSize;
+	}
+
+	public void setBindSize(Integer bindSize) {
+		this.bindSize = bindSize;
+	}
+
+	public Integer getOperatorType() {
+		return operatorType;
+	}
+
+	public void setOperatorType(Integer operatorType) {
+		this.operatorType = operatorType;
 	}
 }

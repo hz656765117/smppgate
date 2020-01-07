@@ -2,6 +2,7 @@ package com.hz.smsgate.business.listener;
 
 import com.hz.smsgate.base.constants.SmppServerConstants;
 import com.hz.smsgate.base.constants.StaticValue;
+import com.hz.smsgate.base.smpp.exception.SmppTimeoutException;
 import com.hz.smsgate.base.smpp.pdu.EnquireLink;
 import com.hz.smsgate.base.smpp.pdu.EnquireLinkResp;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
@@ -72,6 +73,9 @@ public class EnquireLinkConsumer implements Runnable {
 								reBind(null, entry.getKey());
 								continue;
 							}
+
+						} catch (SmppTimeoutException te) {
+							LOGGER.error("-----------------------------systemId（{}）心跳超时不重新绑定---------------------", systemId, te);
 
 						} catch (Exception e) {
 							reBind(e, entry.getKey());
