@@ -20,6 +20,7 @@ package com.hz.smsgate.base.smpp.pojo;
  * #L%
  */
 
+import com.cloudhopper.commons.util.windowing.OfferTimeoutException;
 import com.cloudhopper.commons.util.windowing.Window;
 import com.cloudhopper.commons.util.windowing.WindowFuture;
 import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
@@ -246,7 +247,7 @@ public interface SmppSession {
      * @throws InterruptedException The calling thread was interrupted while waiting
      *      to acquire a lock or write/read the bytes from the socket/channel.
      */
-    public EnquireLinkResp enquireLink(EnquireLink request, long timeoutMillis) throws RecoverablePduException, UnrecoverablePduException, SmppTimeoutException, SmppChannelException, InterruptedException;
+    public EnquireLinkResp enquireLink(EnquireLink request, long timeoutMillis) throws RecoverablePduException, OfferTimeoutException, UnrecoverablePduException, SmppTimeoutException, SmppChannelException, InterruptedException;
 
     /**
      * Synchronously sends a "submit" request to the remote endpoint and
@@ -272,7 +273,7 @@ public interface SmppSession {
      * @throws InterruptedException The calling thread was interrupted while waiting
      *      to acquire a lock or write/read the bytes from the socket/channel.
      */
-    public SubmitSmResp submit(SubmitSm request, long timeoutMillis) throws RecoverablePduException, UnrecoverablePduException, SmppTimeoutException, SmppChannelException, InterruptedException;
+    public SubmitSmResp submit(SubmitSm request, long timeoutMillis) throws RecoverablePduException,OfferTimeoutException, UnrecoverablePduException, SmppTimeoutException, SmppChannelException, InterruptedException;
 
     /**
      * Main underlying method for sending a request PDU to the remote endpoint.
@@ -315,7 +316,7 @@ public interface SmppSession {
      * @throws InterruptedException The calling thread was interrupted while waiting
      *      to acquire a lock or write/read the bytes from the socket/channel.
      */
-    public WindowFuture<Integer,PduRequest,PduResponse> sendRequestPdu(PduRequest request, long timeoutMillis, boolean synchronous) throws RecoverablePduException, UnrecoverablePduException, SmppTimeoutException, SmppChannelException, InterruptedException;
+    public WindowFuture<Integer,PduRequest,PduResponse> sendRequestPdu(PduRequest request, long timeoutMillis, boolean synchronous) throws RecoverablePduException,OfferTimeoutException, UnrecoverablePduException, SmppTimeoutException, SmppChannelException, InterruptedException;
 
     /**
      * Main underlying method for sending a response PDU to the remote endpoint.

@@ -305,7 +305,7 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 	}
 
 	//TODO 改了访问控制 protected
-	public BaseBindResp bind(BaseBind request, long timeoutInMillis) throws RecoverablePduException, UnrecoverablePduException, SmppBindException, SmppTimeoutException, SmppChannelException, InterruptedException {
+	public BaseBindResp bind(BaseBind request, long timeoutInMillis) throws RecoverablePduException,OfferTimeoutException, UnrecoverablePduException, SmppBindException, SmppTimeoutException, SmppChannelException, InterruptedException {
 		assertValidRequest(request);
 		boolean bound = false;
 		try {
@@ -423,7 +423,7 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 	}
 
 	@Override
-	public EnquireLinkResp enquireLink(EnquireLink request, long timeoutInMillis) throws RecoverablePduException, UnrecoverablePduException, SmppTimeoutException, SmppChannelException, InterruptedException {
+	public EnquireLinkResp enquireLink(EnquireLink request, long timeoutInMillis) throws RecoverablePduException,OfferTimeoutException, UnrecoverablePduException, SmppTimeoutException, SmppChannelException, InterruptedException {
 		assertValidRequest(request);
 		PduResponse response = sendRequestAndGetResponse(request, timeoutInMillis);
 		SmppSessionUtil.assertExpectedResponse(request, response);
@@ -431,7 +431,7 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 	}
 
 	@Override
-	public SubmitSmResp submit(SubmitSm request, long timeoutInMillis) throws RecoverablePduException, UnrecoverablePduException, SmppTimeoutException, SmppChannelException, InterruptedException {
+	public SubmitSmResp submit(SubmitSm request, long timeoutInMillis) throws RecoverablePduException, OfferTimeoutException,UnrecoverablePduException, SmppTimeoutException, SmppChannelException, InterruptedException {
 		assertValidRequest(request);
 		PduResponse response = sendRequestAndGetResponse(request, timeoutInMillis);
 		SmppSessionUtil.assertExpectedResponse(request, response);
@@ -450,7 +450,7 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 	 * expecting, it needs to verify it afterwards.
 	 */
 	//TODO 改了访问控制 protect
-	public PduResponse sendRequestAndGetResponse(PduRequest requestPdu, long timeoutInMillis) throws RecoverablePduException, UnrecoverablePduException, SmppTimeoutException, SmppChannelException, InterruptedException {
+	public PduResponse sendRequestAndGetResponse(PduRequest requestPdu, long timeoutInMillis) throws RecoverablePduException,OfferTimeoutException, UnrecoverablePduException, SmppTimeoutException, SmppChannelException, InterruptedException {
 		WindowFuture<Integer, PduRequest, PduResponse> future = sendRequestPdu(requestPdu, timeoutInMillis, true);
 		boolean completedWithinTimeout = future.await();
 
@@ -480,7 +480,7 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public WindowFuture<Integer, PduRequest, PduResponse> sendRequestPdu(PduRequest pdu, long timeoutMillis, boolean synchronous) throws RecoverablePduException, UnrecoverablePduException, SmppTimeoutException, SmppChannelException, InterruptedException {
+	public WindowFuture<Integer, PduRequest, PduResponse> sendRequestPdu(PduRequest pdu, long timeoutMillis, boolean synchronous) throws RecoverablePduException,OfferTimeoutException, UnrecoverablePduException, SmppTimeoutException, SmppChannelException, InterruptedException {
 		// assign the next PDU sequence # if its not yet assigned
 		if (!pdu.hasSequenceNumberAssigned()) {
 			pdu.setSequenceNumber(this.sequenceNumber.next());
@@ -495,7 +495,7 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 		} catch (DuplicateKeyException e) {
 			throw new UnrecoverablePduException(e.getMessage(), e);
 		} catch (OfferTimeoutException e) {
-			throw new SmppTimeoutException(e.getMessage(), e);
+			throw new OfferTimeoutException(e.getMessage(), e);
 		}
 
 		if (this.sessionHandler instanceof SmppSessionListener) {

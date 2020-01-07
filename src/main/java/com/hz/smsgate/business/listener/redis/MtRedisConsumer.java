@@ -98,7 +98,7 @@ public class MtRedisConsumer implements Runnable {
 				LOGGER.error("{}-{}-{} 处理短信下行异常", Thread.currentThread().getName(), submitSm.getSystemId(), sendId, e);
 				try {
 					Thread.sleep(10000);
-				} catch (Exception E) {
+				} catch (Exception e1) {
 
 				}
 			}
@@ -171,7 +171,7 @@ public class MtRedisConsumer implements Runnable {
 	 * @param submitResp 上游返回下行响应
 	 * @param msgId      自定义的msgid
 	 */
-	public void handleMsgId(SubmitSmResp submitResp, String msgId) {
+	private void handleMsgId(SubmitSmResp submitResp, String msgId) {
 		if (submitResp == null) {
 			return;
 		}
@@ -195,7 +195,7 @@ public class MtRedisConsumer implements Runnable {
 	 *
 	 * @param submitSm 下行短信对象
 	 */
-	public void putSelfQueue(SubmitSm submitSm) {
+	private void putSelfQueue(SubmitSm submitSm) {
 		try {
 			if (submitSm.getSourceAddress() == null) {
 				LOGGER.error("{}  短短信 下行对象为空，将发送失败的非opt短信放入到营销中异常", Thread.currentThread().getName());

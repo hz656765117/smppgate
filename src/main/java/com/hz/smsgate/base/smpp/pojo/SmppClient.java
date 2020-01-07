@@ -21,6 +21,7 @@ package com.hz.smsgate.base.smpp.pojo;
  */
 
 
+import com.cloudhopper.commons.util.windowing.OfferTimeoutException;
 import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.exception.SmppBindException;
 import com.hz.smsgate.base.smpp.exception.SmppChannelException;
@@ -55,7 +56,7 @@ public interface SmppClient {
      * @throws InterruptedException Thrown if the calling thread is interrupted
      * while we are attempting the bind.
      */
-    public SmppSession bind(SmppSessionConfiguration config, SmppSessionHandler sessionHandler) throws SmppTimeoutException, SmppChannelException, SmppBindException, UnrecoverablePduException, InterruptedException;
+    public SmppSession bind(SmppSessionConfiguration config, SmppSessionHandler sessionHandler) throws SmppTimeoutException, OfferTimeoutException,SmppChannelException, SmppBindException, UnrecoverablePduException, InterruptedException;
 
     /**
      * Destroy a client by ensuring that all session sockets are closed and all

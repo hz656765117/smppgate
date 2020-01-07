@@ -1,5 +1,6 @@
 package com.hz.smsgate.business.listener;
 
+import com.cloudhopper.commons.util.windowing.OfferTimeoutException;
 import com.hz.smsgate.base.constants.SmppServerConstants;
 import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.smpp.exception.SmppTimeoutException;
@@ -74,9 +75,8 @@ public class EnquireLinkConsumer implements Runnable {
 								continue;
 							}
 
-						} catch (SmppTimeoutException te) {
+						} catch (OfferTimeoutException te) {
 							LOGGER.error("-----------------------------systemId（{}）心跳超时不重新绑定---------------------", systemId, te);
-
 						} catch (Exception e) {
 							reBind(e, entry.getKey());
 						}

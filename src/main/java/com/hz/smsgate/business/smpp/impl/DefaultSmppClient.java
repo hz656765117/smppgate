@@ -21,6 +21,7 @@ package com.hz.smsgate.business.smpp.impl;
  */
 
 
+import com.cloudhopper.commons.util.windowing.OfferTimeoutException;
 import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.exception.*;
 import com.hz.smsgate.base.smpp.pdu.*;
@@ -172,12 +173,12 @@ public class DefaultSmppClient implements SmppClient {
 	}
 
 
-	public SmppSession bind(SmppSessionConfiguration config) throws SmppTimeoutException, SmppChannelException, SmppBindException, UnrecoverablePduException, InterruptedException {
+	public SmppSession bind(SmppSessionConfiguration config) throws SmppTimeoutException,OfferTimeoutException, SmppChannelException, SmppBindException, UnrecoverablePduException, InterruptedException {
 		return bind(config, null);
 	}
 
 	@Override
-	public SmppSession bind(SmppSessionConfiguration config, SmppSessionHandler sessionHandler) throws SmppTimeoutException, SmppChannelException, SmppBindException, UnrecoverablePduException, InterruptedException {
+	public SmppSession bind(SmppSessionConfiguration config, SmppSessionHandler sessionHandler) throws SmppTimeoutException, OfferTimeoutException,SmppChannelException, SmppBindException, UnrecoverablePduException, InterruptedException {
 		DefaultSmppSession session = null;
 		try {
 			// connect to the remote system and create the session
@@ -198,7 +199,7 @@ public class DefaultSmppClient implements SmppClient {
 		return session;
 	}
 
-	protected void doBind(DefaultSmppSession session, SmppSessionConfiguration config, SmppSessionHandler sessionHandler) throws SmppTimeoutException, SmppChannelException, SmppBindException, UnrecoverablePduException, InterruptedException {
+	protected void doBind(DefaultSmppSession session, SmppSessionConfiguration config, SmppSessionHandler sessionHandler) throws SmppTimeoutException,SmppChannelException, OfferTimeoutException, SmppBindException, UnrecoverablePduException, InterruptedException {
 		// create the bind request we'll use (may throw an exception)
 		BaseBind bindRequest = createBindRequest(config);
 		BaseBindResp bindResp = null;
