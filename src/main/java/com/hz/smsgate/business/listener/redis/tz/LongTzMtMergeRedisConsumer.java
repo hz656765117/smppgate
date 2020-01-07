@@ -45,6 +45,7 @@ public class LongTzMtMergeRedisConsumer implements Runnable {
 			LOGGER.error("{}-线程启动异常", Thread.currentThread().getName(), e);
 		}
 		SubmitSm submitSm;
+		Object obj;
 		LOGGER.info("{}-长短信（redis）合并线程开始工作......", Thread.currentThread().getName());
 
 		while (true) {
@@ -52,7 +53,7 @@ public class LongTzMtMergeRedisConsumer implements Runnable {
 
 			try {
 				if (longMtMergeRedisConsumer.redisUtil != null) {
-					Object obj = longMtMergeRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_LONG_SUBMIT_SM_TZ);
+					obj = longMtMergeRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_LONG_SUBMIT_SM_TZ);
 					if (obj != null) {
 						submitSm = (SubmitSm) obj;
 						validateMt(submitSm);
@@ -67,7 +68,7 @@ public class LongTzMtMergeRedisConsumer implements Runnable {
 				LOGGER.error("{}-长短信（redis）合并异常", Thread.currentThread().getName(), e);
 				try {
 					Thread.sleep(10000);
-				}catch (Exception E){
+				} catch (Exception E) {
 
 				}
 			}

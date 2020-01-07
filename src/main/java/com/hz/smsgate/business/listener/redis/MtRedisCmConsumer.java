@@ -53,6 +53,7 @@ public class MtRedisCmConsumer implements Runnable {
 		SubmitSm submitSm;
 		LOGGER.info("{}-处理短信（redis）-cm下行线程开始工作......", Thread.currentThread().getName());
 		SubmitSmResp submitResp;
+		Object obj;
 		while (true) {
 			try {
 				//redis对象为空休眠一秒
@@ -60,7 +61,7 @@ public class MtRedisCmConsumer implements Runnable {
 					Thread.sleep(1000);
 					continue;
 				}
-				Object obj = mtRedisConsumer.redisUtil.rPop(SmppServerConstants.CM_SUBMIT_SM_OPT);
+				obj = mtRedisConsumer.redisUtil.rPop(SmppServerConstants.CM_SUBMIT_SM_OPT);
 				//下行对象为空，从其他队列中获取，获取不到休眠半秒
 				if (obj == null) {
 					//opt的短信发完后 处理通知的短信
@@ -176,7 +177,7 @@ public class MtRedisCmConsumer implements Runnable {
 //				return submitResp;
 //			}
 
-			if( "infinotp".equals(session0.getConfiguration().getSystemId()) ){
+			if ("infinotp".equals(session0.getConfiguration().getSystemId())) {
 				Address destAddress = submitSm.getDestAddress();
 				destAddress.setTon((byte) 1);
 				destAddress.setNpi((byte) 1);

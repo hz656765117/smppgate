@@ -44,12 +44,13 @@ public class ClientBindConsumer implements Runnable {
 		}
 
 		SessionKey key;
+		Object obj;
 		LOGGER.info("{}-处理重新绑定的客户端线程（redis）开始工作......", Thread.currentThread().getName());
 
 		while (true) {
 			try {
 				if (clientBindConsumer.redisUtil != null) {
-					Object obj = clientBindConsumer.redisUtil.rPop(SmppServerConstants.WEB_BIND_AGAIN);
+					obj = clientBindConsumer.redisUtil.rPop(SmppServerConstants.WEB_BIND_AGAIN);
 					if (obj != null) {
 						key = (SessionKey) obj;
 						LOGGER.info("{}-读取到需要重新绑定的客户端信息{}-{}", Thread.currentThread().getName(), key.getSystemId(), key.getSenderId());
@@ -84,7 +85,7 @@ public class ClientBindConsumer implements Runnable {
 				LOGGER.error("{}-处理重新绑定的客户端异常", Thread.currentThread().getName(), e);
 				try {
 					Thread.sleep(10000);
-				}catch (Exception E){
+				} catch (Exception E) {
 
 				}
 

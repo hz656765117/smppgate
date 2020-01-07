@@ -21,7 +21,6 @@ public class SyncSubmitConsumer implements Runnable {
 	private static Logger LOGGER = LoggerFactory.getLogger(SyncSubmitConsumer.class);
 
 
-
 	@Autowired
 	public RedisUtil redisUtil;
 
@@ -36,7 +35,7 @@ public class SyncSubmitConsumer implements Runnable {
 	@Override
 	public void run() {
 		WGParams wgParams;
-
+		Object obj;
 
 		try {
 			Thread.sleep(3000);
@@ -47,12 +46,9 @@ public class SyncSubmitConsumer implements Runnable {
 
 
 		while (true) {
-
-
-
 			try {
 				if (syncSubmitConsumer.redisUtil != null) {
-					Object obj = syncSubmitConsumer.redisUtil.rPop(SmppServerConstants.SYNC_SUBMIT);
+					obj = syncSubmitConsumer.redisUtil.rPop(SmppServerConstants.SYNC_SUBMIT);
 					if (obj != null) {
 						wgParams = (WGParams) obj;
 						LOGGER.info("{}-读取到同步短信信息{}", Thread.currentThread().getName(), wgParams.toString());
@@ -75,7 +71,7 @@ public class SyncSubmitConsumer implements Runnable {
 				LOGGER.error("{}-处理同步短信信息异常", Thread.currentThread().getName(), e);
 				try {
 					Thread.sleep(10000);
-				}catch (Exception E){
+				} catch (Exception E) {
 
 				}
 			}

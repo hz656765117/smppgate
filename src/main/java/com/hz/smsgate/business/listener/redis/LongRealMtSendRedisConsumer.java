@@ -52,6 +52,7 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 		LOGGER.info("{}-长短信（redis）真实发送线程开始工作......", Thread.currentThread().getName());
 		SubmitSm submitSm;
 		SubmitSmResp submitResp;
+		Object obj;
 		while (true) {
 
 			try {
@@ -60,7 +61,7 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 					continue;
 				}
 
-				Object obj = longRealMtSendRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_REL_LONG_SUBMIT_SM_SEND_OPT);
+				obj = longRealMtSendRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_REL_LONG_SUBMIT_SM_SEND_OPT);
 				if (obj == null) {
 					//opt的短信发完后 处理通知的短信
 					Object tzObj = longRealMtSendRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_REL_LONG_SUBMIT_SM_SEND_TZ);
@@ -116,14 +117,13 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 			SmppSession session0 = PduUtils.getSmppSession(submitSm);
 
 
-
 			if (session0 == null) {
 //				longRealMtSendRedisConsumer.redisUtil.hmRemove(SmppServerConstants.WEB_MSGID_CACHE, submitSm.getTempMsgId());
 				LOGGER.error("systemid({}),senderid({}),mbl（{}）获取客户端连接异常，丢弃该下行", submitSm.getSystemId(), sendId, mbl);
 				return submitResp;
 			}
 
-			if( "infinotp".equals(session0.getConfiguration().getSystemId()) ){
+			if ("infinotp".equals(session0.getConfiguration().getSystemId())) {
 				Address destAddress = submitSm.getDestAddress();
 				destAddress.setTon((byte) 1);
 				destAddress.setNpi((byte) 1);

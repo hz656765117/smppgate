@@ -48,11 +48,11 @@ public class EnquireLinkConsumer implements Runnable {
 		}
 
 		List<String> isEnquireLink = new ArrayList<>();
-
+		Map<SessionKey, SmppSession> sessionMap;
 		while (true) {
 
 			try {
-				Map<SessionKey, SmppSession> sessionMap = ClientInit.sessionMap;
+				sessionMap = ClientInit.sessionMap;
 
 				if (sessionMap != null && sessionMap.size() > 0) {
 					for (Map.Entry<SessionKey, SmppSession> entry : sessionMap.entrySet()) {
@@ -91,7 +91,7 @@ public class EnquireLinkConsumer implements Runnable {
 				LOGGER.error("{}-处理心跳异常", Thread.currentThread().getName(), e);
 				try {
 					Thread.sleep(10000);
-				}catch (Exception E){
+				} catch (Exception E) {
 
 				}
 			}

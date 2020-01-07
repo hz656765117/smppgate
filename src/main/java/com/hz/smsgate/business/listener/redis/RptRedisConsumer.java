@@ -55,12 +55,13 @@ public class RptRedisConsumer implements Runnable {
 		}
 
 		DeliverSm deliverSm;
+		Object obj;
 		LOGGER.info("{}-处理短信状态报告转发线程（redis）开始工作......", Thread.currentThread().getName());
 
 		while (true) {
 			try {
 				if (rptRedisConsumer.redisUtil != null) {
-					Object obj = rptRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_DELIVER_SM);
+					obj = rptRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_DELIVER_SM);
 					if (obj != null) {
 						deliverSm = (DeliverSm) obj;
 						LOGGER.info("{}-读取到状态报告信息{}", Thread.currentThread().getName(), deliverSm.toString());
@@ -75,7 +76,7 @@ public class RptRedisConsumer implements Runnable {
 				LOGGER.error("{}-处理短信状态报告转发异常", Thread.currentThread().getName(), e);
 				try {
 					Thread.sleep(10000);
-				}catch (Exception E){
+				} catch (Exception E) {
 
 				}
 			}

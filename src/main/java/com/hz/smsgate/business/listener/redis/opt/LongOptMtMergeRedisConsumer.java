@@ -47,14 +47,12 @@ public class LongOptMtMergeRedisConsumer implements Runnable {
 		}
 
 		SubmitSm submitSm;
+		Object obj;
 		LOGGER.info("{}-长短信（redis）合并线程开始工作......", Thread.currentThread().getName());
-
 		while (true) {
-
-
 			try {
 				if (longMtMergeRedisConsumer.redisUtil != null) {
-					Object obj = longMtMergeRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_LONG_SUBMIT_SM_OPT);
+					obj = longMtMergeRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_LONG_SUBMIT_SM_OPT);
 					if (obj != null) {
 						submitSm = (SubmitSm) obj;
 						validateMt(submitSm);
@@ -69,7 +67,7 @@ public class LongOptMtMergeRedisConsumer implements Runnable {
 				LOGGER.error("{}-长短信（redis）合并异常", Thread.currentThread().getName(), e);
 				try {
 					Thread.sleep(10000);
-				}catch (Exception E){
+				} catch (Exception E) {
 
 				}
 			}

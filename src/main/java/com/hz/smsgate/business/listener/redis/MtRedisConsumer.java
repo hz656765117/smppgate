@@ -41,6 +41,8 @@ public class MtRedisConsumer implements Runnable {
 		mtRedisConsumer.redisUtil = this.redisUtil;
 	}
 
+
+
 	@Override
 	public void run() {
 		try {
@@ -52,9 +54,11 @@ public class MtRedisConsumer implements Runnable {
 		SubmitSm submitSm = new SubmitSm();
 		LOGGER.info("{}-处理短信（redis）下行线程开始工作......", Thread.currentThread().getName());
 		SubmitSmResp submitResp;
+		Object obj;
+		String sendId = "";
+		Object tzObj;
+		Object yxObj;
 		while (true) {
-
-			String sendId = "";
 			try {
 				//redis对象为空休眠一秒
 				if (mtRedisConsumer.redisUtil == null) {
@@ -62,18 +66,18 @@ public class MtRedisConsumer implements Runnable {
 					continue;
 				}
 
-				Object obj = mtRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_SUBMIT_SM_OPT);
+				obj = mtRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_SUBMIT_SM_OPT);
 
 				if (obj == null) {
 					//opt的短信发完后 处理通知的短信
-					Object tzObj = mtRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_SUBMIT_SM_TZ);
+					tzObj = mtRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_SUBMIT_SM_TZ);
 					if (tzObj != null) {
 						mtRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_SUBMIT_SM_OPT, tzObj);
 						continue;
 					}
 
 					//通知的短信发完后 处理营销的短信
-					Object yxObj = mtRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_SUBMIT_SM_YX);
+					yxObj = mtRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_SUBMIT_SM_YX);
 					if (yxObj != null) {
 						mtRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_SUBMIT_SM_OPT, yxObj);
 						continue;
@@ -118,12 +122,7 @@ public class MtRedisConsumer implements Runnable {
 			sendId = submitSm.getSourceAddress().getAddress();
 
 
-
 			LOGGER.info("{}-读取到短信下行信息{}", Thread.currentThread().getName(), submitSm.toString());
-
-
-
-
 
 
 			//获取客户端session
@@ -135,7 +134,7 @@ public class MtRedisConsumer implements Runnable {
 			}
 
 
-			if( "infinotp".equals(session0.getConfiguration().getSystemId()) ){
+			if ("infinotp".equals(session0.getConfiguration().getSystemId())) {
 				Address destAddress = submitSm.getDestAddress();
 				destAddress.setTon((byte) 1);
 				destAddress.setNpi((byte) 1);

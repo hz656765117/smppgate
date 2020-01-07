@@ -43,6 +43,7 @@ public class LongTzMtSplitRedisConsumer implements Runnable {
 			LOGGER.error("{}-线程启动异常", Thread.currentThread().getName(), e);
 		}
 		SubmitSm submitSm;
+		Object obj;
 		LOGGER.info("{}-处理将长短信拆分并放到真正的发送队列中(通知消息类型)线程（redis）开始工作......", Thread.currentThread().getName());
 
 
@@ -51,7 +52,7 @@ public class LongTzMtSplitRedisConsumer implements Runnable {
 
 			try {
 				if (longMtSplitRedisConsumer.redisUtil != null) {
-					Object obj = longMtSplitRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_LONG_SUBMIT_SM_SEND_TZ);
+					obj = longMtSplitRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_LONG_SUBMIT_SM_SEND_TZ);
 					if (obj != null) {
 						submitSm = (SubmitSm) obj;
 						//重组下行对象
@@ -67,7 +68,7 @@ public class LongTzMtSplitRedisConsumer implements Runnable {
 				LOGGER.error("{}-处理将长短信拆分并放到真正的发送队列中(通知消息类型)异常", Thread.currentThread().getName(), e);
 				try {
 					Thread.sleep(10000);
-				}catch (Exception E){
+				} catch (Exception E) {
 
 				}
 			}
@@ -139,8 +140,6 @@ public class LongTzMtSplitRedisConsumer implements Runnable {
 			LOGGER.error("{}-长短信拆分异常", Thread.currentThread().getName(), e);
 		}
 	}
-
-
 
 
 }
