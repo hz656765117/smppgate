@@ -495,6 +495,7 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 		} catch (DuplicateKeyException e) {
 			throw new UnrecoverablePduException(e.getMessage(), e);
 		} catch (OfferTimeoutException e) {
+			logger.error("排队进入window，等待超时----------------",e);
 			throw new OfferTimeoutException(e.getMessage(), e);
 		}
 
