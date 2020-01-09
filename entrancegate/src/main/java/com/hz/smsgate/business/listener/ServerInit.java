@@ -41,6 +41,9 @@ public class ServerInit {
 
 	public static Map<String, SessionKey> CHANNL_REL = new LinkedHashMap<>();
 
+
+	public static Map<String, String> OPERATOR_TYPE = new LinkedHashMap<>();
+
 	/**
 	 * opt通道
 	 */
@@ -131,6 +134,21 @@ public class ServerInit {
 
 		CHANNL_REL.clear();
 		CHANNL_REL = map;
+	}
+
+
+	public void initOperatorType() {
+		Map<String, String> map = new LinkedHashMap<>();
+		List<OperatorVo> allOperator = smppService.getAllOperator();
+		for (OperatorVo operatorVo : allOperator) {
+			SessionKey sessionKey = new SessionKey();
+			sessionKey.setSenderId(operatorVo.getSenderid());
+			sessionKey.setSystemId(operatorVo.getSystemid());
+			map.put(operatorVo.getSystemid(), operatorVo.getSystemid());
+		}
+
+		OPERATOR_TYPE.clear();
+		OPERATOR_TYPE = map;
 	}
 
 
