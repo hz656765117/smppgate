@@ -20,9 +20,7 @@ import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Auther: huangzhuo
@@ -42,7 +40,7 @@ public class ServerInit {
 	public static Map<String, SessionKey> CHANNL_REL = new LinkedHashMap<>();
 
 
-	public static Map<String, String> OPERATOR_TYPE = new LinkedHashMap<>();
+	public static Map<String, Integer> OPERATOR_TYPE = new LinkedHashMap<>();
 
 	/**
 	 * opt通道
@@ -74,7 +72,8 @@ public class ServerInit {
 		initYxj();
 		//初始化http路由账号
 		initHttpSmppUser();
-
+		//初始化运营商类型
+		initOperatorType();
 
 		int serverPort = StaticValue.SERVER_PORT;
 
@@ -138,13 +137,13 @@ public class ServerInit {
 
 
 	public void initOperatorType() {
-		Map<String, String> map = new LinkedHashMap<>();
+		Map<String, Integer> map = new LinkedHashMap<>();
 		List<OperatorVo> allOperator = smppService.getAllOperator();
 		for (OperatorVo operatorVo : allOperator) {
 			SessionKey sessionKey = new SessionKey();
 			sessionKey.setSenderId(operatorVo.getSenderid());
 			sessionKey.setSystemId(operatorVo.getSystemid());
-			map.put(operatorVo.getSystemid(), operatorVo.getSystemid());
+			map.put(operatorVo.getSystemid(), operatorVo.getOperatorType());
 		}
 
 		OPERATOR_TYPE.clear();

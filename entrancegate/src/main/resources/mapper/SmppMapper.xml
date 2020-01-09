@@ -76,10 +76,12 @@
         <result column="systemid" jdbcType="VARCHAR" property="systemid" />
         <result column="password" jdbcType="VARCHAR" property="password" />
         <result column="flag" jdbcType="INTEGER" property="flag" />
+        <result column="bind_size" jdbcType="INTEGER" property="bindSize" />
+        <result column="operator_type" jdbcType="INTEGER" property="operatorType" />
         <result column="desc" jdbcType="VARCHAR" property="desc" />
         <result column="channel" jdbcType="VARCHAR" property="channel" />
         <result column="senderid" jdbcType="VARCHAR" property="senderid" />
-        <result column="type" jdbcType="INTEGER" property="type" />
+        <result column="channel_type" jdbcType="INTEGER" property="type" />
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     </resultMap>
@@ -88,7 +90,7 @@
 
         SELECT
         op.*,
-        ch.type,
+        ch.type as channel_type,
         ch.senderid,
         ch.channel
         FROM

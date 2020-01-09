@@ -62,7 +62,8 @@ spring:
 #      # 连接超时时间（毫秒）
 #    timeout: 0
 
-
+smsgate:
+  type: 1000
 
  
  

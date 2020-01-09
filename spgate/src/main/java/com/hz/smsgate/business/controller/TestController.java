@@ -11,6 +11,7 @@ import com.hz.smsgate.business.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,9 @@ public class TestController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestController.class);
 	@Autowired
 	public RedisUtil redisUtil;
+
+	@Value("${smsgate.type}")
+	private String type;
 
 	@RequestMapping(value = "/push")
 	public void demoTest() {
@@ -48,7 +52,7 @@ public class TestController {
 		LOGGER.error("aaaaaaaaaaaaaaaaerrorerrorerrortest1111123434");
 		LOGGER.warn("aaaaaaaaaaaaaawarnwarnwarntest1warnwarn111123434");
 
-		return "test111";
+		return type;
 	}
 
 
