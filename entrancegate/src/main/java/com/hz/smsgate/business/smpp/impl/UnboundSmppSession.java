@@ -20,7 +20,6 @@ package com.hz.smsgate.business.smpp.impl;
  * #L%
  */
 
-import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.constants.SmppConstants;
 import com.hz.smsgate.base.smpp.exception.SmppChannelException;
@@ -28,7 +27,6 @@ import com.hz.smsgate.base.smpp.exception.SmppProcessingException;
 import com.hz.smsgate.base.smpp.pdu.*;
 import com.hz.smsgate.base.smpp.pojo.LoggingOptions;
 import com.hz.smsgate.base.smpp.pojo.SmppBindType;
-import com.hz.smsgate.business.listener.ClientInit;
 import com.hz.smsgate.business.smpp.channel.ChannelUtil;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.channel.Channel;

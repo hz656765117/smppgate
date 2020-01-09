@@ -32,23 +32,6 @@ public class StaticValue {
 
 	public static String SYSTEMID_ALEX = "Alex";
 
-
-
-
-
-
-	//马来西亚区号
-	public static String AREA_CODE_MALAYSIA = "60";
-
-	//越南区号
-	public static String AREA_CODE_VIETNAM = "84";
-
-	//菲律宾
-	public static String AREA_CODE_PHILIPPINES = "63";
-
-
-
-
 	public static String WEB_GATE = "";
 
 

@@ -2,11 +2,7 @@ package com.hz.smsgate.business.controller;
 
 import com.google.gson.Gson;
 import com.hz.smsgate.base.constants.StaticValue;
-import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
-import com.hz.smsgate.base.smpp.pojo.SessionKey;
-import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.FileUtils;
-import com.hz.smsgate.business.listener.ClientInit;
 import com.hz.smsgate.business.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class TestController {
@@ -72,22 +67,6 @@ public class TestController {
 	}
 
 
-	@CrossOrigin
-	@RequestMapping("delResourceById/{id}")
-	public String delResourceById(@PathVariable(name = "id") String id) {
-		LOGGER.info("根据id删除资源，id={}", id);
-		List<String> strings = FileUtils.readFileByLines(StaticValue.RESOURCE_HOME);
-		String curStr = strings.get(Integer.parseInt(id));
-		strings.remove(Integer.parseInt(id));
-		boolean b = FileUtils.writerTxt(strings, StaticValue.RESOURCE_HOME);
-
-		String[] split = curStr.split("\\|");
-		closeClientConnect(split[4]);
-
-
-		return b + "";
-	}
-
 
 	@CrossOrigin
 	@RequestMapping("addResource")
@@ -101,59 +80,11 @@ public class TestController {
 		return b + "";
 	}
 
-	@CrossOrigin
-	@RequestMapping("updateResource")
-	public String updateResource(@RequestParam(value = "id", required = false) int id, @RequestParam(value = "resource", required = false) String resource) {
-		LOGGER.info("新增资源，id={}, resource={}", id, resource);
-		List<String> strings = FileUtils.readFileByLines(StaticValue.RESOURCE_HOME);
-		String oldResource = strings.get(id);
-		strings.set(id, resource);
-		boolean b = FileUtils.writerTxt(strings, StaticValue.RESOURCE_HOME);
-
-		String[] split1 = oldResource.split("\\|");
-		closeClientConnect(split1[4]);
-
-		String[] split2 = resource.split("\\|");
-//		openClientConnect(split2[4]);
-		return b + "";
-	}
 
 
-	@CrossOrigin
-	@RequestMapping("flushClientConnect")
-	public String flushClientConnect() {
-		LOGGER.info("刷新客户端连接");
-		//如果心跳失败，则重新绑定一次，绑定失败 则移除该session
-		for (Map.Entry<SessionKey, SmppSession> entry : ClientInit.sessionMap.entrySet()) {
-			entry.getValue().close();
-			ClientInit.sessionMap.remove(entry.getKey());
-		}
-
-		for (Map.Entry<SessionKey, SmppSessionConfiguration> entry : ClientInit.configMap.entrySet()) {
-			ClientInit.createClient(entry.getValue());
-		}
-
-		return "complet";
-	}
 
 
-	public void closeClientConnect(String key) {
-		LOGGER.info("关闭客户端连接，key={}", key);
-		SmppSession smppSession = ClientInit.sessionMap.get(key);
-		if (smppSession != null) {
-			smppSession.close();
-		}
 
-		ClientInit.sessionMap.remove(key);
-	}
-
-//	public void openClientConnect(String key) {
-//		LOGGER.info("打开客户端连接，key={}", key);
-//		ClientInit.initConfigs();
-//		SmppSessionConfiguration config = ClientInit.configMap.get(key);
-//		ClientInit.createClient(config);
-//
-//	}
 
 
 	@RequestMapping("/login")

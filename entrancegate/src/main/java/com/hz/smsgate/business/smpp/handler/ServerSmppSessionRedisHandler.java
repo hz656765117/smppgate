@@ -9,12 +9,12 @@ import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.PduAsyncResponse;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
-import com.hz.smsgate.business.utils.RedisUtil;
 import com.hz.smsgate.base.utils.SmppUtils;
-import com.hz.smsgate.business.listener.ClientInit;
+import com.hz.smsgate.business.listener.ServerInit;
 import com.hz.smsgate.business.pojo.MsgVo;
 import com.hz.smsgate.business.pojo.SmppUserVo;
 import com.hz.smsgate.business.utils.PduUtils;
+import com.hz.smsgate.business.utils.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -177,21 +177,21 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 		SessionKey sessionKey = new SessionKey(submitSm.getSystemId(), senderId);
 
 		//营销
-		if (ClientInit.CHANNEL_YX_LIST.contains(sessionKey)) {
+		if (ServerInit.CHANNEL_YX_LIST.contains(sessionKey)) {
 			if (type == 1) {
 				serverSmppSessionRedisHandler.redisUtil.lPush(SmppServerConstants.WEB_LONG_SUBMIT_SM_YX, submitSm);
 			} else {
 				serverSmppSessionRedisHandler.redisUtil.lPush(SmppServerConstants.WEB_SUBMIT_SM_YX, submitSm);
 			}
 			//通知
-		} else if (ClientInit.CHANNEL_TZ_LIST.contains(sessionKey)) {
+		} else if (ServerInit.CHANNEL_TZ_LIST.contains(sessionKey)) {
 			if (type == 1) {
 				serverSmppSessionRedisHandler.redisUtil.lPush(SmppServerConstants.WEB_LONG_SUBMIT_SM_TZ, submitSm);
 			} else {
 				serverSmppSessionRedisHandler.redisUtil.lPush(SmppServerConstants.WEB_SUBMIT_SM_TZ, submitSm);
 			}
 			//opt  验证码
-		} else if (ClientInit.CHANNEL_OPT_LIST.contains(sessionKey)) {
+		} else if (ServerInit.CHANNEL_OPT_LIST.contains(sessionKey)) {
 			if (type == 1) {
 				serverSmppSessionRedisHandler.redisUtil.lPush(SmppServerConstants.WEB_LONG_SUBMIT_SM_OPT, submitSm);
 			} else {
