@@ -32,7 +32,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.hz.smsgate.SmsGateApplication</mainClass>
+                    <mainClass>com.hz.entrancegate.SmsGateApplication</mainClass>
                     <jvmArguments>-Xms256M -Xmx1024M -XX:+UseConcMarkSweepGC</jvmArguments>
                     <executable>true</executable>
                     <includeSystemScope>true</includeSystemScope>
