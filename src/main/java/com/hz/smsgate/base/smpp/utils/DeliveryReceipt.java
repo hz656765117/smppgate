@@ -562,9 +562,13 @@ public class DeliveryReceipt {
 			return SmppConstants.STATE_REJECTED;
 		} else if (stateText.equalsIgnoreCase("ENROUTE")) {
 			return SmppConstants.STATE_ENROUTE;
+		} else if (stateText.equalsIgnoreCase("Senderid Pattern Failed")) {
+			return SmppConstants.STATE_UNKNOWN;
 		} else {
 			return -1;
 		}
+
+
 	}
 
 	static public String toStateText(byte state) {
