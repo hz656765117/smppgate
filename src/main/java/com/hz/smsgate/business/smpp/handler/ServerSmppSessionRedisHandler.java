@@ -118,6 +118,7 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 						MsgVo msgVo = new MsgVo(tempMsgId, session.getConfiguration().getSystemId(), session.getConfiguration().getPassword(), submitSm.getSourceAddress().getAddress());
 						try {
 							serverSmppSessionRedisHandler.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, tempMsgId, msgVo);
+							serverSmppSessionRedisHandler.redisUtil.hmSet(SmppServerConstants.BACK_MSGID_CACHE, tempMsgId, msgVo);
 							putSelfQueue(getRealSubmitSm(submitSm, session), 1);
 						} catch (Exception e) {
 							logger.error("-----------长短信下行接收，加入队列异常。------------- {}", e);
@@ -134,7 +135,7 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 
 						try {
 							serverSmppSessionRedisHandler.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, msgid, msgVo);
-
+							serverSmppSessionRedisHandler.redisUtil.hmSet(SmppServerConstants.BACK_MSGID_CACHE, msgid, msgVo);
 							putSelfQueue(getRealSubmitSm(submitSm, session), 0);
 						} catch (Exception e) {
 							logger.error("-----------短短信下行接收，加入队列异常。------------- {}", e);
@@ -207,6 +208,8 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 				serverSmppSessionRedisHandler.redisUtil.lPush(SmppServerConstants.WEB_SUBMIT_SM_YX, submitSm);
 			}
 		}
+
+		serverSmppSessionRedisHandler.redisUtil.lPush(SmppServerConstants.BACK_SUBMIT_SM, submitSm);
 
 	}
 

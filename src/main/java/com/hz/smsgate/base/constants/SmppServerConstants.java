@@ -141,4 +141,15 @@ public class SmppServerConstants {
     public static final String WEB_BIND_AGAIN = "webBindAgain";
 
 
+    /**
+     * 短信下行  详情记录
+     */
+    public static final String BACK_SUBMIT_SM = "backSubmitSm";
+
+    /**
+     * msgid的缓存key
+     */
+    public static final String BACK_MSGID_CACHE = "backMsgIdCache";
+
+
 }

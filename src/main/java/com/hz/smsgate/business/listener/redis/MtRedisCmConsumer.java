@@ -113,26 +113,26 @@ public class MtRedisCmConsumer implements Runnable {
 	}
 
 
-	private void sendToWg(SubmitSm submitSm) {
-		SessionKey sessionKey = new SessionKey();
-		Object obj = mtRedisConsumer.redisUtil.hmGet(SmppServerConstants.CM_MSGID_CACHE, submitSm.getTempMsgId());
-		if (obj != null) {
-			MsgVo msgVo = (MsgVo) obj;
-			sessionKey.setSystemId(msgVo.getSmppUser());
-			sessionKey.setSenderId(msgVo.getSmppPwd());
-		}
-
-		WGParams wgParams = ClientInit.CHANNL_SP_REL.get(sessionKey);
-		if (wgParams != null) {
-			wgParams.setDas(submitSm.getDestAddress().getAddress());
-			String sm = new String(submitSm.getShortMessage());
-			wgParams.setSm(sm);
-			mtRedisConsumer.redisUtil.lPush(SmppServerConstants.SYNC_SUBMIT, wgParams);
-		} else {
-			LOGGER.error("{}- {} -{}-{}短信记录异常，未能获取到sp账号", Thread.currentThread().getName(), submitSm.getSystemId(), submitSm.getSourceAddress().getAddress(), submitSm.getDestAddress().getAddress());
-		}
-
-	}
+//	private void sendToWg(SubmitSm submitSm) {
+//		SessionKey sessionKey = new SessionKey();
+//		Object obj = mtRedisConsumer.redisUtil.hmGet(SmppServerConstants.CM_MSGID_CACHE, submitSm.getTempMsgId());
+//		if (obj != null) {
+//			MsgVo msgVo = (MsgVo) obj;
+//			sessionKey.setSystemId(msgVo.getSmppUser());
+//			sessionKey.setSenderId(msgVo.getSmppPwd());
+//		}
+//
+//		WGParams wgParams = ClientInit.CHANNL_SP_REL.get(sessionKey);
+//		if (wgParams != null) {
+//			wgParams.setDas(submitSm.getDestAddress().getAddress());
+//			String sm = new String(submitSm.getShortMessage());
+//			wgParams.setSm(sm);
+//			mtRedisConsumer.redisUtil.lPush(SmppServerConstants.SYNC_SUBMIT, wgParams);
+//		} else {
+//			LOGGER.error("{}- {} -{}-{}短信记录异常，未能获取到sp账号", Thread.currentThread().getName(), submitSm.getSystemId(), submitSm.getSourceAddress().getAddress(), submitSm.getDestAddress().getAddress());
+//		}
+//
+//	}
 
 
 	private void handleMsgId(SubmitSm submitSm, SubmitSmResp submitResp, String msgId) {
@@ -196,12 +196,9 @@ public class MtRedisCmConsumer implements Runnable {
 			try {
 				submitResp = session0.submit(submitSm, 10000);
 			} catch (SmppTimeoutException e) {
-				LOGGER.error("{}-{}- {} 处理短信下行异常1111", Thread.currentThread().getName(), sendId, mbl, e);
-				if (e.getMessage().contains("Unable to get response")) {
-					LOGGER.error("{}-{}- {} 处理短信下行异常2222", Thread.currentThread().getName(), sendId, mbl, e);
-				}
+				LOGGER.error("{}-{}- {} cm处理短信下行异常", Thread.currentThread().getName(), sendId, mbl, e);
 			}
-			sendToWg(submitSm);
+//			sendToWg(submitSm);
 		} catch (Exception e) {
 			putSelfQueue(submitSm);
 			LOGGER.error("{}-{}- {} 处理短信下行异常", Thread.currentThread().getName(), sendId, mbl, e);

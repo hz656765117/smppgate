@@ -151,10 +151,8 @@ public class MtRedisConsumer implements Runnable {
 			try {
 				submitResp = session0.submit(submitSm, 10000);
 			} catch (SmppTimeoutException e) {
-				LOGGER.error("{}-{}- {} 处理短信下行异常1111", Thread.currentThread().getName(), sendId, mbl, e);
-				if (e.getMessage().contains("Unable to get response")) {
-					LOGGER.error("{}-{}- {} 处理短信下行异常2222", Thread.currentThread().getName(), sendId, mbl, e);
-				}
+				LOGGER.error("{}-{}- {} 处理短信下行异常", Thread.currentThread().getName(), sendId, mbl, e);
+
 			}
 		} catch (Exception e) {
 			putSelfQueue(submitSm);

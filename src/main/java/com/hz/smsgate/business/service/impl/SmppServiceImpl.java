@@ -1,14 +1,18 @@
 package com.hz.smsgate.business.service.impl;
 
 
+import com.hz.smsgate.base.smpp.pdu.SubmitSm;
+import com.hz.smsgate.base.utils.ChangeCharset;
+import com.hz.smsgate.business.listener.CleanLogThread;
 import com.hz.smsgate.business.mybatis.mapper.ChannelMapper;
+import com.hz.smsgate.business.mybatis.mapper.MtTaskMapper;
 import com.hz.smsgate.business.mybatis.mapper.SmppMapper;
-import com.hz.smsgate.business.pojo.Channel;
-import com.hz.smsgate.business.pojo.ChannelExample;
-import com.hz.smsgate.business.pojo.OperatorVo;
-import com.hz.smsgate.business.pojo.SmppUserVo;
+import com.hz.smsgate.business.pojo.*;
 import com.hz.smsgate.business.service.SmppService;
+import org.apache.commons.lang3.CharSetUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +24,7 @@ import java.util.stream.Collectors;
 @Service
 public class SmppServiceImpl implements SmppService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(SmppServiceImpl.class);
 
 	@Autowired
 	private ChannelMapper channelMapper;
@@ -27,6 +32,9 @@ public class SmppServiceImpl implements SmppService {
 	@Autowired
 	private SmppMapper smppMapper;
 
+
+	@Autowired
+	private MtTaskMapper mtTaskMapper;
 
 	@Override
 	public List<Channel> getAllChannels() {
@@ -81,4 +89,19 @@ public class SmppServiceImpl implements SmppService {
 	}
 
 
+	@Override
+	public boolean insertMtTask(SubmitSm submitSm) {
+		int i = 0;
+		try {
+			MtTask mtTask = new MtTask();
+			mtTask.setTableName("t_mt_task_202001");
+			mtTask.setMessage(new String(submitSm.getShortMessage(), ChangeCharset.UTF_8));
+			mtTask.setPhone(submitSm.getDestAddress().getAddress());
+			i = mtTaskMapper.insertSelective(mtTask);
+		} catch (Exception e) {
+			LOGGER.error("新增下行明细异常", e);
+		}
+
+		return i > 0;
+	}
 }

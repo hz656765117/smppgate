@@ -97,7 +97,7 @@
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from #{tableName,jdbcType=VARCHAR}
+    from ${tableName}
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -108,15 +108,15 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from #{tableName,jdbcType=VARCHAR}
+    from ${tableName}
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from #{tableName,jdbcType=VARCHAR}
+    delete from ${tableName}
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <delete id="deleteByExample" parameterType="com.hz.smsgate.business.pojo.MtTaskExample">
-    delete from #{tableName,jdbcType=VARCHAR}
+    delete from ${tableName}
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -125,7 +125,7 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into #{tableName,jdbcType=VARCHAR} (sp_msg_id, real_msg_id, user_id, 
+    insert into ${tableName} (sp_msg_id, real_msg_id, user_id, 
       system_id, channel, sender_id, 
       phone, message, send_type, 
       send_level, send_flag, receive_flag, 
@@ -146,7 +146,7 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into #{tableName,jdbcType=VARCHAR}
+    insert into ${tableName}
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="spMsgId != null">
         sp_msg_id,
@@ -291,13 +291,13 @@
     </trim>
   </insert>
   <select id="countByExample" parameterType="com.hz.smsgate.business.pojo.MtTaskExample" resultType="java.lang.Long">
-    select count(*) from #{tableName,jdbcType=VARCHAR}
+    select count(*) from ${tableName}
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update #{tableName,jdbcType=VARCHAR}
+    update ${tableName}
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=INTEGER},
@@ -377,7 +377,7 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update #{tableName,jdbcType=VARCHAR}
+    update ${tableName}
     set id = #{record.id,jdbcType=INTEGER},
       sp_msg_id = #{record.spMsgId,jdbcType=VARCHAR},
       real_msg_id = #{record.realMsgId,jdbcType=VARCHAR},
@@ -407,7 +407,7 @@
     </if>
   </update>
   <update id="updateByPrimaryKeySelective" parameterType="com.hz.smsgate.business.pojo.MtTask">
-    update #{tableName,jdbcType=VARCHAR}
+    update ${tableName}
     <set>
       <if test="spMsgId != null">
         sp_msg_id = #{spMsgId,jdbcType=VARCHAR},
@@ -482,7 +482,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.hz.smsgate.business.pojo.MtTask">
-    update #{tableName,jdbcType=VARCHAR}
+    update ${tableName}
     set sp_msg_id = #{spMsgId,jdbcType=VARCHAR},
       real_msg_id = #{realMsgId,jdbcType=VARCHAR},
       user_id = #{userId,jdbcType=VARCHAR},
