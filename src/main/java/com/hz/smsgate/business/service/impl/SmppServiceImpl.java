@@ -3,13 +3,13 @@ package com.hz.smsgate.business.service.impl;
 
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.utils.ChangeCharset;
-import com.hz.smsgate.business.listener.CleanLogThread;
+import com.hz.smsgate.base.utils.DateUtil;
+import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.business.mybatis.mapper.ChannelMapper;
 import com.hz.smsgate.business.mybatis.mapper.MtTaskMapper;
 import com.hz.smsgate.business.mybatis.mapper.SmppMapper;
 import com.hz.smsgate.business.pojo.*;
 import com.hz.smsgate.business.service.SmppService;
-import org.apache.commons.lang3.CharSetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -94,9 +95,35 @@ public class SmppServiceImpl implements SmppService {
 		int i = 0;
 		try {
 			MtTask mtTask = new MtTask();
-			mtTask.setTableName("t_mt_task_202001");
-			mtTask.setMessage(new String(submitSm.getShortMessage(), ChangeCharset.UTF_8));
-			mtTask.setPhone(submitSm.getDestAddress().getAddress());
+
+			Date curDate = new Date();
+
+			String mbl = submitSm.getDestAddress().getAddress();
+			//获取区号
+			String areaCode = PduUtils.getAreaCode(mbl);
+			//获取号段
+			String numSeg = PduUtils.getNumSeg(mbl);
+
+			byte[] shortMessage = submitSm.getShortMessage();
+			String msg = "";
+			if (shortMessage[0] == 5 && shortMessage[1] == 0 && shortMessage[2] == 3) {
+				mtTask.setLongMsgSeq(submitSm.getSequenceNumber());
+				mtTask.setPkNumber((int) shortMessage[5]);
+				mtTask.setPkTotal((int) shortMessage[4]);
+			}
+			msg = new String(shortMessage, ChangeCharset.UTF_8);
+			mtTask.setMessage(msg);
+
+			String mm = DateUtil.convertDateToString(curDate, "yyyyMM");
+			mtTask.setTableName("t_mt_task_" + mm);
+
+			mtTask.setPhone(mbl);
+			mtTask.setRealMsgId(submitSm.getTempMsgId());
+			mtTask.setSystemId(submitSm.getSystemId());
+			mtTask.setSenderId(submitSm.getSourceAddress().getAddress());
+			mtTask.setSendTime(curDate);
+			mtTask.setAreaCode(areaCode);
+			mtTask.setNumSeg(numSeg);
 			i = mtTaskMapper.insertSelective(mtTask);
 		} catch (Exception e) {
 			LOGGER.error("新增下行明细异常", e);

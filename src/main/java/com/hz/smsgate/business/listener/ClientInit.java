@@ -337,6 +337,10 @@ public class ClientInit {
 		SyncSubmitConsumer syncSubmitConsumer = new SyncSubmitConsumer();
 
 
+		MtRecordThread mtRecordThread = new MtRecordThread();
+		//记录详细下行数据线程
+		ThreadPoolHelper.executeTask(mtRecordThread);
+
 		//心跳线程
 		ThreadPoolHelper.executeTask(enquireLinkConsumer);
 
