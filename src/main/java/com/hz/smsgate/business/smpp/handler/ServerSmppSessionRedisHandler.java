@@ -92,6 +92,7 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 				if (pduRequest.getCommandId() == SmppConstants.CMD_ID_SUBMIT_SM) {
 					SubmitSmResp submitResp = (SubmitSmResp) response;
 					SubmitSm submitSm = (SubmitSm) pduRequest;
+					submitSm.setChannel(submitSm.getSourceAddress().getAddress());
 					//通道替换
 					submitSm = PduUtil.rewriteSmSourceAddress(submitSm);
 
@@ -102,7 +103,7 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 						systemId = session.getConfiguration().getSystemId();
 						submitSm.setSystemId(systemId);
 					}
-
+					submitSm.setUserType(1);
 
 					byte[] shortMessage = submitSm.getShortMessage();
 					if (shortMessage[0] == 5 && shortMessage[1] == 0 && shortMessage[2] == 3) {

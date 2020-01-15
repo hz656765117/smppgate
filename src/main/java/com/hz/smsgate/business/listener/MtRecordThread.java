@@ -50,7 +50,6 @@ public class MtRecordThread implements Runnable {
 		}
 		SubmitSm submitSm;
 		LOGGER.info("{}-记录短信（redis）-cm下行线程开始工作......", Thread.currentThread().getName());
-		SubmitSmResp submitResp;
 		Object obj;
 		while (true) {
 			try {
@@ -68,11 +67,14 @@ public class MtRecordThread implements Runnable {
 				}
 
 				submitSm = (SubmitSm) obj;
-
-				sendToWg(submitSm);
-
+				//新增记录
 				addRecord(submitSm);
 
+				//smpp接入 才转发到网关
+				if (0 == submitSm.getUserType()) {
+					sendToWg(submitSm);
+				}
+				mtRecordThread.redisUtil.hmRemove(SmppServerConstants.BACK_MSGID_CACHE, submitSm.getTempMsgId());
 			} catch (Exception e) {
 				LOGGER.error("{}- 记录短信下行异常", Thread.currentThread().getName(), e);
 				try {
@@ -126,7 +128,6 @@ public class MtRecordThread implements Runnable {
 			LOGGER.error("{}- {} -{}-{}短信记录异常，未能获取到sp账号", Thread.currentThread().getName(), submitSm.getSystemId(), submitSm.getSourceAddress().getAddress(), submitSm.getDestAddress().getAddress());
 		}
 
-		mtRecordThread.redisUtil.hmRemove(SmppServerConstants.BACK_MSGID_CACHE, submitSm.getTempMsgId());
 
 	}
 

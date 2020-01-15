@@ -117,6 +117,7 @@ public class SmppServiceImpl implements SmppService {
 			String mm = DateUtil.convertDateToString(curDate, "yyyyMM");
 			mtTask.setTableName("t_mt_task_" + mm);
 
+			mtTask.setChannel(submitSm.getChannel());
 			mtTask.setPhone(mbl);
 			mtTask.setRealMsgId(submitSm.getTempMsgId());
 			mtTask.setSystemId(submitSm.getSystemId());
@@ -124,6 +125,8 @@ public class SmppServiceImpl implements SmppService {
 			mtTask.setSendTime(curDate);
 			mtTask.setAreaCode(areaCode);
 			mtTask.setNumSeg(numSeg);
+			mtTask.setUserId(submitSm.getSmppUser());
+			mtTask.setSendType(submitSm.getUserType());
 			i = mtTaskMapper.insertSelective(mtTask);
 		} catch (Exception e) {
 			LOGGER.error("新增下行明细异常", e);
