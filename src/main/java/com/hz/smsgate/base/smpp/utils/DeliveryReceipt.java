@@ -565,7 +565,8 @@ public class DeliveryReceipt {
 		} else if (stateText.equalsIgnoreCase("Senderid Pattern Failed")) {
 			return SmppConstants.STATE_UNKNOWN;
 		} else {
-			return -1;
+			logger.error("Unable to convert [stat] field with value {} into a valid state",stateText);
+			return SmppConstants.STATE_UNKNOWN;
 		}
 
 
