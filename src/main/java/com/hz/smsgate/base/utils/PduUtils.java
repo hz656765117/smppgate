@@ -127,7 +127,7 @@ public class PduUtils {
 	public static SubmitSm encodeGsm(SubmitSm sm) {
 		String systemId = sm.getSystemId();
 		//cm资源需要GSM格式编码
-		if (StaticValue.CHANNEL_MK_1.equals(systemId) || StaticValue.CHANNEL_MK_2.equals(systemId) || StaticValue.CHANNEL_MK_3.equals(systemId) || StaticValue.CHANNEL_MK_4.equals(systemId) || StaticValue.SYSTEMID_CM_1.equals(systemId) || StaticValue.SYSTEMID_CM_2.equals(systemId) || StaticValue.SYSTEMID_ALEX.equals(systemId)) {
+		if (StaticValue.SYSTEMID_MK_1.equals(systemId) || StaticValue.SYSTEMID_MK_2.equals(systemId) || StaticValue.SYSTEMID_MK_3.equals(systemId) || StaticValue.SYSTEMID_MK_4.equals(systemId) || StaticValue.SYSTEMID_CM_1.equals(systemId) || StaticValue.SYSTEMID_CM_2.equals(systemId) || StaticValue.SYSTEMID_ALEX.equals(systemId)) {
 			onlyEncodeGsm(sm);
 		}
 		return sm;
