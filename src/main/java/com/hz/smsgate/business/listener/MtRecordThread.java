@@ -123,6 +123,7 @@ public class MtRecordThread implements Runnable {
 			wgParams.setDas(submitSm.getDestAddress().getAddress());
 			String sm = new String(submitSm.getShortMessage());
 			wgParams.setSm(sm);
+			wgParams.setSvrtype(submitSm.getSystemId());
 			mtRecordThread.redisUtil.lPush(SmppServerConstants.SYNC_SUBMIT, wgParams);
 		} else {
 			LOGGER.error("{}- {} -{}-{}短信记录异常，未能获取到sp账号", Thread.currentThread().getName(), submitSm.getSystemId(), submitSm.getSourceAddress().getAddress(), submitSm.getDestAddress().getAddress());
