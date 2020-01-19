@@ -1,5 +1,7 @@
 package com.hz.smsgate.base.constants;
 
+import com.hz.smsgate.business.pojo.SenderIdVo;
+
 /**
  * @Auther: huangzhuo
  * @Date: 2019/11/4 21:00
@@ -150,6 +152,12 @@ public class SmppServerConstants {
      * msgid的缓存key
      */
     public static final String BACK_MSGID_CACHE = "backMsgIdCache";
+
+    /**
+     * msgid的缓存key
+     */
+    public static final String REAL_CHANNEL_CACHE = "realChannelCache";
+
 
 
 }

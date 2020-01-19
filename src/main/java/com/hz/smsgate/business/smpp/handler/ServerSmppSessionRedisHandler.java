@@ -16,6 +16,7 @@ import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.base.utils.SmppUtils;
 import com.hz.smsgate.business.listener.ClientInit;
 import com.hz.smsgate.business.pojo.MsgVo;
+import com.hz.smsgate.business.pojo.SenderIdVo;
 import com.hz.smsgate.business.pojo.SmppUserVo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -92,7 +93,9 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 				if (pduRequest.getCommandId() == SmppConstants.CMD_ID_SUBMIT_SM) {
 					SubmitSmResp submitResp = (SubmitSmResp) response;
 					SubmitSm submitSm = (SubmitSm) pduRequest;
-					submitSm.setChannel(submitSm.getSourceAddress().getAddress());
+					String channel = submitSm.getSourceAddress().getAddress();
+					submitSm.setChannel(channel);
+					submitSm.setRealChannel(channel);
 					//通道替换
 					submitSm = PduUtil.rewriteSmSourceAddress(submitSm);
 
@@ -120,7 +123,8 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 						try {
 							serverSmppSessionRedisHandler.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, tempMsgId, msgVo);
 							serverSmppSessionRedisHandler.redisUtil.hmSet(SmppServerConstants.BACK_MSGID_CACHE, tempMsgId, msgVo);
-							putSelfQueue(getRealSubmitSm(submitSm, session), 1);
+							submitSm = getRealSubmitSm(submitSm, session);
+							putSelfQueue(submitSm, 1);
 						} catch (Exception e) {
 							logger.error("-----------长短信下行接收，加入队列异常。------------- {}", e);
 						}
@@ -128,6 +132,13 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 
 						String msgId16 = new BigInteger(msgid, 10).toString(16);
 						submitResp.setMessageId(msgId16);
+
+						try {
+							serverSmppSessionRedisHandler.redisUtil.lPush(SmppServerConstants.REAL_CHANNEL_CACHE, new SenderIdVo(msgid, submitSm.getSystemId(), channel, submitSm.getRealChannel()));
+						} catch (Exception e) {
+							logger.error("-----------长短信下行真实通道回调，加入队列异常。------------- {}", e);
+						}
+
 						return submitResp;
 					} else {
 						submitSm.setTempMsgId(msgid);
@@ -137,13 +148,24 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 						try {
 							serverSmppSessionRedisHandler.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, msgid, msgVo);
 							serverSmppSessionRedisHandler.redisUtil.hmSet(SmppServerConstants.BACK_MSGID_CACHE, msgid, msgVo);
-							putSelfQueue(getRealSubmitSm(submitSm, session), 0);
+							submitSm = getRealSubmitSm(submitSm, session);
+							putSelfQueue(submitSm, 0);
+
+
 						} catch (Exception e) {
 							logger.error("-----------短短信下行接收，加入队列异常。------------- {}", e);
 						}
 						String msgId16 = new BigInteger(msgid, 10).toString(16);
 						submitResp.setMessageId(msgId16);
 						submitResp.calculateAndSetCommandLength();
+
+
+						try {
+							serverSmppSessionRedisHandler.redisUtil.lPush(SmppServerConstants.REAL_CHANNEL_CACHE, new SenderIdVo(msgid, submitSm.getSystemId(), channel, submitSm.getRealChannel()));
+						} catch (Exception e) {
+							logger.error("-----------短短信下行真实通道回调，加入队列异常。------------- {}", e);
+						}
+
 						return submitResp;
 					}
 
@@ -249,6 +271,7 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 
 			String systemId = null;
 			String senderId = null;
+			String realChannel = null;
 
 			List<SmppUserVo> areaList = new LinkedList<>();
 
@@ -266,6 +289,7 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 			if (areaList.size() == 1) {
 				systemId = areaList.get(0).getSystemid();
 				senderId = areaList.get(0).getSenderid();
+				realChannel = areaList.get(0).getChannel();
 			} else {
 				//如果同一个国家配置了两个国家，则根据号段匹配发送
 				String numSeg = PduUtils.getNumSeg(mbl);
@@ -274,6 +298,7 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 					if (StringUtils.isNotBlank(smppUser.getNumSegment()) && smppUser.getNumSegment().contains(numSeg)) {
 						systemId = smppUser.getSystemid();
 						senderId = smppUser.getSenderid();
+						realChannel = smppUser.getChannel();
 						break;
 					}
 				}
@@ -284,7 +309,6 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 					senderId = areaList.get(0).getSenderid();
 					logger.error("手机号（{}），号段({})未配置到具体发送账号上,使用systemId（{}）和senderId（{}）发送", mbl, numSeg, systemId, senderId);
 				}
-
 			}
 
 			if (StringUtils.isNotBlank(systemId) && StringUtils.isNotBlank(senderId)) {
@@ -292,6 +316,7 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
 				submitSm.setSystemId(systemId);
 				sourceAddress.setAddress(senderId);
 				submitSm.setSourceAddress(sourceAddress);
+				submitSm.setRealChannel(realChannel);
 
 			} else {
 				logger.error("systemId({}),senderId({})  获取真实systemId和senderId 失败------------- ", submitSm.getSystemId(), sourceAddress.getAddress());

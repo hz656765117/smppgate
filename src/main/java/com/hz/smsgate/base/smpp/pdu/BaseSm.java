@@ -61,6 +61,7 @@ public abstract class BaseSm<R extends PduResponse> extends PduRequest<R> implem
 	public String tempMsgId;
 	public String systemId;
 	public String channel;
+	public String realChannel;
 	public String smppUser;
 	public int  userType;
 
@@ -218,6 +219,14 @@ public abstract class BaseSm<R extends PduResponse> extends PduRequest<R> implem
 
 	public void setUserType(int userType) {
 		this.userType = userType;
+	}
+
+	public String getRealChannel() {
+		return realChannel;
+	}
+
+	public void setRealChannel(String realChannel) {
+		this.realChannel = realChannel;
 	}
 
 	@Override

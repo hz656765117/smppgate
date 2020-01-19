@@ -116,6 +116,8 @@ public class StaticValue {
 
 	public static String WEB_GATE = "";
 
+	public static String HTTP_WEB = "";
+
 	public static String TYPE = "";
 
 
@@ -252,6 +254,9 @@ public class StaticValue {
 //		CHANNL_SP_REL = new LinkedHashMap<>();
 //
 		WEB_GATE = SystemGlobals.getValue("montnets.webgate");
+
+
+		HTTP_WEB= SystemGlobals.getValue("montnets.webgate1");
 //
 //		CHANNL_SP_REL = FileUtils.getSpConfigs(StaticValue.SP_RESOURCE_HOME);
 	}

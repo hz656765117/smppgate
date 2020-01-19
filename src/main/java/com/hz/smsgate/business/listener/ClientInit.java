@@ -348,6 +348,11 @@ public class ClientInit {
 		ThreadPoolHelper.executeTask(syncSubmitConsumer);
 
 
+
+		RealChannelCallBackThread realChannelCallBackThread = new RealChannelCallBackThread();
+		//真实channel回调线程
+		ThreadPoolHelper.executeTask(realChannelCallBackThread);
+
 		for (int i = 0; i <= 2; i++) {
 			//CM 短信发送线程
 			ThreadPoolHelper.executeTask(mtRedisCmConsumer);
