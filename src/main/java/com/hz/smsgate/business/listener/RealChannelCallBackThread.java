@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -89,14 +90,15 @@ public class RealChannelCallBackThread implements Runnable {
 		try {
 			String url = StaticValue.HTTP_WEB + "/rvsmpp.hts";
 
+			HashMap<String, String> headerMap = new HashMap<>(1);
+			headerMap.put("Connection", "close");
 
-
-			Map<String, String> param = new LinkedHashMap<>();
+			Map<String, String> param = new LinkedHashMap<>(4);
 			param.put("systemid", senderIdVo.getSystemId());
 			param.put("msgid", senderIdVo.getMsgId());
 			param.put("spgate", senderIdVo.getChannel());
 			param.put("spno", senderIdVo.getRealChannel());
-			HttpClientUtils.doPost(url, param, null);
+			HttpClientUtils.doPost(url, param, headerMap);
 		} catch (Exception e) {
 			LOGGER.error("{}- 真实channel回调异常", Thread.currentThread().getName(), e);
 		}

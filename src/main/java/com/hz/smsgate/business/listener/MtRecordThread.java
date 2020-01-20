@@ -98,6 +98,7 @@ public class MtRecordThread implements Runnable {
 			boolean flag = false;
 			int i = 0;
 			while (!flag && i <= 3) {
+				submitSm.setShortMessage("content error".getBytes());
 				flag = mtRecordThread.smppService.insertMtTask(submitSm);
 				i++;
 			}
