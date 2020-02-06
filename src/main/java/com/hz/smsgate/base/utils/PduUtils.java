@@ -44,7 +44,7 @@ public class PduUtils {
 		SessionKey sessionKey = new SessionKey(sm.getSystemId(), channel);
 		SessionKey sessionKey1 = ClientInit.CHANNL_REL.get(StaticValue.CHANNEL_1);
 		boolean flag = sessionKey1 != null ? channel.equals(ClientInit.CHANNL_REL.get(StaticValue.CHANNEL_1).getSenderId()) : false;
-		if (flag || channel.equals(StaticValue.CHANNEL_1) || ClientInit.CHANNEL_MK_LIST.contains(sessionKey)) {
+		if (StaticValue.SYSTEMID_JATIS.equals(sm.getSystemId()) || flag || channel.equals(StaticValue.CHANNEL_1) || ClientInit.CHANNEL_MK_LIST.contains(sessionKey)) {
 			Address destAddress = sm.getDestAddress();
 			if (destAddress.getAddress().startsWith("00")) {
 				String address = destAddress.getAddress().substring(2);

@@ -59,6 +59,8 @@ public class StaticValue {
 
 	public static String SYSTEMID_SA = "SA015a";
 
+	public static String SYSTEMID_JATIS = "testotp";
+
 
 	public static String CHANNEL_MK_1 = "778";
 	public static String CHANNEL_MK_2 = "779";
