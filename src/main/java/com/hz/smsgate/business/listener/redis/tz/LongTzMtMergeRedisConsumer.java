@@ -212,7 +212,7 @@ public class LongTzMtMergeRedisConsumer implements Runnable {
 				startIndex += shortMessage.length;
 				tempMsgIds += submitSm.getTempMsgId() + "|";
 			}
-			LOGGER.info("合并后的内容为{}", new String(sm));
+			LOGGER.info("mbl为{},合并后的内容为{}", mt.getDestAddress().getAddress(), new String(sm));
 
 			mt.setShortMessage(sm);
 			mt.calculateAndSetCommandLength();
