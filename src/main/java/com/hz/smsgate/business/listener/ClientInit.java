@@ -18,6 +18,7 @@ import com.hz.smsgate.business.listener.redis.opt.LongOptMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.opt.LongOptMtSplitRedisConsumer;
 import com.hz.smsgate.business.listener.redis.tz.LongTzMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.tz.LongTzMtSplitRedisConsumer;
+import com.hz.smsgate.business.listener.redis.yx.LongLongYxMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.yx.LongYxMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.yx.LongYxMtSplitRedisConsumer;
 import com.hz.smsgate.business.pojo.OperatorVo;
@@ -322,6 +323,7 @@ public class ClientInit {
 		LongOptMtSplitRedisConsumer longOptMtSplitRedisConsumer = new LongOptMtSplitRedisConsumer();
 
 		LongYxMtMergeRedisConsumer longYxMtMergeRedisConsumer = new LongYxMtMergeRedisConsumer();
+		LongLongYxMtMergeRedisConsumer longLongYxMtMergeRedisConsumer = new LongLongYxMtMergeRedisConsumer();
 		LongYxMtSplitRedisConsumer longYxMtSplitRedisConsumer = new LongYxMtSplitRedisConsumer();
 
 		LongTzMtMergeRedisConsumer longTzMtMergeRedisConsumer = new LongTzMtMergeRedisConsumer();
@@ -371,6 +373,8 @@ public class ClientInit {
 
 		//redis长短信合并   营销
 		ThreadPoolHelper.executeTask(longYxMtMergeRedisConsumer);
+		//redis长长短信合并   营销
+		ThreadPoolHelper.executeTask(longLongYxMtMergeRedisConsumer);
 		//redis长短信拆分   营销
 		ThreadPoolHelper.executeTask(longYxMtSplitRedisConsumer);
 

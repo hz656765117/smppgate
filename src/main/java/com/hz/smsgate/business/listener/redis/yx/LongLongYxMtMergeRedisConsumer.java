@@ -14,19 +14,19 @@ import java.util.*;
 
 
 /**
- * 长短信合并
+ * 长长短信合并
  *
  * @author huangzhuo
  * @date 2019/7/2 15:53
  */
 @Component
-public class LongYxMtMergeRedisConsumer implements Runnable {
-    private static Logger LOGGER = LoggerFactory.getLogger(LongYxMtMergeRedisConsumer.class);
+public class LongLongYxMtMergeRedisConsumer implements Runnable {
+    private static Logger LOGGER = LoggerFactory.getLogger(LongLongYxMtMergeRedisConsumer.class);
 
     @Autowired
     public RedisUtil redisUtil;
 
-    public static LongYxMtMergeRedisConsumer longMtMergeRedisConsumer;
+    public static LongLongYxMtMergeRedisConsumer longMtMergeRedisConsumer;
 
     @PostConstruct
     public void init() {
@@ -46,14 +46,14 @@ public class LongYxMtMergeRedisConsumer implements Runnable {
         }
         SubmitSm submitSm;
         Object obj;
-        LOGGER.info("{}-长短信（redis）合并线程开始工作......", Thread.currentThread().getName());
+        LOGGER.info("{}-长长短信（redis）合并线程开始工作......", Thread.currentThread().getName());
 
         while (true) {
 
 
             try {
                 if (longMtMergeRedisConsumer.redisUtil != null) {
-                    obj = longMtMergeRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_LONG_SUBMIT_SM_YX);
+                    obj = longMtMergeRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_LONG_LONG_SUBMIT_SM_YX);
                     if (obj != null) {
                         submitSm = (SubmitSm) obj;
                         validateMt(submitSm);
@@ -65,7 +65,7 @@ public class LongYxMtMergeRedisConsumer implements Runnable {
                     Thread.sleep(1000);
                 }
             } catch (Exception e) {
-                LOGGER.error("{}-长短信（redis）合并异常", Thread.currentThread().getName(), e);
+                LOGGER.error("{}-长长短信（redis）合并异常", Thread.currentThread().getName(), e);
                 try {
                     Thread.sleep(10000);
                 } catch (Exception E) {
@@ -97,7 +97,7 @@ public class LongYxMtMergeRedisConsumer implements Runnable {
         key.append(shortMessage[4]);
         key.append("-");
         key.append(shortMessage[5]);
-        LOGGER.info("mbl{},KEY={},长短信校验,并缓存进CACHE_MAP", submitSm.getDestAddress().getAddress(), key.toString());
+        LOGGER.info("mbl{},KEY={},长长短信校验,并缓存进CACHE_MAP", submitSm.getDestAddress().getAddress(), key.toString());
         CACHE_MAP.put(key.toString(), submitSm);
     }
 

@@ -77,6 +77,12 @@ public class SmppServerConstants {
      */
     public static final String WEB_LONG_SUBMIT_SM_YX = "webYxLongSm";
 
+    /**
+     * WEB 长长短信下行缓存  营销
+     */
+    public static final String WEB_LONG_LONG_SUBMIT_SM_YX = "webYxLongLongSm";
+
+
 
     /**
      * WEB 长短信合并  opt 验证码类型
