@@ -165,7 +165,9 @@ public class LongLongYxMtMergeRedisConsumer implements Runnable {
                 // 升序排序
                 @Override
                 public int compare(Map.Entry<String, SubmitSm> o1, Map.Entry<String, SubmitSm> o2) {
-                    return o1.getKey().compareTo(o2.getKey());
+                    Integer o11 = Integer.valueOf(o1.getKey().split("-")[3]) ;
+                    Integer o21 = Integer.valueOf(o2.getKey().split("-")[3]) ;
+                    return o11.compareTo(o21);
                 }
             });
             // 排序后输出
