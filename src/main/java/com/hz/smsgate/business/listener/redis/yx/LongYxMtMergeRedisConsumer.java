@@ -97,13 +97,11 @@ public class LongYxMtMergeRedisConsumer implements Runnable {
         key.append(shortMessage[4]);
         key.append("-");
         key.append(shortMessage[5]);
-        LOGGER.info("mbl{},KEY={},长短信校验,并缓存进CACHE_MAP", submitSm.getDestAddress().getAddress(), key.toString());
         CACHE_MAP.put(key.toString(), submitSm);
     }
 
 
     public void mergeSt() throws Exception {
-        LOGGER.info("mergeSt前CACHE_MAP的size为{}", CACHE_MAP.size());
         if (CACHE_MAP.size() <= 0) {
             return;
         }
@@ -114,9 +112,7 @@ public class LongYxMtMergeRedisConsumer implements Runnable {
         String tempKey = "";
         for (Map.Entry<String, SubmitSm> entry : CACHE_MAP.entrySet()) {
             String key = entry.getKey();
-            LOGGER.info("key为{},completeMap的size为{}", key, completeMap.size());
             if ("1".equals(key.substring(key.length() - 1)) && flag) {
-                LOGGER.info("key为{},准备开始缓存数据合并", key);
                 tempKey = key;
                 flag = false;
                 completeMap.put(entry.getKey(), entry.getValue());
@@ -127,7 +123,6 @@ public class LongYxMtMergeRedisConsumer implements Runnable {
                     String msgCount = split[split.length - 2];
 
                     if (completeMap.size() == Integer.valueOf(msgCount)) {
-                        LOGGER.info("key为{},completeMap的size为{},准备去合并短信", key, completeMap.size());
                         SubmitSm submitSm = mergeSubmitSm(completeMap);
                         if (submitSm != null) {
                             tempKey = "";
@@ -147,7 +142,6 @@ public class LongYxMtMergeRedisConsumer implements Runnable {
 
 
                 } else {
-                    LOGGER.info("tempKey为{}，key为{},tempKey的size为{},放到临时map中", tempKey, key, tempMap.size());
                     tempMap.put(entry.getKey(), entry.getValue());
                 }
             }
@@ -174,7 +168,6 @@ public class LongYxMtMergeRedisConsumer implements Runnable {
             }
         }
 
-        LOGGER.info("mergeSt后CACHE_MAP的size为{}", CACHE_MAP.size());
 
     }
 
