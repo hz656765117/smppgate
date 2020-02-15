@@ -114,6 +114,7 @@ public class MtRedisConsumer implements Runnable {
 		String mbl = "";
 
 		try {
+            LOGGER.info("{}-读取到短信下行信息{}", Thread.currentThread().getName(), submitSm.toString());
 
 			//重组下行对象
 			submitSm = PduUtils.rewriteSubmitSm(submitSm);
@@ -122,7 +123,6 @@ public class MtRedisConsumer implements Runnable {
 			sendId = submitSm.getSourceAddress().getAddress();
 
 
-			LOGGER.info("{}-读取到短信下行信息{}", Thread.currentThread().getName(), submitSm.toString());
 
 
 			//获取客户端session

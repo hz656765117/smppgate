@@ -355,7 +355,7 @@ public class ClientInit {
 		//真实channel回调线程
 		ThreadPoolHelper.executeTask(realChannelCallBackThread);
 
-		for (int i = 0; i <= 2; i++) {
+		for (int i = 0; i <= 5; i++) {
 			//CM 短信发送线程
 			ThreadPoolHelper.executeTask(mtRedisCmConsumer);
 		}
@@ -378,12 +378,12 @@ public class ClientInit {
 		//redis长短信拆分   营销
 		ThreadPoolHelper.executeTask(longYxMtSplitRedisConsumer);
 
-		for (int i = 0; i <= 5; i++) {
+		for (int i = 0; i <= 8; i++) {
 			//redis长短信发送
 			ThreadPoolHelper.executeTask(longRealMtSendRedisConsumer);
 		}
 
-		for (int i = 0; i <= 3; i++) {
+		for (int i = 0; i <= 8; i++) {
 			//redis短短信下行线程
 			ThreadPoolHelper.executeTask(mtRedisConsumer);
 		}

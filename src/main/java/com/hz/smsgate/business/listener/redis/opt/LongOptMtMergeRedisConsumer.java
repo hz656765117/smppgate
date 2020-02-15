@@ -102,7 +102,7 @@ public class LongOptMtMergeRedisConsumer implements Runnable {
 
 
     public void mergeSt() throws Exception {
-
+        LOGGER.info("mergeSt前CACHE_MAP的size为{}", CACHE_MAP.size());
         if (CACHE_MAP.size() <= 0) {
             return;
         }
@@ -113,7 +113,9 @@ public class LongOptMtMergeRedisConsumer implements Runnable {
         String tempKey = "";
         for (Map.Entry<String, SubmitSm> entry : CACHE_MAP.entrySet()) {
             String key = entry.getKey();
+            LOGGER.info("key为{},completeMap的size为{}", key, completeMap.size());
             if ("1".equals(key.substring(key.length() - 1)) && flag) {
+                LOGGER.info("key为{},准备开始缓存数据合并", key);
                 tempKey = key;
                 flag = false;
                 completeMap.put(entry.getKey(), entry.getValue());
@@ -124,6 +126,7 @@ public class LongOptMtMergeRedisConsumer implements Runnable {
                     String msgCount = split[split.length - 2];
 
                     if (completeMap.size() == Integer.valueOf(msgCount)) {
+                        LOGGER.info("key为{},completeMap的size为{},准备去合并短信", key, completeMap.size());
                         SubmitSm submitSm = mergeSubmitSm(completeMap);
                         if (submitSm != null) {
                             tempKey = "";
@@ -135,7 +138,6 @@ public class LongOptMtMergeRedisConsumer implements Runnable {
                             }
                             completeMap.clear();
                         } else {
-                            LOGGER.error("-----------key={} 短信下行（长短信合并），合并失败，帮到临时合并map中，下次再合并。------------- ", key);
                             //如果合并失败则把各条短信放到临时map中，下次再合并
                             tempMap.putAll(completeMap);
                         }
@@ -143,6 +145,7 @@ public class LongOptMtMergeRedisConsumer implements Runnable {
 
 
                 } else {
+                    LOGGER.info("tempKey为{}，key为{},tempKey的size为{},放到临时map中", tempKey, key, tempMap.size());
                     tempMap.put(entry.getKey(), entry.getValue());
                 }
             }
@@ -168,7 +171,7 @@ public class LongOptMtMergeRedisConsumer implements Runnable {
                 CACHE_MAP.put(m.getKey(), m.getValue());
             }
         }
-
+        LOGGER.info("mergeSt后CACHE_MAP的size为{}", CACHE_MAP.size());
 
     }
 

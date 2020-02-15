@@ -56,8 +56,8 @@ public class LongLongYxMtMergeRedisConsumer implements Runnable {
                     obj = longMtMergeRedisConsumer.redisUtil.rPop(SmppServerConstants.WEB_LONG_LONG_SUBMIT_SM_YX);
                     if (obj != null) {
                         submitSm = (SubmitSm) obj;
-                        validateMt(submitSm);
-                        mergeSt();
+//                        validateMt(submitSm);
+//                        mergeSt();
                     } else {
                         Thread.sleep(1000);
                     }
@@ -121,7 +121,7 @@ public class LongLongYxMtMergeRedisConsumer implements Runnable {
                 flag = false;
                 completeMap.put(entry.getKey(), entry.getValue());
             } else {
-                if (!StringUtils.isBlank(tempKey) && key.substring(0, key.length() - 1).equals(tempKey.substring(0, tempKey.length() - 1))) {
+                if (!StringUtils.isBlank(tempKey) && key.substring(0, key.length() - 2).contains(tempKey.substring(0, tempKey.length() - 2))) {
                     completeMap.put(entry.getKey(), entry.getValue());
                     String[] split = key.split("-");
                     String msgCount = split[split.length - 2];
