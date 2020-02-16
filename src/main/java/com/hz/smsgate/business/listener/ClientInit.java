@@ -272,7 +272,7 @@ public class ClientInit {
 			}
 			try {
 				SmppSessionConfiguration config0 = new SmppSessionConfiguration();
-				config0.setWindowSize(64);
+				config0.setWindowSize(96);
 				config0.setConnectTimeout(10000);
 				config0.setRequestExpiryTimeout(30000);
 				config0.setWindowMonitorInterval(15000);
@@ -355,7 +355,7 @@ public class ClientInit {
 		//真实channel回调线程
 		ThreadPoolHelper.executeTask(realChannelCallBackThread);
 
-		for (int i = 0; i <= 15; i++) {
+		for (int i = 0; i <= 10; i++) {
 			//CM 短信发送线程
 			ThreadPoolHelper.executeTask(mtRedisCmConsumer);
 		}
@@ -378,12 +378,12 @@ public class ClientInit {
 		//redis长短信拆分   营销
 		ThreadPoolHelper.executeTask(longYxMtSplitRedisConsumer);
 
-		for (int i = 0; i <= 20; i++) {
+		for (int i = 0; i <= 12; i++) {
 			//redis长短信发送
 			ThreadPoolHelper.executeTask(longRealMtSendRedisConsumer);
 		}
 
-		for (int i = 0; i <= 20; i++) {
+		for (int i = 0; i <= 12; i++) {
 			//redis短短信下行线程
 			ThreadPoolHelper.executeTask(mtRedisConsumer);
 		}
