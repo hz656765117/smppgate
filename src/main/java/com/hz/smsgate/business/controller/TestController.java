@@ -79,6 +79,16 @@ public class TestController {
 	}
 
 
+	@RequestMapping("loglevel")
+	public String getSomething2() throws Exception {
+		LOGGER.debug("aaaaaaaaaaadebugdebugdebugtest1111123434");
+		LOGGER.info("aaaaaaaaaaaaaaaaaaainfoinfoinfotest1111123434");
+		LOGGER.error("aaaaaaaaaaaaaaaaerrorerrorerrortest1111123434");
+		LOGGER.warn("aaaaaaaaaaaaaawarnwarnwarntest1warnwarn111123434");
+		return "test111";
+	}
+
+
 	@CrossOrigin
 	@RequestMapping("getResource")
 	public String getResource() {
