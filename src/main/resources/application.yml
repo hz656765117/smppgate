@@ -52,11 +52,7 @@ spring:
     password: mwkjhz2019
 
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: 'loggers'
+
 
 
 #    pool:
