@@ -61,6 +61,8 @@ public class StaticValue {
 
 	public static String SYSTEMID_JATIS = "testotp";
 
+	public static List<String> CHANNEL_JATIS_LIST = new ArrayList<>();
+
 
 	public static String CHANNEL_MK_1 = "778";
 	public static String CHANNEL_MK_2 = "779";
@@ -124,6 +126,11 @@ public class StaticValue {
 
 
 	static {
+
+		CHANNEL_JATIS_LIST.add("testotp");
+		CHANNEL_JATIS_LIST.add("iitsmpp0");
+		CHANNEL_JATIS_LIST.add("iitsmpp1");
+		CHANNEL_JATIS_LIST.add("iitsmpp2");
 
 		TYPE = SystemGlobals.getValue("montnets.type", "0");
 
