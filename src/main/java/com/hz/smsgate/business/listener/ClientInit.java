@@ -14,6 +14,7 @@ import com.hz.smsgate.business.listener.redis.LongRealMtSendRedisConsumer;
 import com.hz.smsgate.business.listener.redis.MtRedisCmConsumer;
 import com.hz.smsgate.business.listener.redis.MtRedisConsumer;
 import com.hz.smsgate.business.listener.redis.RptRedisConsumer;
+import com.hz.smsgate.business.listener.redis.cmopt.LongCmOptMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.opt.LongOptMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.opt.LongOptMtSplitRedisConsumer;
 import com.hz.smsgate.business.listener.redis.tz.LongTzMtMergeRedisConsumer;
@@ -339,6 +340,9 @@ public class ClientInit {
 		SyncSubmitConsumer syncSubmitConsumer = new SyncSubmitConsumer();
 
 
+		LongCmOptMtMergeRedisConsumer longCmOptMtMergeRedisConsumer = new LongCmOptMtMergeRedisConsumer();
+
+
 		MtRecordThread mtRecordThread = new MtRecordThread();
 		//记录详细下行数据线程
 		ThreadPoolHelper.executeTask(mtRecordThread);
@@ -360,6 +364,8 @@ public class ClientInit {
 			ThreadPoolHelper.executeTask(mtRedisCmConsumer);
 		}
 
+		//redis长短信cm合并   opt
+		ThreadPoolHelper.executeTask(longCmOptMtMergeRedisConsumer);
 
 		//redis长短信合并   opt
 		ThreadPoolHelper.executeTask(longOptMtMergeRedisConsumer);

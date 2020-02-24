@@ -1,11 +1,6 @@
 package com.hz.smsgate.base.constants;
 
 
-import com.hz.smsgate.base.emp.pojo.WGParams;
-import com.hz.smsgate.base.smpp.pojo.SessionKey;
-import com.hz.smsgate.base.utils.FileUtils;
-import com.hz.smsgate.business.listener.ClientInit;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -48,6 +43,7 @@ public class StaticValue {
 
 	public static String SYSTEMID_CM_1 = "HaloPushingLtd";
 	public static String SYSTEMID_CM_2 = "HaloMakreting";
+	public static String SYSTEMID_CM_3 = "6puUZWO0t!K5dw";
 
 	public static String SYSTEMID_MK_1 = "HP01";
 	public static String SYSTEMID_MK_2 = "HP02";

@@ -67,6 +67,13 @@ public class SmppServerConstants {
      */
     public static final String WEB_LONG_SUBMIT_SM_OPT = "webOptLongSm";
 
+
+    /**
+     * WEB 长短信下行缓存  opt
+     */
+    public static final String WEB_LONG_CM_SUBMIT_SM_OPT = "webOptLongCmSm";
+
+
     /**
      * WEB 长短信下行缓存  通知
      */
