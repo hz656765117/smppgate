@@ -225,7 +225,7 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
             //opt  验证码
         } else if (ClientInit.CHANNEL_OPT_LIST.contains(sessionKey)) {
             if (type == 1) {
-                if(StaticValue.SYSTEMID_CM_2.equals(submitSm.getSystemId()) || StaticValue.SYSTEMID_CM_3.equals(submitSm.getSystemId())){
+                if(StaticValue.SYSTEMID_CM_1.equals(submitSm.getSystemId()) || StaticValue.SYSTEMID_CM_3.equals(submitSm.getSystemId())){
                     serverSmppSessionRedisHandler.redisUtil.lPush(SmppServerConstants.WEB_LONG_CM_SUBMIT_SM_OPT, submitSm);
                 }else {
                     serverSmppSessionRedisHandler.redisUtil.lPush(SmppServerConstants.WEB_LONG_SUBMIT_SM_OPT, submitSm);
