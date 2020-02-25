@@ -43,6 +43,10 @@ public class SmppServerConstants {
      */
     public static final String WEB_MSGID_CACHE = "webMsgIdCache";
 
+    /**
+     * WEB 短短信下行 opt
+     */
+    public static final String WEB_CM_SUBMIT_SM_OPT = "webCmSubmitSmOpt";
 
     /**
      * WEB 短短信下行 opt

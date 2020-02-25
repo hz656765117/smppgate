@@ -10,10 +10,7 @@ import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.PropertiesLoader;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.base.utils.ThreadPoolHelper;
-import com.hz.smsgate.business.listener.redis.LongRealMtSendRedisConsumer;
-import com.hz.smsgate.business.listener.redis.MtRedisCmConsumer;
-import com.hz.smsgate.business.listener.redis.MtRedisConsumer;
-import com.hz.smsgate.business.listener.redis.RptRedisConsumer;
+import com.hz.smsgate.business.listener.redis.*;
 import com.hz.smsgate.business.listener.redis.cmopt.LongCmOptMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.cmopt.LongCmOptMtSplitRedisConsumer;
 import com.hz.smsgate.business.listener.redis.cmopt.LongCmOptRealMtSendRedisConsumer;
@@ -363,7 +360,7 @@ public class ClientInit {
 		//真实channel回调线程
 		ThreadPoolHelper.executeTask(realChannelCallBackThread);
 
-		for (int i = 0; i <= 10; i++) {
+		for (int i = 0; i <= 7; i++) {
 			//CM 短信发送线程
 			ThreadPoolHelper.executeTask(mtRedisCmConsumer);
 		}
@@ -413,6 +410,12 @@ public class ClientInit {
 			ThreadPoolHelper.executeTask(rptRedisConsumer);
 		}
 
+
+		WebCmMtRedisOptConsumer webCmMtRedisOptConsumer = new WebCmMtRedisOptConsumer();
+		for (int i = 0; i <= 12; i++) {
+			//redis短短信下行线程
+			ThreadPoolHelper.executeTask(webCmMtRedisOptConsumer);
+		}
 
 	}
 
