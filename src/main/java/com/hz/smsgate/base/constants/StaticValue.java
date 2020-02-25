@@ -43,7 +43,7 @@ public class StaticValue {
 
 	public static String SYSTEMID_CM_1 = "HaloPushingLtd";
 	public static String SYSTEMID_CM_2 = "HaloMakreting";
-	public static String SYSTEMID_CM_3 = "6puUZWO0t!K5dw";
+	public static String SYSTEMID_CM_3 = "HaloPUSH2";
 
 	public static String SYSTEMID_MK_1 = "HP01";
 	public static String SYSTEMID_MK_2 = "HP02";

@@ -15,6 +15,8 @@ import com.hz.smsgate.business.listener.redis.MtRedisCmConsumer;
 import com.hz.smsgate.business.listener.redis.MtRedisConsumer;
 import com.hz.smsgate.business.listener.redis.RptRedisConsumer;
 import com.hz.smsgate.business.listener.redis.cmopt.LongCmOptMtMergeRedisConsumer;
+import com.hz.smsgate.business.listener.redis.cmopt.LongCmOptMtSplitRedisConsumer;
+import com.hz.smsgate.business.listener.redis.cmopt.LongCmOptRealMtSendRedisConsumer;
 import com.hz.smsgate.business.listener.redis.opt.LongOptMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.opt.LongOptMtSplitRedisConsumer;
 import com.hz.smsgate.business.listener.redis.tz.LongTzMtMergeRedisConsumer;
@@ -322,6 +324,8 @@ public class ClientInit {
 
 		LongOptMtMergeRedisConsumer longOptMtMergeRedisConsumer = new LongOptMtMergeRedisConsumer();
 		LongOptMtSplitRedisConsumer longOptMtSplitRedisConsumer = new LongOptMtSplitRedisConsumer();
+		LongCmOptRealMtSendRedisConsumer longCmOptRealMtSendRedisConsumer = new LongCmOptRealMtSendRedisConsumer();
+
 
 		LongYxMtMergeRedisConsumer longYxMtMergeRedisConsumer = new LongYxMtMergeRedisConsumer();
 		LongLongYxMtMergeRedisConsumer longLongYxMtMergeRedisConsumer = new LongLongYxMtMergeRedisConsumer();
@@ -341,7 +345,7 @@ public class ClientInit {
 
 
 		LongCmOptMtMergeRedisConsumer longCmOptMtMergeRedisConsumer = new LongCmOptMtMergeRedisConsumer();
-
+		LongCmOptMtSplitRedisConsumer longCmOptMtSplitRedisConsumer = new LongCmOptMtSplitRedisConsumer();
 
 		MtRecordThread mtRecordThread = new MtRecordThread();
 		//记录详细下行数据线程
@@ -366,11 +370,21 @@ public class ClientInit {
 
 		//redis长短信cm合并   opt
 		ThreadPoolHelper.executeTask(longCmOptMtMergeRedisConsumer);
+		//redis长短信cm拆分   opt
+		ThreadPoolHelper.executeTask(longCmOptMtSplitRedisConsumer);
+
 
 		//redis长短信合并   opt
 		ThreadPoolHelper.executeTask(longOptMtMergeRedisConsumer);
 		//redis长短信拆分   opt
 		ThreadPoolHelper.executeTask(longOptMtSplitRedisConsumer);
+
+
+		for (int i = 0; i <= 20; i++) {
+			//redis长短信发送
+			ThreadPoolHelper.executeTask(longCmOptRealMtSendRedisConsumer);
+		}
+
 
 		//redis长短信合并   通知
 		ThreadPoolHelper.executeTask(longTzMtMergeRedisConsumer);
@@ -384,7 +398,7 @@ public class ClientInit {
 		//redis长短信拆分   营销
 		ThreadPoolHelper.executeTask(longYxMtSplitRedisConsumer);
 
-		for (int i = 0; i <= 12; i++) {
+		for (int i = 0; i <= 15; i++) {
 			//redis长短信发送
 			ThreadPoolHelper.executeTask(longRealMtSendRedisConsumer);
 		}

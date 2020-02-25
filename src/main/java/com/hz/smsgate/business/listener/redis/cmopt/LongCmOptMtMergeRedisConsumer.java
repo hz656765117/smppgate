@@ -132,7 +132,7 @@ public class LongCmOptMtMergeRedisConsumer implements Runnable {
                             tempKey = "";
                             flag = true;
                             try {
-                                longCmMtMergeRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_LONG_SUBMIT_SM_SEND_OPT, submitSm);
+                                longCmMtMergeRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_LONG_CM_SUBMIT_SM_SEND_OPT, submitSm);
                             } catch (Exception e) {
                                 LOGGER.error("-----------key={}短信下行（长短信合并），加入队列异常。------------- {}", key, e);
                             }

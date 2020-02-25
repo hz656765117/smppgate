@@ -90,6 +90,10 @@ public class SmppServerConstants {
     public static final String WEB_LONG_LONG_SUBMIT_SM_YX = "webYxLongLongSm";
 
 
+    /**
+     * WEB 长短信合并  opt 验证码类型
+     */
+    public static final String WEB_LONG_CM_SUBMIT_SM_SEND_OPT = "webCmOptLongSmSend";
 
     /**
      * WEB 长短信合并  opt 验证码类型
@@ -117,6 +121,11 @@ public class SmppServerConstants {
 //     */
 //    public static final String WEB_REL_LONG_SUBMIT_SM_SEND = "webRealLongSubmitSmSend";
 
+
+    /**
+     * WEB 长短信真实发送  OPT
+     */
+    public static final String WEB_REL_CM_LONG_SUBMIT_SM_SEND_OPT = "webRealCmOptLongSmSend";
 
     /**
      * WEB 长短信真实发送  OPT
