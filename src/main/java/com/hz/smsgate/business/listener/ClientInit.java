@@ -377,7 +377,7 @@ public class ClientInit {
 		ThreadPoolHelper.executeTask(longOptMtSplitRedisConsumer);
 
 
-		for (int i = 0; i <= 20; i++) {
+		for (int i = 0; i <= 10; i++) {
 			//redis长短信发送
 			ThreadPoolHelper.executeTask(longCmOptRealMtSendRedisConsumer);
 		}
@@ -412,7 +412,7 @@ public class ClientInit {
 
 
 		WebCmMtRedisOptConsumer webCmMtRedisOptConsumer = new WebCmMtRedisOptConsumer();
-		for (int i = 0; i <= 12; i++) {
+		for (int i = 0; i <= 8; i++) {
 			//redis短短信下行线程
 			ThreadPoolHelper.executeTask(webCmMtRedisOptConsumer);
 		}
