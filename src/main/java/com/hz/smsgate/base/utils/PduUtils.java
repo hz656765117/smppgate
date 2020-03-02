@@ -131,7 +131,7 @@ public class PduUtils {
         String areaCode = PduUtils.getAreaCode(mbl);
 
         //cm资源需要GSM格式编码
-        if ((StaticValue.SYSTEMID_MK_1.equals(systemId) && (areaCode.equals("62") || areaCode.equals("63"))) || (StaticValue.SYSTEMID_MK_2.equals(systemId) && (areaCode.equals("62") || areaCode.equals("63"))) || (StaticValue.SYSTEMID_MK_3.equals(systemId) && (areaCode.equals("62") || areaCode.equals("63"))) || (StaticValue.SYSTEMID_MK_4.equals(systemId) && (areaCode.equals("62") || areaCode.equals("63"))) || StaticValue.SYSTEMID_CM_1.equals(systemId) || StaticValue.SYSTEMID_CM_2.equals(systemId) || StaticValue.SYSTEMID_CM_3.equals(systemId) || StaticValue.SYSTEMID_ALEX.equals(systemId)) {
+        if ((StaticValue.SYSTEMID_MK_1.equals(systemId) &&  areaCode.equals("62") ) || (StaticValue.SYSTEMID_MK_2.equals(systemId) &&  areaCode.equals("62") ) || (StaticValue.SYSTEMID_MK_3.equals(systemId) &&  areaCode.equals("62")  ) || (StaticValue.SYSTEMID_MK_4.equals(systemId) &&  areaCode.equals("62")  ) || StaticValue.SYSTEMID_CM_1.equals(systemId) || StaticValue.SYSTEMID_CM_2.equals(systemId) || StaticValue.SYSTEMID_CM_3.equals(systemId) || StaticValue.SYSTEMID_ALEX.equals(systemId)) {
             onlyEncodeGsm(sm);
         }
         return sm;
