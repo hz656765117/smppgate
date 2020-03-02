@@ -164,7 +164,7 @@ public class MtRedisCmConsumer implements Runnable {
 
 		try {
 			//重组下行对象
-			submitSm = PduUtils.rewriteSubmitSm(submitSm);
+			submitSm = PduUtils.rewriteCmSubmitSm(submitSm);
 			sendId = submitSm.getSourceAddress().getAddress();
 			mbl = submitSm.getDestAddress().getAddress();
 

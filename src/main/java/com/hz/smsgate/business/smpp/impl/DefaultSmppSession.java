@@ -520,7 +520,7 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 			logger.error("unbind不判断channel.isConnected");
 		}else{
 			if (!channel.isConnected()) {
-				logger.error("Failed to write any response because the channel is not connected any more. Maybe the client has closed the connection? ");
+				logger.error("1Failed to write any response because the channel is not connected any more. Maybe the client has closed the connection? ");
 				return future;
 			}
 		}
@@ -572,7 +572,7 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 		}
 
 		if (!channel.isConnected()) {
-			logger.error("Failed to write any response because the channel is not connected any more. Maybe the client has closed the connection? ");
+			logger.error("2Failed to write any response because the channel is not connected any more. Maybe the client has closed the connection? ");
 			return;
 		}
 		// write the pdu out & wait timeout amount of time

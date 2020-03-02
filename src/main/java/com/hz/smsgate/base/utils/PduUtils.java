@@ -137,6 +137,38 @@ public class PduUtils {
         return sm;
     }
 
+
+    /**
+     * 重写下行对象
+     *
+     * @param sm
+     * @return
+     */
+    public static SubmitSm rewriteCmSubmitSm(SubmitSm sm) {
+
+        //通道替换
+        sm = PduUtil.rewriteSmSourceAddress(sm);
+
+        //短信下行内容编码
+        sm = PduUtils.encodeCmGsm(sm);
+        //通道555的短信去掉前面两个00
+        sm = PduUtils.removeZero(sm);
+        return sm;
+    }
+
+    public static SubmitSm encodeCmGsm(SubmitSm sm) {
+        String systemId = sm.getSystemId();
+
+        String mbl = sm.getDestAddress().getAddress();
+        String areaCode = PduUtils.getAreaCode(mbl);
+
+        //cm资源需要GSM格式编码
+        if ((StaticValue.SYSTEMID_MK_1.equals(systemId) &&  areaCode.equals("62") ) || (StaticValue.SYSTEMID_MK_2.equals(systemId) &&  areaCode.equals("62") ) || (StaticValue.SYSTEMID_MK_3.equals(systemId) &&  areaCode.equals("62")  ) || (StaticValue.SYSTEMID_MK_4.equals(systemId) &&  areaCode.equals("62")  ) || StaticValue.SYSTEMID_CM_1.equals(systemId) || StaticValue.SYSTEMID_CM_2.equals(systemId) || StaticValue.SYSTEMID_CM_3.equals(systemId) || StaticValue.SYSTEMID_ALEX.equals(systemId)) {
+            onlyEncodeGsm(sm);
+        }
+        return sm;
+    }
+
     /**
      * 短信内容Gsm编码
      *

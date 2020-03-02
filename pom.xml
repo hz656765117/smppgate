@@ -328,7 +328,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>com.hz.smsgate.SmsGateApplication</mainClass>
-                    <jvmArguments>-Xms256M -Xmx1024M -XX:+UseConcMarkSweepGC</jvmArguments>
+                    <jvmArguments>-Xms512M -Xmx2048M -XX:+UseConcMarkSweepGC</jvmArguments>
                     <executable>true</executable>
                     <includeSystemScope>true</includeSystemScope>
                 </configuration>
