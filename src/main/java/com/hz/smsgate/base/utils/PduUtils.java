@@ -239,7 +239,7 @@ public class PduUtils {
             }
         }
 
-        if (session0 == null || !session0.isBound()) {
+        if (session0 == null) {
             try {
                 sessionKey.setSenderId(sendId);
                 SmppSessionConfiguration smppSessionConfiguration = ClientInit.configMap.get(sessionKey);
