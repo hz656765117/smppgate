@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.math.BigInteger;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -129,6 +130,10 @@ public class RptRedisConsumer implements Runnable {
 			return;
 		}
 
+		//该运营商的msgid需要16进制编码
+		if (StaticValue.CHANNEL_JATIS_LIST.contains(deliverSm.getSystemId()){
+			messageId = new BigInteger(messageId, 10).toString(16);
+		}
 
 		Object obj = rptRedisConsumer.redisUtil.hmGet(SmppServerConstants.WEB_MSGID_CACHE, messageId);
 		if (obj != null) {
