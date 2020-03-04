@@ -131,7 +131,7 @@ public class RptRedisConsumer implements Runnable {
 		}
 
 		//该运营商的msgid需要16进制编码
-		if (StaticValue.CHANNEL_JATIS_LIST.contains(deliverSm.getSystemId()){
+		if (StaticValue.CHANNEL_JATIS_LIST.contains(deliverSm.getSystemId())){
 			messageId = new BigInteger(messageId, 10).toString(16);
 		}
 
