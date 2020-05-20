@@ -132,9 +132,6 @@ public class MtRedisOptConsumer implements Runnable {
 				submitSm.setSourceAddress(sourceAddress);
 			}
 
-			if (StaticValue.SYSTEMID_SA.equals(session0.getConfiguration().getSystemId())) {
-				submitSm.setDataCoding(SmppConstants.DATA_CODING_8BIT);
-			}
 
 			submitSm.removeSequenceNumber();
 			submitSm.calculateAndSetCommandLength();
