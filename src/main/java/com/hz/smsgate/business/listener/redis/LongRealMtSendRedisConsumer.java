@@ -1,6 +1,8 @@
 package com.hz.smsgate.business.listener.redis;
 
 import com.hz.smsgate.base.constants.SmppServerConstants;
+import com.hz.smsgate.base.constants.StaticValue;
+import com.hz.smsgate.base.smpp.constants.SmppConstants;
 import com.hz.smsgate.base.smpp.exception.SmppTimeoutException;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSmResp;
@@ -133,6 +135,12 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 				sourceAddress.setNpi((byte) 1);
 				submitSm.setSourceAddress(sourceAddress);
 			}
+
+			if (StaticValue.SYSTEMID_SA.equals(session0.getConfiguration().getSystemId())) {
+				submitSm.setDataCoding(SmppConstants.DATA_CODING_8BIT);
+			}
+
+
 			submitSm.removeSequenceNumber();
 			submitSm.calculateAndSetCommandLength();
 
