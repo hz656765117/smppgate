@@ -59,6 +59,8 @@ public class StaticValue {
 
 	public static List<String> CHANNEL_JATIS_LIST = new ArrayList<>();
 
+	public static String YN_TELKOMSEL = "0062811,0062812,0062813,0062852,0062853,0062821,0062822,0062823,0062854,0062851L";
+
 
 	public static String CHANNEL_MK_1 = "778";
 	public static String CHANNEL_MK_2 = "779";

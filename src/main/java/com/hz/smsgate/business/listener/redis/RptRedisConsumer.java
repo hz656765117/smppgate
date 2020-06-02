@@ -131,7 +131,7 @@ public class RptRedisConsumer implements Runnable {
 		}
 
 		//该运营商的msgid需要16进制编码
-		if (StaticValue.CHANNEL_JATIS_LIST.contains(deliverSm.getSystemId())){
+		if (StaticValue.CHANNEL_JATIS_LIST.contains(deliverSm.getSystemId())) {
 			messageId = new BigInteger(messageId, 10).toString(16);
 		}
 
@@ -154,8 +154,11 @@ public class RptRedisConsumer implements Runnable {
 				if (ClientInit.CHANNEL_MK_LIST.contains(sessionKey)) {
 					String mbl = deliverSm.getSourceAddress().getAddress();
 					String areaCode = PduUtils.getAreaCode(mbl);
+					String numSeg = PduUtils.getNumSeg(mbl);
+
+
 					//马来西亚和菲律宾 只有accepted  || StaticValue.AREA_CODE_VIETNAM.equals(areaCode)
-					if (StaticValue.AREA_CODE_MALAYSIA.equals(areaCode) || StaticValue.AREA_CODE_PHILIPPINES.equals(areaCode)) {
+					if (StaticValue.AREA_CODE_MALAYSIA.equals(areaCode) || StaticValue.AREA_CODE_PHILIPPINES.equals(areaCode) || (StaticValue.SYSTEMID_MK_4.equals(sessionKey.getSystemId()) && StaticValue.YN_TELKOMSEL.contains(numSeg))) {
 						if (deliveryReceipt.getState() == SmppConstants.STATE_ACCEPTED) {
 							deliveryReceipt.setState(SmppConstants.STATE_DELIVERED);
 						}

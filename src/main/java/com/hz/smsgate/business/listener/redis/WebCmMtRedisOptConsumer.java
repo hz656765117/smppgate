@@ -132,7 +132,7 @@ public class WebCmMtRedisOptConsumer implements Runnable {
 			}
 
 			if (StaticValue.SYSTEMID_SA.equals(session0.getConfiguration().getSystemId())) {
-				submitSm.setDataCoding(SmppConstants.DATA_CODING_8BIT);
+				submitSm.setDataCoding(SmppConstants.DATA_CODING_DEFAULT);
 			}
 
 			submitSm.removeSequenceNumber();
