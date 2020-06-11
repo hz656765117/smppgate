@@ -1,6 +1,7 @@
 package com.hz.smsgate.business.service;
 
 
+import com.hz.smsgate.base.smpp.pdu.DeliverSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.business.pojo.Channel;
 import com.hz.smsgate.business.pojo.OperatorVo;
@@ -35,5 +36,12 @@ public interface SmppService {
 
 
     boolean insertMtTask(SubmitSm submitSm);
+
+    /**
+     * 新增状态报告信息
+     * @param deliverSm
+     * @return
+     */
+    boolean insertRptRecord(DeliverSm deliverSm);
 
 }

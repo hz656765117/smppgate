@@ -416,6 +416,10 @@ public class ClientInit {
 			ThreadPoolHelper.executeTask(webCmMtRedisOptConsumer);
 		}
 
+
+		PptRecordThread rptRecordThread = new  PptRecordThread();
+		ThreadPoolHelper.executeTask(rptRecordThread);
+
 	}
 
 

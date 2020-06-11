@@ -1,16 +1,20 @@
 package com.hz.smsgate.business.service.impl;
 
 
+import com.hz.smsgate.base.smpp.pdu.DeliverSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
+import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
 import com.hz.smsgate.base.utils.ChangeCharset;
 import com.hz.smsgate.base.utils.DateUtil;
 import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.business.mybatis.mapper.ChannelMapper;
 import com.hz.smsgate.business.mybatis.mapper.MtTaskMapper;
+import com.hz.smsgate.business.mybatis.mapper.RptRecordMapper;
 import com.hz.smsgate.business.mybatis.mapper.SmppMapper;
 import com.hz.smsgate.business.pojo.*;
 import com.hz.smsgate.business.service.SmppService;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +40,10 @@ public class SmppServiceImpl implements SmppService {
 
 	@Autowired
 	private MtTaskMapper mtTaskMapper;
+
+
+	@Autowired
+	private RptRecordMapper rptRecordMapper;
 
 	@Override
 	public List<Channel> getAllChannels() {
@@ -134,4 +142,47 @@ public class SmppServiceImpl implements SmppService {
 
 		return i > 0;
 	}
+
+
+	@Override
+	public boolean insertRptRecord(DeliverSm deliverSm) {
+		RptRecord record = new RptRecord();
+		Date curDate = new Date();
+		String mm = DateUtil.convertDateToString(curDate, "yyyyMM");
+		record.setTableName("t_rpt_record_" + mm);
+		int i = 0;
+
+		try {
+			record.setSystemId(deliverSm.getSystemId());
+			record.setPhone(deliverSm.getSourceAddress().getAddress());
+			record.setSenderid(deliverSm.getDestAddress().getAddress());
+			record.setCreateTime(curDate);
+			byte[] shortMessage = deliverSm.getShortMessage();
+			DeliveryReceipt deliveryReceipt = DeliveryReceipt.parseShortMessage(new String(shortMessage), DateTimeZone.UTC, false);
+			record.setSpMsgId(deliveryReceipt.getMessageId());
+			record.setStateDes(DeliveryReceipt.toStateText(deliveryReceipt.getState()));
+			if(deliveryReceipt.getSubmitDate()!=null){
+				long subMillis = deliveryReceipt.getSubmitDate().getMillis();
+				Date subDate = new Date(subMillis);
+				record.setSubTime(subDate);
+			}
+
+			if(deliveryReceipt.getDoneDate()!=null){
+				long doneMillis = deliveryReceipt.getDoneDate().getMillis();
+				Date doneDate = new Date(doneMillis);
+				record.setDoneTime(doneDate);
+			}
+
+
+			record.setErrorCode(deliveryReceipt.getErrorCode() + "");
+			record.setState(deliveryReceipt.getState() + "");
+			i = rptRecordMapper.insertSelective(record);
+		} catch (Exception e) {
+			LOGGER.error("新增状态报告异常", e);
+		}
+
+
+		return i > 0;
+	}
+
 }

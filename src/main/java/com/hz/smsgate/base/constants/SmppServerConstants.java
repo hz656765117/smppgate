@@ -185,5 +185,11 @@ public class SmppServerConstants {
     public static final String REAL_CHANNEL_CACHE = "realChannelCache";
 
 
+    /**
+     * 状态报告入库
+     */
+    public static final String BACK_DELIVER_SM = "backDeliverSm";
+
+
 
 }
