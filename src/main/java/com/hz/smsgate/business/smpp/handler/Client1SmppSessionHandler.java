@@ -176,6 +176,10 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
                 client1SmppSessionHandler.redisUtil.lPush(SmppServerConstants.WEB_DELIVER_SM, deliverSm);
             }
 
+
+            //用于状态报告入库
+            client1SmppSessionHandler.redisUtil.lPush(SmppServerConstants.BACK_DELIVER_SM, deliverSm);
+
         } catch (Exception e) {
             logger.error("{}-处理短信状态报告内容解析异常", Thread.currentThread().getName(), e);
             return;

@@ -30,4 +30,10 @@ public interface MtTaskMapper {
     int updateByPrimaryKeySelective(MtTask record);
 
     int updateByPrimaryKey(MtTask record);
+
+
+    int updateByRealMsgIdSelective(MtTask record);
+
+    int updateBySpMsgIdSelective(MtTask record);
+
 }

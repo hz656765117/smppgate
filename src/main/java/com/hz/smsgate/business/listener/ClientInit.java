@@ -420,6 +420,10 @@ public class ClientInit {
 		PptRecordThread rptRecordThread = new  PptRecordThread();
 		ThreadPoolHelper.executeTask(rptRecordThread);
 
+
+		MtRecordUpdateThread mtRecordUpdateThread = new  MtRecordUpdateThread();
+		ThreadPoolHelper.executeTask(mtRecordUpdateThread);
+
 	}
 
 

@@ -12,6 +12,8 @@ import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.business.listener.ClientInit;
+import com.hz.smsgate.business.pojo.MsgRelateVo;
+import com.hz.smsgate.business.pojo.SenderIdVo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,6 +94,9 @@ public class MtRedisConsumer implements Runnable {
 				submitSm = (SubmitSm) obj;
 				//发送短信
 				submitResp = realSend(submitSm);
+
+
+
 
 				handleMsgId(submitResp, submitSm.getTempMsgId());
 
@@ -179,19 +184,27 @@ public class MtRedisConsumer implements Runnable {
 		if (submitResp == null) {
 			return;
 		}
-
 		try {
 			String messageId = submitResp.getMessageId();
 			//更新缓存中的value
 			Object msgVo = mtRedisConsumer.redisUtil.hmGet(SmppServerConstants.WEB_MSGID_CACHE, msgId);
 			mtRedisConsumer.redisUtil.hmRemove(SmppServerConstants.WEB_MSGID_CACHE, msgId);
 			mtRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, messageId, msgVo);
+
+
+			mtRedisConsumer.redisUtil.lPush(SmppServerConstants.UPDATE_SUBMIT_SM, new MsgRelateVo(msgId, messageId));
+
+
+
 		} catch (Exception e) {
 			LOGGER.error("{}- 替换msgid异常", Thread.currentThread().getName(), e);
 		}
 
 
 	}
+
+
+
 
 
 	/**

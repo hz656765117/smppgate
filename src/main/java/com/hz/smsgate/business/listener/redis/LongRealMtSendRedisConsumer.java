@@ -12,6 +12,7 @@ import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.business.listener.ClientInit;
+import com.hz.smsgate.business.pojo.MsgRelateVo;
 import com.hz.smsgate.business.pojo.MsgVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -197,7 +198,15 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 					msg1.setMsgId(msgId1 + "|" + msgId2);
 					longRealMtSendRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, messageId, msg1);
 				}
+
+
+				longRealMtSendRedisConsumer.redisUtil.lPush(SmppServerConstants.UPDATE_SUBMIT_SM, new MsgRelateVo(curMsgId, messageId));
+
 			}
+
+
+
+
 		} catch (Exception e) {
 			LOGGER.error("{}- 替换msgid异常", Thread.currentThread().getName(), e);
 		}

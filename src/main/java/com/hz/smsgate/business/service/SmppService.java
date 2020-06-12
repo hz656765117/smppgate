@@ -4,6 +4,7 @@ package com.hz.smsgate.business.service;
 import com.hz.smsgate.base.smpp.pdu.DeliverSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.business.pojo.Channel;
+import com.hz.smsgate.business.pojo.MsgRelateVo;
 import com.hz.smsgate.business.pojo.OperatorVo;
 import com.hz.smsgate.business.pojo.SmppUserVo;
 
@@ -43,5 +44,19 @@ public interface SmppService {
      * @return
      */
     boolean insertRptRecord(DeliverSm deliverSm);
+
+    /**
+     * 根据msgid更新spmsgid
+     * @param msgRelateVo
+     * @return
+     */
+    boolean updateMtTaskByMsgId(MsgRelateVo msgRelateVo);
+
+    /**
+     * 根据spmsgid更新errorcode
+     * @param msgRelateVo
+     * @return
+     */
+    boolean updateMtTaskBySpMsgId(MsgRelateVo msgRelateVo);
 
 }

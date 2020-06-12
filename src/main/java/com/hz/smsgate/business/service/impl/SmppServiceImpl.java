@@ -151,7 +151,8 @@ public class SmppServiceImpl implements SmppService {
 		String mm = DateUtil.convertDateToString(curDate, "yyyyMM");
 		record.setTableName("t_rpt_record_" + mm);
 		int i = 0;
-
+		String spMsgId = "";
+		String errrorCode = "";
 		try {
 			record.setSystemId(deliverSm.getSystemId());
 			record.setPhone(deliverSm.getSourceAddress().getAddress());
@@ -160,20 +161,21 @@ public class SmppServiceImpl implements SmppService {
 			byte[] shortMessage = deliverSm.getShortMessage();
 			DeliveryReceipt deliveryReceipt = DeliveryReceipt.parseShortMessage(new String(shortMessage), DateTimeZone.UTC, false);
 			record.setSpMsgId(deliveryReceipt.getMessageId());
+			spMsgId = deliveryReceipt.getMessageId();
 			record.setStateDes(DeliveryReceipt.toStateText(deliveryReceipt.getState()));
-			if(deliveryReceipt.getSubmitDate()!=null){
+			if (deliveryReceipt.getSubmitDate() != null) {
 				long subMillis = deliveryReceipt.getSubmitDate().getMillis();
 				Date subDate = new Date(subMillis);
 				record.setSubTime(subDate);
 			}
 
-			if(deliveryReceipt.getDoneDate()!=null){
+			if (deliveryReceipt.getDoneDate() != null) {
 				long doneMillis = deliveryReceipt.getDoneDate().getMillis();
 				Date doneDate = new Date(doneMillis);
 				record.setDoneTime(doneDate);
 			}
 
-
+			errrorCode = DeliveryReceipt.toStateText(deliveryReceipt.getState());
 			record.setErrorCode(deliveryReceipt.getErrorCode() + "");
 			record.setState(deliveryReceipt.getState() + "");
 			i = rptRecordMapper.insertSelective(record);
@@ -182,7 +184,64 @@ public class SmppServiceImpl implements SmppService {
 		}
 
 
+		try {
+			if (StringUtils.isNotBlank(spMsgId)) {
+				MtTask mttask = new MtTask();
+				mttask.setTableName("t_mt_task_" + mm);
+				mttask.setSpMsgId(spMsgId);
+				mttask.setReceiveFlag(1);
+				mttask.setReceiveTime(curDate);
+				mttask.setErrorCode(errrorCode);
+				mtTaskMapper.updateBySpMsgIdSelective(mttask);
+			}
+		} catch (Exception e) {
+			LOGGER.error("根据spMsgId更新mttask异常", e);
+		}
+
+
 		return i > 0;
 	}
 
+
+	@Override
+	public boolean updateMtTaskByMsgId(MsgRelateVo msgRelateVo) {
+
+
+		MtTask record = new MtTask();
+		Date curDate = new Date();
+		String mm = DateUtil.convertDateToString(curDate, "yyyyMM");
+		record.setTableName("t_mt_task_" + mm);
+		int i = 0;
+
+		try {
+			record.setRealMsgId(msgRelateVo.getMsgId());
+			record.setSpMsgId(msgRelateVo.getSpMsgId());
+			record.setSendFlag(1);
+			i = mtTaskMapper.updateByRealMsgIdSelective(record);
+		} catch (Exception e) {
+			LOGGER.error("新增状态报告异常", e);
+		}
+
+		return i > 0;
+	}
+
+	@Override
+	public boolean updateMtTaskBySpMsgId(MsgRelateVo msgRelateVo) {
+//		MtTask record = new MtTask();
+//		Date curDate = new Date();
+//		String mm = DateUtil.convertDateToString(curDate, "yyyyMM");
+//		record.setTableName("t_mt_task_" + mm);
+//		int i = 0;
+//
+//		try {
+//			record.setRealMsgId(msgRelateVo.getMsgId());
+//			record.setSpMsgId(msgRelateVo.getSpMsgId());
+//			record.setSendFlag(1);
+//			i = mtTaskMapper.updateBySpMsgIdSelective(record);
+//		} catch (Exception e) {
+//			LOGGER.error("新增状态报告异常", e);
+//		}
+
+		return true;
+	}
 }

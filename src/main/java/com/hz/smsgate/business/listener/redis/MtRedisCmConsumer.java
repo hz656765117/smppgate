@@ -13,6 +13,7 @@ import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.business.listener.ClientInit;
+import com.hz.smsgate.business.pojo.MsgRelateVo;
 import com.hz.smsgate.business.pojo.MsgVo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -150,6 +151,12 @@ public class MtRedisCmConsumer implements Runnable {
 			} else {
 				LOGGER.error("{}- {} -{}-{}短信记录异常，msgVo对象为空或者响应msgid为空，删除该条msgid: {} - {}", Thread.currentThread().getName(), submitSm.getSystemId(), submitSm.getSourceAddress().getAddress(), submitSm.getDestAddress().getAddress(), msgId, messageId);
 			}
+
+
+
+			mtRedisConsumer.redisUtil.lPush(SmppServerConstants.UPDATE_SUBMIT_SM, new MsgRelateVo(msgId, messageId));
+
+
 		} catch (Exception e) {
 			LOGGER.error("{}- 替换msgid异常", Thread.currentThread().getName(), e);
 		}

@@ -191,5 +191,11 @@ public class SmppServerConstants {
     public static final String BACK_DELIVER_SM = "backDeliverSm";
 
 
+    /**
+     * 短信下行  sp_msg_id更新入库
+     */
+    public static final String UPDATE_SUBMIT_SM = "updateSubmitSm";
+
+
 
 }
