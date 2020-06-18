@@ -50,6 +50,7 @@ public class StaticValue {
 	public static String SYSTEMID_MK_3 = "HP03";
 	public static String SYSTEMID_MK_4 = "HP04";
 	public static String SYSTEMID_MK_5 = "HP05";
+	public static String SYSTEMID_MK_5_1 = "hp05backup01";
 
 	public static String SYSTEMID_ALEX = "Alex";
 

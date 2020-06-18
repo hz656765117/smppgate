@@ -1,5 +1,6 @@
 package com.hz.smsgate.business.listener;
 
+import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.constants.SystemGlobals;
 import com.hz.smsgate.base.emp.pojo.WGParams;
 import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
@@ -229,7 +230,7 @@ public class ClientInit {
 		List<OperatorVo> allOperator = smppService.getAllOperator();
 		CHANNEL_MK_LIST.clear();
 		for (OperatorVo operatorVo : allOperator) {
-			if ("HP01".equals(operatorVo.getSystemid()) || "HP02".equals(operatorVo.getSystemid()) || "HP03".equals(operatorVo.getSystemid()) || "HP04".equals(operatorVo.getSystemid()) || "HP05".equals(operatorVo.getSystemid())) {
+			if (StaticValue.SYSTEMID_MK_1.equals(operatorVo.getSystemid()) || StaticValue.SYSTEMID_MK_2.equals(operatorVo.getSystemid()) || StaticValue.SYSTEMID_MK_3.equals(operatorVo.getSystemid()) || StaticValue.SYSTEMID_MK_4.equals(operatorVo.getSystemid()) || StaticValue.SYSTEMID_MK_5.equals(operatorVo.getSystemid())|| StaticValue.SYSTEMID_MK_5_1.equals(operatorVo.getSystemid())) {
 				SessionKey sessionKey = new SessionKey(operatorVo.getSystemid(), operatorVo.getChannel());
 				SessionKey sessionKey1 = ClientInit.CHANNL_REL.get(operatorVo.getChannel());
 				CHANNEL_MK_LIST.add(sessionKey);
