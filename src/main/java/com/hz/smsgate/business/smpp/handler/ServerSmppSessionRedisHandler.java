@@ -269,13 +269,16 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
         }
 
         try {
-            SmppUserVo smppUserFather = PduUtils.getSmppUserByUserPwd(session.getConfiguration().getSystemId(), session.getConfiguration().getPassword());
+
+            Address sourceAddress = submitSm.getSourceAddress();
+
+            SmppUserVo smppUserFather = PduUtils.getSmppUserByUserPwd(session.getConfiguration().getSystemId(), session.getConfiguration().getPassword(),sourceAddress.getAddress());
             //如果查不到账号，走原有的逻辑
             if (smppUserFather == null) {
                 return submitSm;
             }
 
-            Address sourceAddress = submitSm.getSourceAddress();
+
 
             List<SmppUserVo> list = smppUserFather.getList();
             if (list == null || list.size() <= 0) {

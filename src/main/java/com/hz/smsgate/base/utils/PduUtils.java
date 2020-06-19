@@ -368,4 +368,19 @@ public class PduUtils {
         return null;
     }
 
+
+    public static SmppUserVo getSmppUserByUserPwd(String smppUser, String smppPwd,String channel) {
+        if (StringUtils.isBlank(smppUser) || StringUtils.isBlank(smppPwd)) {
+            return null;
+        }
+        List<SmppUserVo> smppUser1 = ClientInit.HTTP_SMPP_USER;
+        for (SmppUserVo smppUserVo : smppUser1) {
+            if (smppUser.equals(smppUserVo.getSmppUser()) && smppPwd.equals(smppUserVo.getSmppPwd()) && channel.equals(smppUserVo.getDesc())) {
+                return smppUserVo;
+            }
+
+        }
+        return null;
+    }
+
 }
