@@ -375,7 +375,7 @@ public class PduUtils {
         }
         List<SmppUserVo> smppUser1 = ClientInit.HTTP_SMPP_USER;
         for (SmppUserVo smppUserVo : smppUser1) {
-            if (smppUser.equals(smppUserVo.getSmppUser()) && smppPwd.equals(smppUserVo.getSmppPwd()) && channel.equals(smppUserVo.getDesc())) {
+            if (smppUser.equals(smppUserVo.getSmppUser()) && smppPwd.equals(smppUserVo.getSmppPwd()) && channel.equals(smppUserVo.getSmppChannel())) {
                 return smppUserVo;
             }
 
