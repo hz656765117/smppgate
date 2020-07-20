@@ -54,9 +54,7 @@ public class TestController {
 		LOGGER.warn("aaaaaaaaaaaaaawarnwarnwarntest1warnwarn111123434");
 		Map<SessionKey, SmppSession> sessionMap = ClientInit.sessionMap;
 		SmppSession session0 = null;
-		if (sessionMap != null && sessionMap.size() > 0) {
-			session0 = sessionMap.get(new SessionKey(StaticValue.SYSTEMID_MK_1, "7774"));
-		}
+
 
 
 		String text160 = "\u20AC Lorem [ipsum] dolor sit amet, consectetur adipiscing elit. Proin feugiat, leo id commodo tincidunt, nibh diam ornare est, vitae accumsan risus lacus sed sem metus.";
