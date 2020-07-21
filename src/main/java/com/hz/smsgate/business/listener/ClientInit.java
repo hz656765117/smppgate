@@ -230,7 +230,7 @@ public class ClientInit {
         List<OperatorVo> allOperator = smppService.getAllOperator();
         CHANNEL_MK_LIST.clear();
         for (OperatorVo operatorVo : allOperator) {
-            if (operatorVo.getSystemid().startsWith("HP")) {
+            if (operatorVo.getSystemid().toUpperCase().startsWith("HP")) {
                 SessionKey sessionKey = new SessionKey(operatorVo.getSystemid(), operatorVo.getChannel());
                 SessionKey sessionKey1 = ClientInit.CHANNL_REL.get(operatorVo.getChannel());
                 CHANNEL_MK_LIST.add(sessionKey);

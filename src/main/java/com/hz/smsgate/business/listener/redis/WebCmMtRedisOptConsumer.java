@@ -164,13 +164,11 @@ public class WebCmMtRedisOptConsumer implements Runnable {
 		if (submitResp == null) {
 			return;
 		}
-
+		String messageId = submitResp.getMessageId();
 		try {
-			String messageId = submitResp.getMessageId();
 			//更新缓存中的value
 			Object msgVo = mtRedisOptConsumer.redisUtil.hmGet(SmppServerConstants.WEB_MSGID_CACHE, msgId);
 			mtRedisOptConsumer.redisUtil.hmRemove(SmppServerConstants.WEB_MSGID_CACHE, msgId);
-
 
 			if (msgVo != null && StringUtils.isNotBlank(messageId)) {
 				mtRedisOptConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, messageId, msgVo);
@@ -179,7 +177,7 @@ public class WebCmMtRedisOptConsumer implements Runnable {
 			}
 
 		} catch (Exception e) {
-			LOGGER.error("{}- 替换msgid异常", Thread.currentThread().getName(), e);
+			LOGGER.error("{}- {} -{}-{}替换msgid异常，msgVo对象为空或者响应msgid为空，删除该条msgid: {} - {}", Thread.currentThread().getName(), submitSm.getSystemId(), submitSm.getSourceAddress().getAddress(), submitSm.getDestAddress().getAddress(), msgId, messageId, e);
 		}
 
 

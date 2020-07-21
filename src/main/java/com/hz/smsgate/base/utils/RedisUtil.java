@@ -145,6 +145,9 @@ public class RedisUtil {
 	 * @return
 	 */
 	public Object hmGet(String key, Object hashKey) {
+		if(hashKey == null){
+			return null;
+		}
 		HashOperations<String, Object, Object> hash = redisTemplate.opsForHash();
 		return hash.get(key, hashKey);
 	}

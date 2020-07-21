@@ -131,7 +131,7 @@ public class PduUtils {
         String areaCode = PduUtils.getAreaCode(mbl);
 
         //cm资源需要GSM格式编码
-        if ((systemId.startsWith("HP") &&  areaCode.equals("62")) || StaticValue.SYSTEMID_CM_1.equals(systemId) || StaticValue.SYSTEMID_CM_2.equals(systemId) || StaticValue.SYSTEMID_CM_3.equals(systemId) || StaticValue.SYSTEMID_ALEX.equals(systemId)|| StaticValue.SYSTEMID_SA.equals(systemId)) {
+        if ((systemId.toUpperCase().startsWith("HP") &&  areaCode.equals("62")) || StaticValue.SYSTEMID_CM_1.equals(systemId) || StaticValue.SYSTEMID_CM_2.equals(systemId) || StaticValue.SYSTEMID_CM_3.equals(systemId) || StaticValue.SYSTEMID_ALEX.equals(systemId)|| StaticValue.SYSTEMID_SA.equals(systemId)) {
             onlyEncodeGsm(sm);
         }
         return sm;
@@ -163,7 +163,7 @@ public class PduUtils {
         String areaCode = PduUtils.getAreaCode(mbl);
 
         //cm资源需要GSM格式编码
-        if ((systemId.startsWith("HP") &&  areaCode.equals("62")) ||  StaticValue.SYSTEMID_CM_1.equals(systemId) || StaticValue.SYSTEMID_CM_2.equals(systemId) || StaticValue.SYSTEMID_CM_3.equals(systemId) || StaticValue.SYSTEMID_ALEX.equals(systemId)) {
+        if ((systemId.toUpperCase().startsWith("HP") &&  areaCode.equals("62")) ||  StaticValue.SYSTEMID_CM_1.equals(systemId) || StaticValue.SYSTEMID_CM_2.equals(systemId) || StaticValue.SYSTEMID_CM_3.equals(systemId) || StaticValue.SYSTEMID_ALEX.equals(systemId)) {
             onlyEncodeGsm(sm);
         }
         return sm;

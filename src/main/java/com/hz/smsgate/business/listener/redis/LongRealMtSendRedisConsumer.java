@@ -170,9 +170,9 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 		if (submitResp == null) {
 			return;
 		}
-
+		String messageId = submitResp.getMessageId();
 		try {
-			String messageId = submitResp.getMessageId();
+
 			String[] split;
 			if (msgId.contains("|")) {
 				split = msgId.split("\\|");
@@ -214,11 +214,8 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 
 			}
 
-
-
-
 		} catch (Exception e) {
-			LOGGER.error("{}- 替换msgid异常", Thread.currentThread().getName(), e);
+			LOGGER.error("{}- {} -{}-{}替换msgid异常，msgVo对象为空或者响应msgid为空，删除该条msgid: {} - {}", Thread.currentThread().getName(), submitSm.getSystemId(), submitSm.getSourceAddress().getAddress(), submitSm.getDestAddress().getAddress(), msgId, messageId, e);
 		}
 
 
