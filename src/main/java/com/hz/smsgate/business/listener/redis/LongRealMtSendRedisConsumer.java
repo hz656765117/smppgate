@@ -14,6 +14,7 @@ import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.business.listener.ClientInit;
 import com.hz.smsgate.business.pojo.MsgRelateVo;
 import com.hz.smsgate.business.pojo.MsgVo;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +90,7 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 				submitSm = (SubmitSm) obj;
 				//发送短信
 				submitResp = realSend(submitSm);
-				handleMsgId(submitResp, submitSm.getTempMsgId());
+				handleMsgId(submitResp, submitSm.getTempMsgId(),submitSm);
 
 
 			} catch (Exception e) {
@@ -165,7 +166,7 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 	 * @param submitResp 上游返回下行响应
 	 * @param msgId      自定义的msgid
 	 */
-	private void handleMsgId(SubmitSmResp submitResp, String msgId) {
+	private void handleMsgId(SubmitSmResp submitResp, String msgId,SubmitSm submitSm) {
 		if (submitResp == null) {
 			return;
 		}
@@ -187,7 +188,11 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 
 				Object msgVo1 = longRealMtSendRedisConsumer.redisUtil.hmGet(SmppServerConstants.WEB_MSGID_CACHE, messageId);
 				if (msgVo1 == null) {
-					longRealMtSendRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, messageId, msgVo);
+					if (msgVo != null && StringUtils.isNotBlank(messageId)) {
+						longRealMtSendRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, messageId, msgVo);
+					} else {
+						LOGGER.error("{}- {} -{}-{}短信记录异常，msgVo对象为空或者响应msgid为空，删除该条msgid: {} - {}", Thread.currentThread().getName(), submitSm.getSystemId(), submitSm.getSourceAddress().getAddress(), submitSm.getDestAddress().getAddress(), msgId, messageId);
+					}
 				} else {
 					MsgVo msg = (MsgVo) msgVo;
 					String msgId2 = msg.getMsgId();
@@ -196,7 +201,12 @@ public class LongRealMtSendRedisConsumer implements Runnable {
 					String msgId1 = msg1.getMsgId();
 
 					msg1.setMsgId(msgId1 + "|" + msgId2);
-					longRealMtSendRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, messageId, msg1);
+
+					if (msg1 != null && StringUtils.isNotBlank(messageId)) {
+						longRealMtSendRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, messageId, msg1);
+					} else {
+						LOGGER.error("{}- {} -{}-{}短信记录异常，msgVo对象为空或者响应msgid为空，删除该条msgid: {} - {}", Thread.currentThread().getName(), submitSm.getSystemId(), submitSm.getSourceAddress().getAddress(), submitSm.getDestAddress().getAddress(), msgId, messageId);
+					}
 				}
 
 

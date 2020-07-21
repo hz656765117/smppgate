@@ -28,6 +28,9 @@ public class StaticValue {
 	public static String CHANNEL_1 = "555";
 
 
+	public static String SYSTEMID_MK_4 = "HP04";
+	public static String SYSTEMID_MK_6 = "HP06";
+
 	public static String SYSTEMID_CM_1 = "HaloPushingLtd";
 	public static String SYSTEMID_CM_2 = "HaloMakreting";
 	public static String SYSTEMID_CM_3 = "HaloPUSH2";

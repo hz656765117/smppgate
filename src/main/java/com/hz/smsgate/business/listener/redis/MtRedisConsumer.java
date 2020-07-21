@@ -98,7 +98,7 @@ public class MtRedisConsumer implements Runnable {
 
 
 
-				handleMsgId(submitResp, submitSm.getTempMsgId());
+				handleMsgId(submitResp, submitSm.getTempMsgId(),submitSm);
 
 			} catch (Exception e) {
 				LOGGER.error("{}-{}-{} 处理短信下行异常", Thread.currentThread().getName(), submitSm.getSystemId(), sendId, e);
@@ -180,7 +180,7 @@ public class MtRedisConsumer implements Runnable {
 	 * @param submitResp 上游返回下行响应
 	 * @param msgId      自定义的msgid
 	 */
-	private void handleMsgId(SubmitSmResp submitResp, String msgId) {
+	private void handleMsgId(SubmitSmResp submitResp, String msgId,SubmitSm submitSm) {
 		if (submitResp == null) {
 			return;
 		}
@@ -189,7 +189,14 @@ public class MtRedisConsumer implements Runnable {
 			//更新缓存中的value
 			Object msgVo = mtRedisConsumer.redisUtil.hmGet(SmppServerConstants.WEB_MSGID_CACHE, msgId);
 			mtRedisConsumer.redisUtil.hmRemove(SmppServerConstants.WEB_MSGID_CACHE, msgId);
-			mtRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, messageId, msgVo);
+
+
+
+			if (msgVo != null && StringUtils.isNotBlank(messageId)) {
+				mtRedisConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, messageId, msgVo);
+			} else {
+				LOGGER.error("{}- {} -{}-{}短信记录异常，msgVo对象为空或者响应msgid为空，删除该条msgid: {} - {}", Thread.currentThread().getName(), submitSm.getSystemId(), submitSm.getSourceAddress().getAddress(), submitSm.getDestAddress().getAddress(), msgId, messageId);
+			}
 
 
 			mtRedisConsumer.redisUtil.lPush(SmppServerConstants.UPDATE_SUBMIT_SM, new MsgRelateVo(msgId, messageId));
