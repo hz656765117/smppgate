@@ -36,6 +36,7 @@ public class LongOptMtMergeRedisConsumer implements Runnable {
 
     private static final Map<String, SubmitSm> CACHE_MAP = new LinkedHashMap<>();
 
+    private static final Map<String, Integer> OPT_MERGE_SIZE_MAP = new LinkedHashMap<>();
 
     @Override
     public void run() {
@@ -116,6 +117,20 @@ public class LongOptMtMergeRedisConsumer implements Runnable {
             LOGGER.info("key为{},completeMap的size为{}", key, completeMap.size());
             if ("1".equals(key.substring(key.length() - 1)) && flag) {
                 LOGGER.info("key为{},准备开始缓存数据合并", key);
+
+                Integer size = OPT_MERGE_SIZE_MAP.get(entry.getKey());
+                if (size != null && size > 0) {
+                    size++;
+                } else {
+                    size = 1;
+                }
+                OPT_MERGE_SIZE_MAP.put(entry.getKey(), size);
+                if (size > 11) {
+                    continue;
+                }
+
+
+
                 tempKey = key;
                 flag = false;
                 completeMap.put(entry.getKey(), entry.getValue());
@@ -172,6 +187,8 @@ public class LongOptMtMergeRedisConsumer implements Runnable {
             }
         }
         LOGGER.info("mergeSt后CACHE_MAP的size为{}", CACHE_MAP.size());
+
+        LOGGER.info("OPT_MERGE_SIZE_MAP的size为{}",OPT_MERGE_SIZE_MAP.size());
 
     }
 
