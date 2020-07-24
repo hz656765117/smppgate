@@ -169,7 +169,7 @@ public class RptRedisConsumer implements Runnable {
 						}
 					}
 				}
-				LOGGER.info("{}-{}状态报告响应msgid为{}，缓存中key为{}，value为{}", deliverSm.getSystemId(), deliverSm.getDestAddress().getAddress(), deliverSm.getSourceAddress().getAddress(), messageId, messageId, preMsgId);
+				LOGGER.info("{}-{}-{}状态报告响应msgid为{}，缓存中key为{}，value为{}", deliverSm.getSystemId(), deliverSm.getDestAddress().getAddress(), deliverSm.getSourceAddress().getAddress(), messageId, messageId, preMsgId);
 				String[] tempMsgIds;
 				if (preMsgId.contains("|")) {
 					tempMsgIds = preMsgId.split("\\|");
@@ -200,7 +200,7 @@ public class RptRedisConsumer implements Runnable {
 
 			} catch (Exception e) {
 				rptRedisConsumer.redisUtil.lPush(SmppServerConstants.WEB_DELIVER_SM, deliverSm);
-				LOGGER.error("{}-  systemid为{},{}-{}，msgid={}  ，处理长短信状态报告转发异常", Thread.currentThread().getName(), deliverSm.getSystemId(), deliverSm.getSystemId(), deliverSm.getDestAddress().getAddress(), deliverSm.getSourceAddress().getAddress(), messageId, e);
+				LOGGER.error("{}-  systemid为{},{}-{}，msgid={}  ，处理长短信状态报告转发异常", Thread.currentThread().getName(), deliverSm.getSystemId(), deliverSm.getDestAddress().getAddress(), deliverSm.getSourceAddress().getAddress(), messageId, e);
 				return;
 			}
 
