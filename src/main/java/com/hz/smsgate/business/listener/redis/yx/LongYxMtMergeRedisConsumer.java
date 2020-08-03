@@ -143,6 +143,7 @@ public class LongYxMtMergeRedisConsumer implements Runnable {
 						LOGGER.info("key为{},completeMap的size为{},准备去合并短信", key, completeMap.size());
 						SubmitSm submitSm = mergeSubmitSm(completeMap);
 						if (submitSm != null) {
+							YX_MERGE_SIZE_MAP.remove(tempKey);
 							tempKey = "";
 							flag = true;
 							try {

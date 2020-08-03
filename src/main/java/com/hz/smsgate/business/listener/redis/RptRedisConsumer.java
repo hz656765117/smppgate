@@ -158,12 +158,12 @@ public class RptRedisConsumer implements Runnable {
 
 
 					//马来西亚和菲律宾 只有accepted  || StaticValue.AREA_CODE_VIETNAM.equals(areaCode)
-					if (StaticValue.AREA_CODE_MALAYSIA.equals(areaCode) || StaticValue.AREA_CODE_PHILIPPINES.equals(areaCode) || (StaticValue.SYSTEMID_MK_4.equals(sessionKey.getSystemId()) && StaticValue.YN_TELKOMSEL.contains(numSeg))) {
+					if (StaticValue.AREA_CODE_MALAYSIA.equals(areaCode) || StaticValue.AREA_CODE_PHILIPPINES.equals(areaCode) ) {
 						if (deliveryReceipt.getState() == SmppConstants.STATE_ACCEPTED) {
 							deliveryReceipt.setState(SmppConstants.STATE_DELIVERED);
 						}
 					} else {
-						if (deliveryReceipt.getState() == SmppConstants.STATE_ACCEPTED) {
+						if (deliveryReceipt.getState() == SmppConstants.STATE_ACCEPTED|| (StaticValue.SYSTEMID_MK_4.equals(sessionKey.getSystemId()) && deliveryReceipt.getState() == SmppConstants.STATE_UNKNOWN)|| (StaticValue.SYSTEMID_MK_4.equals(sessionKey.getSystemId()) &&  deliveryReceipt.getState() < 0) ) {
 							LOGGER.info("渠道为：{}的状态报告，状态为：{}的丢弃,状态报告信息为：{}", deliverSm.getDestAddress().getAddress(), deliveryReceipt.getState(), deliveryReceipt.toString());
 							return;
 						}
