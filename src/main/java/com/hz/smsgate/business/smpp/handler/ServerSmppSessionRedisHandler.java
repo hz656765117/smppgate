@@ -91,8 +91,17 @@ public class ServerSmppSessionRedisHandler extends DefaultSmppSessionHandler {
         try {
             if (pduRequest.isRequest()) {
                 if (pduRequest.getCommandId() == SmppConstants.CMD_ID_SUBMIT_SM) {
+
+
+
                     SubmitSmResp submitResp = (SubmitSmResp) response;
                     SubmitSm submitSm = (SubmitSm) pduRequest;
+
+
+                    //补齐国内号码
+                    submitSm = PduUtils.makeUpChinaMbl(submitSm);
+
+
                     String channel = submitSm.getSourceAddress().getAddress();
                     submitSm.setChannel(channel);
                     submitSm.setRealChannel(channel);
