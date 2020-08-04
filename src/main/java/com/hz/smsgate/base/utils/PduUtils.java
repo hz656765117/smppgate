@@ -150,13 +150,22 @@ public class PduUtils {
                 String address = "0086" + destAddress.getAddress();
                 destAddress.setAddress(address);
                 sm.setDestAddress(destAddress);
+
+                String content = new String(sm.getShortMessage());
+                LOGGER.info("处理前的内容为{},下行号码为{}，通道为{},datacoding为{}", content, sm.getDestAddress().getAddress(), sm.getSourceAddress().getAddress(), sm.getDataCoding());
+                content = content.replaceAll("\\^@", "");
+                LOGGER.info("处理后的内容为{},下行号码为{}，通道为{},datacoding为{}", content, sm.getDestAddress().getAddress(), sm.getSourceAddress().getAddress(), sm.getDataCoding());
+                sm.setShortMessage(content.getBytes());
                 sm.calculateAndSetCommandLength();
             }
+
         } catch (Exception e) {
             LOGGER.error("补齐国内号码异常,mbl:{}", sm.getDestAddress().getAddress(), e);
         }
         return sm;
     }
+
+
 
 
     /**
@@ -211,6 +220,8 @@ public class PduUtils {
         sm.calculateAndSetCommandLength();
         return sm;
     }
+
+
 
 
     /**
