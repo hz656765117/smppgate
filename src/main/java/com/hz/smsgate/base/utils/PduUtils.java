@@ -163,7 +163,7 @@ public class PduUtils {
         String areaCode = PduUtils.getAreaCode(mbl);
 
         //cm资源需要GSM格式编码
-        if ((systemId.toUpperCase().startsWith("HP") &&  areaCode.equals("62")) ||  StaticValue.SYSTEMID_CM_1.equals(systemId) || StaticValue.SYSTEMID_CM_2.equals(systemId) || StaticValue.SYSTEMID_CM_3.equals(systemId) || StaticValue.SYSTEMID_ALEX.equals(systemId)) {
+        if ((systemId.toUpperCase().startsWith("HP") &&  areaCode.equals("62"))  || StaticValue.SYSTEMID_ALEX.equals(systemId)) {
             onlyEncodeGsm(sm);
         }
         return sm;
@@ -178,14 +178,14 @@ public class PduUtils {
     public static SubmitSm onlyEncodeGsm(SubmitSm sm) {
         byte[] shortMessage = sm.getShortMessage();
         String content = new String(shortMessage);
-        LOGGER.info("短短信的内容为{},下行号码为{}，通道为{}", content, sm.getDestAddress().getAddress(), sm.getSourceAddress().getAddress());
+        LOGGER.info("短短信的内容为{},下行号码为{}，通道为{},datacoding为{}", content, sm.getDestAddress().getAddress(), sm.getSourceAddress().getAddress(),sm.getDataCoding());
         try {
             byte[] textBytes = CharsetUtil.encode(content, CharsetUtil.CHARSET_GSM);
             sm.setShortMessage(textBytes);
         } catch (Exception e) {
             LOGGER.error("短信内容编码异常", e);
         }
-        LOGGER.info("短短信编码后的内容为{},下行号码为{}，通道为{}", new String(content.getBytes()), sm.getDestAddress().getAddress(), sm.getSourceAddress().getAddress());
+        LOGGER.info("短短信编码后的内容为{},下行号码为{}，通道为{},datacoding为{}", new String(sm.getShortMessage()), sm.getDestAddress().getAddress(), sm.getSourceAddress().getAddress(),sm.getDataCoding());
 
         sm.calculateAndSetCommandLength();
         return sm;
