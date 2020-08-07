@@ -119,7 +119,14 @@ public class SmppServiceImpl implements SmppService {
                 mtTask.setPkNumber((int) shortMessage[5]);
                 mtTask.setPkTotal((int) shortMessage[4]);
             }
-            msg = new String(shortMessage, ChangeCharset.UTF_8);
+
+
+            if(submitSm.getDataCoding()==8){
+                msg = new String(shortMessage, ChangeCharset.UTF_16BE);
+            }else {
+                msg = new String(shortMessage, ChangeCharset.UTF_8);
+            }
+
             mtTask.setMessage(msg);
 
             String mm = DateUtil.convertDateToString(curDate, "yyyyMM");
