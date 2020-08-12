@@ -72,8 +72,22 @@ public class RptRecord implements Serializable {
      */
     private Date createTime;
 
+    /**
+     * VARCHAR(64)<br>
+     * 自己的msgid
+     */
+    private String realMsgId;
+
 
     private String tableName;
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
 
     /**
      * INTEGER(10) 必填<br>
@@ -251,13 +265,20 @@ public class RptRecord implements Serializable {
         this.createTime = createTime;
     }
 
-
-    public String getTableName() {
-        return tableName;
+    /**
+     * VARCHAR(64)<br>
+     * 获得 自己的msgid
+     */
+    public String getRealMsgId() {
+        return realMsgId;
     }
 
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
+    /**
+     * VARCHAR(64)<br>
+     * 设置 自己的msgid
+     */
+    public void setRealMsgId(String realMsgId) {
+        this.realMsgId = realMsgId == null ? null : realMsgId.trim();
     }
 
     @Override
@@ -277,6 +298,7 @@ public class RptRecord implements Serializable {
         sb.append(", subTime=").append(subTime);
         sb.append(", doneTime=").append(doneTime);
         sb.append(", createTime=").append(createTime);
+        sb.append(", realMsgId=").append(realMsgId);
         sb.append("]");
         return sb.toString();
     }
@@ -303,7 +325,8 @@ public class RptRecord implements Serializable {
             && (this.getErrorCode() == null ? other.getErrorCode() == null : this.getErrorCode().equals(other.getErrorCode()))
             && (this.getSubTime() == null ? other.getSubTime() == null : this.getSubTime().equals(other.getSubTime()))
             && (this.getDoneTime() == null ? other.getDoneTime() == null : this.getDoneTime().equals(other.getDoneTime()))
-            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()));
+            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
+            && (this.getRealMsgId() == null ? other.getRealMsgId() == null : this.getRealMsgId().equals(other.getRealMsgId()));
     }
 
     @Override
@@ -321,6 +344,7 @@ public class RptRecord implements Serializable {
         result = prime * result + ((getSubTime() == null) ? 0 : getSubTime().hashCode());
         result = prime * result + ((getDoneTime() == null) ? 0 : getDoneTime().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
+        result = prime * result + ((getRealMsgId() == null) ? 0 : getRealMsgId().hashCode());
         return result;
     }
 }

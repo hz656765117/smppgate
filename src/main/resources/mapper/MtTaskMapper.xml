@@ -598,9 +598,9 @@
       <if test="spMsgId != null">
         sp_msg_id = #{spMsgId,jdbcType=VARCHAR},
       </if>
-      <if test="realMsgId != null">
+<!--      <if test="realMsgId != null">
         real_msg_id = #{realMsgId,jdbcType=VARCHAR},
-      </if>
+      </if>-->
       <if test="userId != null">
         user_id = #{userId,jdbcType=VARCHAR},
       </if>
@@ -666,6 +666,10 @@
       </if>
     </set>
     where sp_msg_id = #{spMsgId,jdbcType=INTEGER}
+    <if test="realMsgId != null">
+      or real_msg_id = #{realMsgId,jdbcType=VARCHAR}
+    </if>
+
   </update>
 
 

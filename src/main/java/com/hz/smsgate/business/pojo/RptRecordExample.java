@@ -834,6 +834,76 @@ public class RptRecordExample {
             addCriterion("create_time not between", value1, value2, "createTime");
             return (Criteria) this;
         }
+
+        public Criteria andRealMsgIdIsNull() {
+            addCriterion("real_msg_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealMsgIdIsNotNull() {
+            addCriterion("real_msg_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealMsgIdEqualTo(String value) {
+            addCriterion("real_msg_id =", value, "realMsgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealMsgIdNotEqualTo(String value) {
+            addCriterion("real_msg_id <>", value, "realMsgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealMsgIdGreaterThan(String value) {
+            addCriterion("real_msg_id >", value, "realMsgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealMsgIdGreaterThanOrEqualTo(String value) {
+            addCriterion("real_msg_id >=", value, "realMsgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealMsgIdLessThan(String value) {
+            addCriterion("real_msg_id <", value, "realMsgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealMsgIdLessThanOrEqualTo(String value) {
+            addCriterion("real_msg_id <=", value, "realMsgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealMsgIdLike(String value) {
+            addCriterion("real_msg_id like", value, "realMsgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealMsgIdNotLike(String value) {
+            addCriterion("real_msg_id not like", value, "realMsgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealMsgIdIn(List<String> values) {
+            addCriterion("real_msg_id in", values, "realMsgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealMsgIdNotIn(List<String> values) {
+            addCriterion("real_msg_id not in", values, "realMsgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealMsgIdBetween(String value1, String value2) {
+            addCriterion("real_msg_id between", value1, value2, "realMsgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealMsgIdNotBetween(String value1, String value2) {
+            addCriterion("real_msg_id not between", value1, value2, "realMsgId");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

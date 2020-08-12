@@ -168,6 +168,7 @@ public class SmppServiceImpl implements SmppService {
             byte[] shortMessage = deliverSm.getShortMessage();
             DeliveryReceipt deliveryReceipt = DeliveryReceipt.parseShortMessage(new String(shortMessage), DateTimeZone.UTC, false);
             record.setSpMsgId(deliveryReceipt.getMessageId());
+            record.setRealMsgId(deliverSm.getTempMsgId());
             spMsgId = deliveryReceipt.getMessageId();
             record.setStateDes(DeliveryReceipt.toStateText(deliveryReceipt.getState()));
             if (deliveryReceipt.getSubmitDate() != null) {
@@ -196,6 +197,7 @@ public class SmppServiceImpl implements SmppService {
                 MtTask mttask = new MtTask();
                 mttask.setTableName("t_mt_task_" + mm);
                 mttask.setSpMsgId(spMsgId);
+                mttask.setRealMsgId(deliverSm.getTempMsgId());
                 mttask.setReceiveFlag(1);
                 mttask.setReceiveTime(curDate);
                 mttask.setErrorCode(errrorCode);

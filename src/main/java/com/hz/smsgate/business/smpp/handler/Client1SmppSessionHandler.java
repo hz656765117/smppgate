@@ -35,6 +35,7 @@ import com.hz.smsgate.base.smpp.pojo.PduAsyncResponse;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
 import com.hz.smsgate.base.utils.RedisUtil;
+import com.hz.smsgate.business.pojo.MsgVo;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppSession;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
@@ -176,6 +177,16 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
                 client1SmppSessionHandler.redisUtil.lPush(SmppServerConstants.WEB_DELIVER_SM, deliverSm);
             }
 
+            MsgVo msgVo;
+            if (obj != null) {
+                msgVo = (MsgVo) obj;
+            } else {
+                obj = client1SmppSessionHandler.redisUtil.hmGet(SmppServerConstants.WEB_MSGID_CACHE, messageId);
+                msgVo = obj != null ? (MsgVo) obj : null;
+            }
+            if (msgVo != null) {
+                deliverSm.setTempMsgId(msgVo.getMsgId());
+            }
 
             //用于状态报告入库
             client1SmppSessionHandler.redisUtil.lPush(SmppServerConstants.BACK_DELIVER_SM, deliverSm);

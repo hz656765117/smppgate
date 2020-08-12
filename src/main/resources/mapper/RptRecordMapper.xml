@@ -129,6 +129,9 @@
       <if test="spMsgId != null">
         sp_msg_id,
       </if>
+      <if test="realMsgId != null">
+        real_msg_id,
+      </if>
       <if test="systemId != null">
         system_id,
       </if>
@@ -160,6 +163,9 @@
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="spMsgId != null">
         #{spMsgId,jdbcType=VARCHAR},
+      </if>
+      <if test="realMsgId != null">
+        #{realMsgId,jdbcType=VARCHAR},
       </if>
       <if test="systemId != null">
         #{systemId,jdbcType=VARCHAR},
