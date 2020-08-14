@@ -1,6 +1,7 @@
 package com.hz.smsgate.business.service.impl;
 
 
+import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.smpp.pdu.DeliverSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -167,9 +169,16 @@ public class SmppServiceImpl implements SmppService {
             record.setCreateTime(curDate);
             byte[] shortMessage = deliverSm.getShortMessage();
             DeliveryReceipt deliveryReceipt = DeliveryReceipt.parseShortMessage(new String(shortMessage), DateTimeZone.UTC, false);
-            record.setSpMsgId(deliveryReceipt.getMessageId());
-            record.setRealMsgId(deliverSm.getTempMsgId());
+
+
             spMsgId = deliveryReceipt.getMessageId();
+            //该运营商的msgid需要16进制编码
+            if (StaticValue.CHANNEL_JATIS_LIST.contains(deliverSm.getSystemId())) {
+                spMsgId = new BigInteger(spMsgId, 10).toString(16);
+            }
+
+            record.setSpMsgId(spMsgId);
+            record.setRealMsgId(deliverSm.getTempMsgId());
             record.setStateDes(DeliveryReceipt.toStateText(deliveryReceipt.getState()));
             if (deliveryReceipt.getSubmitDate() != null) {
                 long subMillis = deliveryReceipt.getSubmitDate().getMillis();
