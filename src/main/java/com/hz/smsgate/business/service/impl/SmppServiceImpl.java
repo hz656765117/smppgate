@@ -123,9 +123,9 @@ public class SmppServiceImpl implements SmppService {
             }
 
 
-            if(submitSm.getDataCoding()==8){
+            if (submitSm.getDataCoding() == 8) {
                 msg = new String(shortMessage, ChangeCharset.UTF_16BE);
-            }else {
+            } else {
                 msg = new String(shortMessage, ChangeCharset.UTF_8);
             }
 
@@ -202,7 +202,7 @@ public class SmppServiceImpl implements SmppService {
 
 
         try {
-            if (StringUtils.isNotBlank(spMsgId)) {
+            if (StringUtils.isNotBlank(spMsgId) && StringUtils.isNotBlank(deliverSm.getTempMsgId())) {
                 MtTask mttask = new MtTask();
                 mttask.setTableName("t_mt_task_" + mm);
                 mttask.setSpMsgId(spMsgId);

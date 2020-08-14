@@ -665,10 +665,16 @@
         pk_total = #{pkTotal,jdbcType=INTEGER},
       </if>
     </set>
-    where sp_msg_id = #{spMsgId,jdbcType=INTEGER}
+    where
+    1=1
     <if test="realMsgId != null">
-      or real_msg_id = #{realMsgId,jdbcType=VARCHAR}
+      and real_msg_id = #{realMsgId,jdbcType=VARCHAR}
     </if>
+    <if test="spMsgId != null">
+      or sp_msg_id = #{spMsgId,jdbcType=VARCHAR}
+    </if>
+
+
 
   </update>
 
