@@ -87,71 +87,13 @@ public class TestController {
 	}
 
 
-	@CrossOrigin
-	@RequestMapping("getResource")
-	public String getResource() {
-		LOGGER.info("获取资源列表");
-		List<String> strings = FileUtils.readFileByLines(StaticValue.RESOURCE_HOME);
-		Gson gson = new Gson();
-		String listJson = gson.toJson(strings);
-		return listJson;
-	}
-
-	@CrossOrigin
-	@RequestMapping("getResourceById/{id}")
-	public String getResourceById(@PathVariable(name = "id") String id) {
-		LOGGER.info("根据id获取资源，id={}", id);
-		List<String> strings = FileUtils.readFileByLines(StaticValue.RESOURCE_HOME);
-		String s = strings.get(Integer.parseInt(id));
-		return s;
-	}
 
 
-	@CrossOrigin
-	@RequestMapping("delResourceById/{id}")
-	public String delResourceById(@PathVariable(name = "id") String id) {
-		LOGGER.info("根据id删除资源，id={}", id);
-		List<String> strings = FileUtils.readFileByLines(StaticValue.RESOURCE_HOME);
-		String curStr = strings.get(Integer.parseInt(id));
-		strings.remove(Integer.parseInt(id));
-		boolean b = FileUtils.writerTxt(strings, StaticValue.RESOURCE_HOME);
-
-		String[] split = curStr.split("\\|");
-		closeClientConnect(split[4]);
 
 
-		return b + "";
-	}
 
 
-	@CrossOrigin
-	@RequestMapping("addResource")
-	public String addResource(@RequestParam(value = "resource", required = false) String resource) {
-		LOGGER.info("新增资源，resource={}", resource);
-		List<String> strings = FileUtils.readFileByLines(StaticValue.RESOURCE_HOME);
-		strings.add(resource);
-		boolean b = FileUtils.writerTxt(strings, StaticValue.RESOURCE_HOME);
-		String[] split = resource.split("\\|");
-//		openClientConnect(split[4]);
-		return b + "";
-	}
 
-	@CrossOrigin
-	@RequestMapping("updateResource")
-	public String updateResource(@RequestParam(value = "id", required = false) int id, @RequestParam(value = "resource", required = false) String resource) {
-		LOGGER.info("新增资源，id={}, resource={}", id, resource);
-		List<String> strings = FileUtils.readFileByLines(StaticValue.RESOURCE_HOME);
-		String oldResource = strings.get(id);
-		strings.set(id, resource);
-		boolean b = FileUtils.writerTxt(strings, StaticValue.RESOURCE_HOME);
-
-		String[] split1 = oldResource.split("\\|");
-		closeClientConnect(split1[4]);
-
-		String[] split2 = resource.split("\\|");
-//		openClientConnect(split2[4]);
-		return b + "";
-	}
 
 
 	@CrossOrigin

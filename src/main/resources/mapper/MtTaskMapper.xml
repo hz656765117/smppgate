@@ -666,16 +666,8 @@
       </if>
     </set>
     where
-    1=1
-    <if test="realMsgId != null">
-      and real_msg_id = #{realMsgId,jdbcType=VARCHAR}
-    </if>
-    <if test="spMsgId != null">
+      real_msg_id = #{realMsgId,jdbcType=VARCHAR}
       or sp_msg_id = #{spMsgId,jdbcType=VARCHAR}
-    </if>
-
-
-
   </update>
 
 

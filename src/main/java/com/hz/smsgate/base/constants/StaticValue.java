@@ -12,11 +12,9 @@ import java.util.Map;
  */
 public class StaticValue {
 
-	//资源文件地址
-	public static String RESOURCE_HOME = "";
 
-	//SP账号资源文件地址
-	public static String SP_RESOURCE_HOME = "";
+
+
 
 	//服务端 端口
 	public static int SERVER_PORT = 2776;
@@ -75,9 +73,7 @@ public class StaticValue {
 
 		TYPE = SystemGlobals.getValue("montnets.type", "0");
 
-		RESOURCE_HOME = SystemGlobals.getValue("resource.home");
 
-		SP_RESOURCE_HOME = SystemGlobals.getValue("sp.resource.home");
 
 		SERVER_PORT = SystemGlobals.getIntValue("server.port", 2776);
 

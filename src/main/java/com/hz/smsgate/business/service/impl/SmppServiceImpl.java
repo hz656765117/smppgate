@@ -202,11 +202,11 @@ public class SmppServiceImpl implements SmppService {
 
 
         try {
-            if (StringUtils.isNotBlank(spMsgId) && StringUtils.isNotBlank(deliverSm.getTempMsgId())) {
+            if (StringUtils.isNotBlank(spMsgId) || StringUtils.isNotBlank(deliverSm.getTempMsgId())) {
                 MtTask mttask = new MtTask();
                 mttask.setTableName("t_mt_task_" + mm);
-                mttask.setSpMsgId(spMsgId);
-                mttask.setRealMsgId(deliverSm.getTempMsgId());
+                mttask.setSpMsgId(StringUtils.isBlank(spMsgId) ? "1" : spMsgId);
+                mttask.setRealMsgId(StringUtils.isBlank(deliverSm.getTempMsgId()) ? "1" : deliverSm.getTempMsgId());
                 mttask.setReceiveFlag(1);
                 mttask.setReceiveTime(curDate);
                 mttask.setErrorCode(errrorCode);
