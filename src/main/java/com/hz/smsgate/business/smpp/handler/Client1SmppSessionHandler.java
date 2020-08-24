@@ -45,6 +45,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.lang.ref.WeakReference;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
@@ -168,6 +169,12 @@ public class Client1SmppSessionHandler extends DefaultSmppSessionHandler {
             DeliveryReceipt deliveryReceipt = DeliveryReceipt.parseShortMessage(str, DateTimeZone.UTC);
 
             String messageId = deliveryReceipt.getMessageId();
+
+            //该运营商的msgid需要16进制编码
+            if (StaticValue.CHANNEL_JATIS_LIST.contains(deliverSm.getSystemId())) {
+                messageId = new BigInteger(messageId, 10).toString(16);
+            }
+
             Object obj = client1SmppSessionHandler.redisUtil.hmGet(SmppServerConstants.CM_MSGID_CACHE, messageId);
 
             //判断msgid是否在cm的msgid缓存中存在
