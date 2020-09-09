@@ -177,6 +177,13 @@ public class SmppServiceImpl implements SmppService {
                 spMsgId = new BigInteger(spMsgId, 10).toString(16);
             }
 
+
+            //该运营商的msgid需要16进制编码
+            if (StaticValue.CHANNEL_MENGWANG_LIST.contains(deliverSm.getSystemId())) {
+                spMsgId = new BigInteger(spMsgId, 10).toString(16);
+            }
+
+
             record.setSpMsgId(spMsgId);
             record.setRealMsgId(deliverSm.getTempMsgId());
             record.setStateDes(DeliveryReceipt.toStateText(deliveryReceipt.getState()));

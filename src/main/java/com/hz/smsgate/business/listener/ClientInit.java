@@ -65,9 +65,9 @@ public class ClientInit {
 
     public static Map<SessionKey, SmppSessionConfiguration> configMap = null;
 
-    public static Map<String, DefaultSmppClient> clientBootstrapMap = null;
-
-    public static Map<String, DefaultSmppSessionHandler> sessionHandlerMap = null;
+//    public static Map<String, DefaultSmppClient> clientBootstrapMap = null;
+//
+//    public static Map<String, DefaultSmppSessionHandler> sessionHandlerMap = null;
 
 
     public static Map<String, SessionKey> CHANNL_REL = new LinkedHashMap<>();
@@ -107,8 +107,8 @@ public class ClientInit {
 
         sessionMap = new LinkedHashMap<>();
         configMap = new LinkedHashMap<>();
-        clientBootstrapMap = new LinkedHashMap<>();
-        sessionHandlerMap = new LinkedHashMap<>();
+//        clientBootstrapMap = new LinkedHashMap<>();
+//        sessionHandlerMap = new LinkedHashMap<>();
 
         //初始化通道
         initChannels();
@@ -456,8 +456,8 @@ public class ClientInit {
             sessionHandler.setSmppSession(session0);
             logger.info("-----连接资源(systemid:{},host:{} port:{} sendId:{})成功------", config.getSystemId(), config.getHost(), config.getPort(), config.getAddressRange().getAddress());
 
-            clientBootstrapMap.put(config.getSystemId(), clientBootstrap);
-            sessionHandlerMap.put(config.getSystemId(), sessionHandler);
+//            clientBootstrapMap.put(config.getSystemId(), clientBootstrap);
+//            sessionHandlerMap.put(config.getSystemId(), sessionHandler);
             sessionMap.put(sessionKey, session0);
         } catch (Exception e) {
             logger.error("连接资源(systemid:{},host:{} port:{} sendId:{})失败", config.getSystemId(), config.getHost(), config.getPort(), config.getAddressRange().getAddress(), e);

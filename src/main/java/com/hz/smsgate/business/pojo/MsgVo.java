@@ -1,7 +1,6 @@
 package com.hz.smsgate.business.pojo;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 
 /**
  * @Auther: huangzhuo
@@ -21,6 +20,8 @@ public class MsgVo implements Serializable {
 
 	public long sendTime;
 
+	public Integer port;
+
 	public MsgVo() {
 	}
 
@@ -31,6 +32,17 @@ public class MsgVo implements Serializable {
 		this.senderId = senderId;
 		this.sendSize = 1;
 		this.sendTime = System.currentTimeMillis();
+		this.port = 0;
+	}
+
+	public MsgVo(String msgId, String smppUser, String smppPwd, String senderId, Integer port) {
+		this.msgId = msgId;
+		this.smppUser = smppUser;
+		this.smppPwd = smppPwd;
+		this.senderId = senderId;
+		this.sendSize = 1;
+		this.sendTime = System.currentTimeMillis();
+		this.port = port;
 	}
 
 	public String getMsgId() {
@@ -80,5 +92,13 @@ public class MsgVo implements Serializable {
 
 	public void setSendTime(long sendTime) {
 		this.sendTime = sendTime;
+	}
+
+	public Integer getPort() {
+		return port;
+	}
+
+	public void setPort(Integer port) {
+		this.port = port;
 	}
 }

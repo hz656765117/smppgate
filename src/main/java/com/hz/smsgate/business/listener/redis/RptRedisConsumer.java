@@ -135,6 +135,16 @@ public class RptRedisConsumer implements Runnable {
 			messageId = new BigInteger(messageId, 10).toString(16);
 		}
 
+
+		//该运营商的msgid需要16进制编码
+		if (StaticValue.CHANNEL_MENGWANG_LIST.contains(deliverSm.getSystemId())) {
+			messageId = new BigInteger(messageId, 10).toString(16).toUpperCase();
+		}
+
+
+
+
+
 		Object obj = rptRedisConsumer.redisUtil.hmGet(SmppServerConstants.WEB_MSGID_CACHE, messageId);
 		if (obj != null) {
 			try {

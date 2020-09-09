@@ -43,7 +43,7 @@ public class StaticValue {
 
 	public static String YN_TELKOMSEL = "0062811,0062812,0062813,0062852,0062853,0062821,0062822,0062823,0062854,0062851L";
 
-
+	public static List<String> CHANNEL_MENGWANG_LIST = new ArrayList<>();
 
 
 	//马来西亚区号
@@ -70,6 +70,9 @@ public class StaticValue {
 		CHANNEL_JATIS_LIST.add("iitsmpp0");
 		CHANNEL_JATIS_LIST.add("iitsmpp1");
 		CHANNEL_JATIS_LIST.add("iitsmpp2");
+
+
+		CHANNEL_MENGWANG_LIST.add("GJ2387");
 
 		TYPE = SystemGlobals.getValue("montnets.type", "0");
 

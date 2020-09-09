@@ -29,7 +29,6 @@ import com.hz.smsgate.base.smpp.exception.UnrecoverablePduException;
 import com.hz.smsgate.base.smpp.pdu.*;
 import com.hz.smsgate.base.smpp.utils.PduUtil;
 import com.hz.smsgate.base.smpp.utils.SequenceNumber;
-import com.hz.smsgate.business.controller.TestController;
 import org.jboss.netty.buffer.BigEndianHeapChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.slf4j.Logger;

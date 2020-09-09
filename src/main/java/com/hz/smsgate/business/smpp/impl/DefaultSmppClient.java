@@ -85,7 +85,6 @@ public class DefaultSmppClient implements SmppClient {
 	 * The maximum number of IO worker threads across any client sessions
 	 * created with this SmppClient will be Runtime.getRuntime().availableProcessors().
 	 *
-	 * @param executor The executor that IO workers will be executed with. An
 	 *                 Executors.newCachedDaemonThreadPool() is recommended. The max threads
 	 *                 will never grow more than expectedSessions if NIO sockets are used.
 	 */
@@ -97,7 +96,6 @@ public class DefaultSmppClient implements SmppClient {
 	 * Creates a new default SmppClient. Window monitoring and automatic
 	 * expiration of requests will be disabled with no monitorExecutors.
 	 *
-	 * @param executor         The executor that IO workers will be executed with. An
 	 *                         Executors.newCachedDaemonThreadPool() is recommended. The max threads
 	 *                         will never grow more than expectedSessions if NIO sockets are used.
 	 * @param expectedSessions The max number of concurrent sessions expected
@@ -113,7 +111,6 @@ public class DefaultSmppClient implements SmppClient {
 	/**
 	 * Creates a new default SmppClient.
 	 *
-	 * @param executor         The executor that IO workers will be executed with. An
 	 *                         Executors.newCachedDaemonThreadPool() is recommended. The max threads
 	 *                         will never grow more than expectedSessions if NIO sockets are used.
 	 * @param expectedSessions The max number of concurrent sessions expected
