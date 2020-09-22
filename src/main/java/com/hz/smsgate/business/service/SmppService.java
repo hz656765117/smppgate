@@ -3,10 +3,7 @@ package com.hz.smsgate.business.service;
 
 import com.hz.smsgate.base.smpp.pdu.DeliverSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
-import com.hz.smsgate.business.pojo.Channel;
-import com.hz.smsgate.business.pojo.MsgRelateVo;
-import com.hz.smsgate.business.pojo.OperatorVo;
-import com.hz.smsgate.business.pojo.SmppUserVo;
+import com.hz.smsgate.business.pojo.*;
 
 import java.util.List;
 
@@ -58,5 +55,12 @@ public interface SmppService {
      * @return
      */
     boolean updateMtTaskBySpMsgId(MsgRelateVo msgRelateVo);
+
+
+    boolean needBindRecord(String systemId);
+
+
+    boolean  inserBindRecord(BindRecord bindRecord);
+
 
 }

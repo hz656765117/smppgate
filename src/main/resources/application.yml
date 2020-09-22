@@ -52,7 +52,12 @@ spring:
     password: mwkjhz2019
 
 
-
+  mail:
+    host: smtp.qq.com
+    port: 25
+    username: 
+    password:
+    default-encoding: UTF-8
 
 
 #    pool:

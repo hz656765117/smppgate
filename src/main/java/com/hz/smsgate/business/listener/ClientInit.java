@@ -1,6 +1,5 @@
 package com.hz.smsgate.business.listener;
 
-import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.constants.SystemGlobals;
 import com.hz.smsgate.base.emp.pojo.WGParams;
 import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
@@ -8,6 +7,7 @@ import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppBindType;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
+import com.hz.smsgate.base.utils.SpringContextUtil;
 import com.hz.smsgate.base.utils.PropertiesLoader;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.base.utils.ThreadPoolHelper;
@@ -22,6 +22,8 @@ import com.hz.smsgate.business.listener.redis.tz.LongTzMtSplitRedisConsumer;
 import com.hz.smsgate.business.listener.redis.yx.LongLongYxMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.yx.LongYxMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.yx.LongYxMtSplitRedisConsumer;
+import com.hz.smsgate.business.mybatis.mapper.BindRecordMapper;
+import com.hz.smsgate.business.pojo.BindRecord;
 import com.hz.smsgate.business.pojo.OperatorVo;
 import com.hz.smsgate.business.pojo.SmppUserVo;
 import com.hz.smsgate.business.service.SmppService;
@@ -94,6 +96,8 @@ public class ClientInit {
 
     public static List<SmppUserVo> HTTP_SMPP_USER = new LinkedList<>();
 
+    public static Map<String, SmppSession> existSystemId1s = new LinkedHashMap<>();
+
 
     @PostConstruct
     public void postConstruct() {
@@ -124,7 +128,7 @@ public class ClientInit {
         //初始化客户端配置
         initClientConfigs();
 
-        Map<String, SmppSession> existSystemId1s = new LinkedHashMap<>();
+
         //启动客户端
         if (configMap != null && configMap.size() > 0) {
             for (Map.Entry<SessionKey, SmppSessionConfiguration> entry : configMap.entrySet()) {
@@ -451,17 +455,31 @@ public class ClientInit {
         sessionKey.setSystemId(config.getSystemId());
 
         SmppSession session0 = null;
+        BindRecord bindRecord = null;
         try {
+            bindRecord = new BindRecord();
+            bindRecord.setSystemid(config.getSystemId());
+            bindRecord.setIp(config.getHost());
+            bindRecord.setPort(config.getPort() + "");
+            bindRecord.setType(0);
+
             session0 = clientBootstrap.bind(config, sessionHandler);
             sessionHandler.setSmppSession(session0);
             logger.info("-----连接资源(systemid:{},host:{} port:{} sendId:{})成功------", config.getSystemId(), config.getHost(), config.getPort(), config.getAddressRange().getAddress());
+
+            bindRecord.setStatus(0);
 
 //            clientBootstrapMap.put(config.getSystemId(), clientBootstrap);
 //            sessionHandlerMap.put(config.getSystemId(), sessionHandler);
             sessionMap.put(sessionKey, session0);
         } catch (Exception e) {
+            bindRecord.setStatus(1);
             logger.error("连接资源(systemid:{},host:{} port:{} sendId:{})失败", config.getSystemId(), config.getHost(), config.getPort(), config.getAddressRange().getAddress(), e);
         }
+
+        bindRecord.setTime(new Date());
+        SpringContextUtil.getBean(BindRecordMapper.class).insert(bindRecord);
+
         return session0;
     }
 

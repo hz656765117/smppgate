@@ -8,10 +8,7 @@ import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
 import com.hz.smsgate.base.utils.ChangeCharset;
 import com.hz.smsgate.base.utils.DateUtil;
 import com.hz.smsgate.base.utils.PduUtils;
-import com.hz.smsgate.business.mybatis.mapper.ChannelMapper;
-import com.hz.smsgate.business.mybatis.mapper.MtTaskMapper;
-import com.hz.smsgate.business.mybatis.mapper.RptRecordMapper;
-import com.hz.smsgate.business.mybatis.mapper.SmppMapper;
+import com.hz.smsgate.business.mybatis.mapper.*;
 import com.hz.smsgate.business.pojo.*;
 import com.hz.smsgate.business.service.SmppService;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,6 +44,11 @@ public class SmppServiceImpl implements SmppService {
 
     @Autowired
     private RptRecordMapper rptRecordMapper;
+
+
+    @Autowired
+    private BindRecordMapper bindRecordMapper;
+
 
     @Override
     public List<Channel> getAllChannels() {
@@ -269,4 +272,25 @@ public class SmppServiceImpl implements SmppService {
 
         return true;
     }
+
+    @Override
+    public boolean needBindRecord(String systemId) {
+        BindRecordExample example = new BindRecordExample();
+
+        Calendar nowTime = Calendar.getInstance();
+        nowTime.add(Calendar.MINUTE, -15);
+        example.createCriteria().andTimeGreaterThanOrEqualTo(nowTime.getTime()).andTypeEqualTo(0).andSystemidEqualTo(systemId);
+        long size = bindRecordMapper.countByExample(example);
+
+        return size > 3 ? false : true;
+    }
+
+    @Override
+    public boolean inserBindRecord(BindRecord bindRecord) {
+        bindRecord.setTime(new Date());
+        int result = bindRecordMapper.insertSelective(bindRecord);
+        return result > 0 ? true : false;
+    }
+
+
 }

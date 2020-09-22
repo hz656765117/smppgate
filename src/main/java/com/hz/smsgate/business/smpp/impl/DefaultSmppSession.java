@@ -33,6 +33,9 @@ import com.hz.smsgate.base.smpp.transcoder.PduTranscoder;
 import com.hz.smsgate.base.smpp.utils.SequenceNumber;
 import com.hz.smsgate.base.smpp.utils.SmppSessionUtil;
 import com.hz.smsgate.base.smpp.utils.SmppUtil;
+import com.hz.smsgate.base.utils.SpringContextUtil;
+import com.hz.smsgate.business.mybatis.mapper.BindRecordMapper;
+import com.hz.smsgate.business.pojo.BindRecord;
 import com.hz.smsgate.business.smpp.handler.DefaultSmppSessionHandler;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.channel.Channel;
@@ -44,6 +47,7 @@ import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.net.InetSocketAddress;
 import java.nio.channels.ClosedChannelException;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -78,6 +82,8 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 	private BaseBindResp preparedBindResponse;
 	private ScheduledExecutorService monitorExecutor;
 	private DefaultSmppSessionCounters counters;
+
+	private BindRecordMapper bindRecordMapper = SpringContextUtil.getBean(BindRecordMapper.class);
 
 	/**
 	 * Creates an SmppSession for a server-based session.
@@ -369,16 +375,28 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 //			logger.error("Session channel is already closed, not going to unbind");
 //		}
 
+		BindRecord bindRecord = new BindRecord();
+		bindRecord.setSystemid(configuration.getSystemId());
+		bindRecord.setIp(configuration.getHost());
+		bindRecord.setPort(configuration.getPort()+"");
+		bindRecord.setType(1);
+
+
 		this.state.set(STATE_UNBINDING);
 
 		// try a "graceful" unbind by sending an "unbind" request
 		try {
 			sendRequestAndGetResponse(new Unbind(), timeoutInMillis);
+			bindRecord.setStatus(0);
 		} catch (Exception e) {
+			bindRecord.setStatus(1);
 			// not sure if an exception while attempting to unbind matters...
 			// we are going to just print out a warning
 			logger.warn("Did not cleanly receive an unbind response to our unbind request, safe to ignore: " + e.getMessage());
 		}
+
+		bindRecord.setTime(new Date());
+		bindRecordMapper.insert(bindRecord);
 
 		// always delegate the unbind to finish up with a "close"
 		close(timeoutInMillis);
