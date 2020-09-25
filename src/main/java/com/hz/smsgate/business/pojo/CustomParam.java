@@ -14,9 +14,9 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "montnets")
 public class CustomParam {
 	/**
-	 * 运营商类型
+	 * 邮件接收账号
 	 */
-	private String operatorType;
+	private String mails;
 
 	/**
 	 * 短信网关ip

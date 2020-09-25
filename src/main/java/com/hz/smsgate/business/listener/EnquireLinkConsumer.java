@@ -11,6 +11,7 @@ import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.MailUtil;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.base.utils.SpringContextUtil;
+import com.hz.smsgate.business.pojo.CustomParam;
 import com.hz.smsgate.business.service.SmppService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,7 +133,8 @@ public class EnquireLinkConsumer implements Runnable {
             SmppSession session1 = ClientInit.existSystemId1s.get(name);
             if (session1 != null) {
                 LOGGER.info("{}连接异常  告警", key.getSystemId());
-                SpringContextUtil.getBean(MailUtil.class).sendSimpleMail("867178908@qq.com", "运营商状态异常", key.getSystemId() + "运营商连接异常，请管理员尽快关闭该运营商并反馈至运营商");
+                CustomParam customParam = SpringContextUtil.getBean(CustomParam.class);
+                SpringContextUtil.getBean(MailUtil.class).sendSimpleMail(customParam.getMails(), "运营商状态异常", key.getSystemId() + "运营商连接异常，请管理员尽快关闭该运营商并反馈至运营商");
             }
 
             ClientInit.existSystemId1s.remove(name);
