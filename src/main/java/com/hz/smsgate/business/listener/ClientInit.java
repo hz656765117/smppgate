@@ -7,10 +7,7 @@ import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppBindType;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
-import com.hz.smsgate.base.utils.SpringContextUtil;
-import com.hz.smsgate.base.utils.PropertiesLoader;
-import com.hz.smsgate.base.utils.RedisUtil;
-import com.hz.smsgate.base.utils.ThreadPoolHelper;
+import com.hz.smsgate.base.utils.*;
 import com.hz.smsgate.business.listener.redis.*;
 import com.hz.smsgate.business.listener.redis.cmopt.LongCmOptMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.cmopt.LongCmOptMtSplitRedisConsumer;
@@ -24,6 +21,7 @@ import com.hz.smsgate.business.listener.redis.yx.LongYxMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.yx.LongYxMtSplitRedisConsumer;
 import com.hz.smsgate.business.mybatis.mapper.BindRecordMapper;
 import com.hz.smsgate.business.pojo.BindRecord;
+import com.hz.smsgate.business.pojo.CustomParam;
 import com.hz.smsgate.business.pojo.OperatorVo;
 import com.hz.smsgate.business.pojo.SmppUserVo;
 import com.hz.smsgate.business.service.SmppService;
@@ -34,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
@@ -50,7 +49,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 
 @Configuration
-public class ClientInit {
+public class ClientInit implements CommandLineRunner {
     private static final Logger logger = LoggerFactory.getLogger(ClientInit.class);
 
     @Autowired
@@ -99,7 +98,6 @@ public class ClientInit {
     public static Map<String, SmppSession> existSystemId1s = new LinkedHashMap<>();
 
 
-    @PostConstruct
     public void postConstruct() {
 
         clientInit = this;
@@ -436,6 +434,15 @@ public class ClientInit {
         if (config == null) {
             return null;
         }
+
+
+        boolean flag = SpringContextUtil.getBean(SmppService.class).needBindRecord(config.getSystemId());
+        if (!flag) {
+            CustomParam customParam = SpringContextUtil.getBean(CustomParam.class);
+            SpringContextUtil.getBean(MailUtil.class).sendSimpleMail(customParam.getMails(), "运营商状态异常", config.getSystemId() + "运营商连接异常，请管理员尽快关闭该运营商并反馈至运营商");
+        }
+
+
         ScheduledThreadPoolExecutor monitorExecutor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(1, new ThreadFactory() {
             private AtomicInteger sequence = new AtomicInteger(0);
 
@@ -498,4 +505,8 @@ public class ClientInit {
     }
 
 
+    @Override
+    public void run(String... args) throws Exception {
+        postConstruct();
+    }
 }

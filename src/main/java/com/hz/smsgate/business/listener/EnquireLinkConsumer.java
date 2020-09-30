@@ -137,9 +137,8 @@ public class EnquireLinkConsumer implements Runnable {
                 SpringContextUtil.getBean(MailUtil.class).sendSimpleMail(customParam.getMails(), "运营商状态异常", key.getSystemId() + "运营商连接异常，请管理员尽快关闭该运营商并反馈至运营商");
             }
 
-            ClientInit.existSystemId1s.remove(name);
-
-            iterator.remove();
+//            ClientInit.existSystemId1s.remove(name);
+//            iterator.remove();
         }
 
 

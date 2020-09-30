@@ -12,7 +12,7 @@ import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.business.listener.ClientInit;
-import com.hz.smsgate.business.pojo.MsgVo;
+import com.hz.smsgate.business.pojo.MsgRelateVo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,8 +58,6 @@ public class MtRedisOptConsumer implements Runnable {
 		SubmitSmResp submitResp;
 		Object obj;
 		String sendId = "";
-		Object tzObj;
-		Object yxObj;
 		while (true) {
 			try {
 				//redis对象为空休眠一秒
@@ -72,7 +70,7 @@ public class MtRedisOptConsumer implements Runnable {
 
 				if (obj == null) {
 					//三个通道都没消息 则休眠1s
-					Thread.sleep(1000);
+					Thread.sleep(500);
 					continue;
 				}
 
@@ -95,14 +93,13 @@ public class MtRedisOptConsumer implements Runnable {
 
 	}
 
-
 	public SubmitSmResp realSend(SubmitSm submitSm) {
 		SubmitSmResp submitResp = null;
 		String sendId = "";
 		String mbl = "";
 
 		try {
-            LOGGER.info("{}-读取到短信下行信息{}", Thread.currentThread().getName(), submitSm.toString());
+			LOGGER.info("{}-读取到短信下行信息{}", Thread.currentThread().getName(), submitSm.toString());
 
 			//重组下行对象
 			submitSm = PduUtils.rewriteSubmitSm(submitSm);
@@ -116,7 +113,7 @@ public class MtRedisOptConsumer implements Runnable {
 			//获取客户端session
 			SmppSession session0 = PduUtils.getSmppSession(submitSm);
 			if (session0 == null) {
-//				mtRedisConsumer.redisUtil.hmRemove(SmppServerConstants.WEB_MSGID_CACHE, submitSm.getTempMsgId());
+//				mtRedisOptConsumer.redisUtil.hmRemove(SmppServerConstants.WEB_MSGID_CACHE, submitSm.getTempMsgId());
 				LOGGER.error("systemid({}),senderid({}),mbl（{}）获取客户端连接异常，丢弃该下行", submitSm.getSystemId(), sendId, mbl);
 				return submitResp;
 			}
@@ -132,6 +129,7 @@ public class MtRedisOptConsumer implements Runnable {
 				sourceAddress.setNpi((byte) 1);
 				submitSm.setSourceAddress(sourceAddress);
 			}
+
 
 			if (StaticValue.SYSTEMID_SA.equals(session0.getConfiguration().getSystemId())) {
 				submitSm.setDataCoding(SmppConstants.DATA_CODING_DEFAULT);
@@ -167,6 +165,7 @@ public class MtRedisOptConsumer implements Runnable {
 		}
 		String messageId = submitResp.getMessageId();
 		try {
+
 			//更新缓存中的value
 			Object msgVo = mtRedisOptConsumer.redisUtil.hmGet(SmppServerConstants.WEB_MSGID_CACHE, msgId);
 			mtRedisOptConsumer.redisUtil.hmRemove(SmppServerConstants.WEB_MSGID_CACHE, msgId);
@@ -179,12 +178,20 @@ public class MtRedisOptConsumer implements Runnable {
 				LOGGER.error("{}- {} -{}-{}短信记录异常，msgVo对象为空或者响应msgid为空，删除该条msgid: {} - {}", Thread.currentThread().getName(), submitSm.getSystemId(), submitSm.getSourceAddress().getAddress(), submitSm.getDestAddress().getAddress(), msgId, messageId);
 			}
 
+
+			mtRedisOptConsumer.redisUtil.lPush(SmppServerConstants.UPDATE_SUBMIT_SM, new MsgRelateVo(msgId, messageId));
+
+
+
 		} catch (Exception e) {
 			LOGGER.error("{}- {} -{}-{}替换msgid异常，msgVo对象为空或者响应msgid为空，删除该条msgid: {} - {}", Thread.currentThread().getName(), submitSm.getSystemId(), submitSm.getSourceAddress().getAddress(), submitSm.getDestAddress().getAddress(), msgId, messageId, e);
 		}
 
 
 	}
+
+
+
 
 
 	/**
@@ -208,22 +215,7 @@ public class MtRedisOptConsumer implements Runnable {
 				LOGGER.info("{} 短短信 将发送失败的非opt短信放入到营销中", Thread.currentThread().getName(), submitSm.toString());
 				Thread.sleep(500);
 			} else {
-				Object obj = mtRedisOptConsumer.redisUtil.hmGet(SmppServerConstants.WEB_MSGID_CACHE, submitSm.getTempMsgId());
-				if (obj == null) {
-					return;
-				}
-				MsgVo msgVo = (MsgVo) obj;
-				Integer sendSize = msgVo.getSendSize();
-				if (sendSize >= 4) {
-					mtRedisOptConsumer.redisUtil.hmRemove(SmppServerConstants.WEB_MSGID_CACHE, submitSm.getTempMsgId());
-					LOGGER.error("systemid({}),senderid({}) 为OPT短信,且已重发三次，丢弃该下行{}", sessionKey.getSystemId(), sessionKey.getSenderId(), submitSm.toString());
-					return;
-				}
-				sendSize = sendSize + 1;
-				msgVo.setSendSize(sendSize);
-				mtRedisOptConsumer.redisUtil.hmSet(SmppServerConstants.WEB_MSGID_CACHE, submitSm.getTempMsgId(), msgVo);
-				mtRedisOptConsumer.redisUtil.lPush(SmppServerConstants.WEB_SUBMIT_SM_OPT, submitSm);
-				LOGGER.info("{}  WEBD短短信OPT短信 将发送失败的opt短信放入到OPT中{}", Thread.currentThread().getName(), submitSm.toString());
+				LOGGER.error("systemid({}),senderid({}) 为OPT短信，丢弃该下行{}", sessionKey.getSystemId(), sessionKey.getSenderId(), submitSm.toString());
 			}
 		} catch (Exception e) {
 			LOGGER.error("{} 短短信 将发送失败的非opt短信放入到营销中异常", Thread.currentThread().getName(), e);
