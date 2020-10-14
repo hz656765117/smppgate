@@ -282,7 +282,7 @@ public class SmppServiceImpl implements SmppService {
         example.createCriteria().andTimeGreaterThanOrEqualTo(nowTime.getTime()).andTypeEqualTo(0).andSystemidEqualTo(systemId);
         long size = bindRecordMapper.countByExample(example);
 
-        return size > 3 ? false : true;
+        return size > 10 ? false : true;
     }
 
     @Override

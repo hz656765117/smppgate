@@ -30,11 +30,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * #schedule cannot spawn more threads than corePoolSize, so the blocking work is done by separate executor
  */
-public class ReconnectionDaemon {
+public class SmppReconnectionDaemon {
 
-	private static final Logger log = LoggerFactory.getLogger(ReconnectionDaemon.class);
+	private static final Logger log = LoggerFactory.getLogger(SmppReconnectionDaemon.class);
 
-	private static final ReconnectionDaemon RECONNECTION_DAEMON = new ReconnectionDaemon("0,5,15");
+	private static final SmppReconnectionDaemon RECONNECTION_DAEMON = new SmppReconnectionDaemon("0,5,15");
 	private static final long KEEP_ALIVE_TIME = 60L;
 
 	private final String[] reconnectionPeriods;
@@ -42,7 +42,7 @@ public class ReconnectionDaemon {
 	private final ThreadPoolExecutor executor;
 	private final ScheduledExecutorService scheduledExecutorService;
 
-	public ReconnectionDaemon(String reconnectionPeriods) {
+	public SmppReconnectionDaemon(String reconnectionPeriods) {
 		this.reconnectionPeriods = reconnectionPeriods.split(",");
 		scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(getThreadFactory("ReconnectionSchedulerDaemon-"));
 
@@ -64,12 +64,12 @@ public class ReconnectionDaemon {
 		};
 	}
 
-	public static ReconnectionDaemon getInstance() {
+	public static SmppReconnectionDaemon getInstance() {
 		return RECONNECTION_DAEMON;
 	}
 
-	public void scheduleReconnect(OutboundClient outboundClient, Integer failureCount,
-                                  ReconnectionTask reconnectionTask) {
+	public void scheduleReconnect(SmppClient outboundClient, Integer failureCount,
+                                  SmppReconnectionTask reconnectionTask) {
 		 long delay = getReconnectionPeriod(failureCount);
 		log.info("Scheduling reconnect for {} in {} seconds", outboundClient, delay);
 		scheduledExecutorService.schedule(new ScheduledTask(reconnectionTask), delay,

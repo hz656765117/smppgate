@@ -8,6 +8,7 @@ import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
+import com.hz.smsgate.base.smpp.utils.CircularList;
 import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
 import com.hz.smsgate.base.smpp.utils.PduUtil;
 import com.hz.smsgate.business.listener.ClientInit;
@@ -243,13 +244,79 @@ public class PduUtils {
     }
 
 
+//    /**
+//     * 根据下行通道获取对应的客户端session  TODO  暂时不支持多个客户端获取
+//     *
+//     * @param sm
+//     * @return
+//     */
+//    public static SmppSession getSmppSession(SubmitSm sm) {
+//        String sendId = sm.getSourceAddress().getAddress();
+//        String systemId = sm.getSystemId();
+//
+//
+//        String key = getKey(systemId, sendId);
+//
+//        SessionKey sessionKey = new SessionKey();
+//        sessionKey.setSystemId(systemId);
+//        sessionKey.setSenderId(sendId);
+//
+//
+//        SmppSession session0 = null;
+//        Map<SessionKey, SmppSession> sessionMap = ClientInit.sessionMap;
+//        if (sessionMap != null && sessionMap.size() > 0) {
+//            session0 = sessionMap.get(sessionKey);
+//            if (session0 == null) {
+//                sessionKey.setSenderId(key);
+//                session0 = sessionMap.get(sessionKey);
+//            }
+//        }
+//
+//        if (session0 == null) {
+//            try {
+//                sessionKey.setSenderId(sendId);
+//                SmppSessionConfiguration smppSessionConfiguration = ClientInit.configMap.get(sessionKey);
+//                if (smppSessionConfiguration == null) {
+//                    sessionKey.setSenderId(key);
+//                    smppSessionConfiguration = ClientInit.configMap.get(sessionKey);
+//                }
+//
+//                session0 = ClientInit.createClient(smppSessionConfiguration);
+//                if (session0 != null) {
+//                    return session0;
+//                }
+//            } catch (Exception e) {
+//                LOGGER.error("获取客户端连接异常", e);
+//            }
+//        }
+//
+//
+//        return session0;
+//    }
+
+
+
+
+
+    public static SmppSession getSmppSession(SubmitSm sm) {
+        byte[] shortMessage = sm.getShortMessage();
+        int type = 0;
+        if (shortMessage[0] == 5 && shortMessage[1] == 0 && shortMessage[2] == 3) {
+            type = 0;
+        }else {
+            type = 1;
+        }
+        return getSmppSession( sm, type);
+    }
+
     /**
      * 根据下行通道获取对应的客户端session  TODO  暂时不支持多个客户端获取
+     * type 0  获取第一个session  1 轮询获取
      *
      * @param sm
      * @return
      */
-    public static SmppSession getSmppSession(SubmitSm sm) {
+    public static SmppSession getSmppSession(SubmitSm sm, int type) {
         String sendId = sm.getSourceAddress().getAddress();
         String systemId = sm.getSystemId();
 
@@ -262,12 +329,12 @@ public class PduUtils {
 
 
         SmppSession session0 = null;
-        Map<SessionKey, SmppSession> sessionMap = ClientInit.sessionMap;
+        Map<SessionKey, CircularList> sessionMap = ClientInit.sessionMap;
         if (sessionMap != null && sessionMap.size() > 0) {
-            session0 = sessionMap.get(sessionKey);
+            session0 = type == 0 ? sessionMap.get(sessionKey).fetchOne().getSession() : sessionMap.get(sessionKey).fetch().getSession();
             if (session0 == null) {
                 sessionKey.setSenderId(key);
-                session0 = sessionMap.get(sessionKey);
+                session0 = type == 0 ? sessionMap.get(sessionKey).fetchOne().getSession() : sessionMap.get(sessionKey).fetch().getSession();
             }
         }
 
@@ -279,8 +346,7 @@ public class PduUtils {
                     sessionKey.setSenderId(key);
                     smppSessionConfiguration = ClientInit.configMap.get(sessionKey);
                 }
-
-                session0 = ClientInit.createClient(smppSessionConfiguration);
+                session0 = type == 0 ? ClientInit.createClient(smppSessionConfiguration).fetchOne().getSession() : ClientInit.createClient(smppSessionConfiguration).fetch().getSession();
                 if (session0 != null) {
                     return session0;
                 }
@@ -292,6 +358,12 @@ public class PduUtils {
 
         return session0;
     }
+
+
+
+
+
+
 
     public static String getKey(String systemId, String sendId) {
         Map<String, SessionKey> channlRel = ClientInit.CHANNL_REL;

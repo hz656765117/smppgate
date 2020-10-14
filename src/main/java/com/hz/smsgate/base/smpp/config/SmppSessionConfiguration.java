@@ -59,6 +59,7 @@ public class SmppSessionConfiguration extends SmppConnectionConfiguration implem
 	private long windowMonitorInterval;
 	private long writeTimeout;
 	private boolean countersEnabled;
+	private int bindSize;
 
 	public SmppSessionConfiguration() {
 		this(SmppBindType.TRANSCEIVER, null, null, null);
@@ -82,6 +83,7 @@ public class SmppSessionConfiguration extends SmppConnectionConfiguration implem
 		this.windowMonitorInterval = SmppConstants.DEFAULT_WINDOW_MONITOR_INTERVAL;
 		this.writeTimeout = SmppConstants.DEFAULT_WRITE_TIMEOUT;
 		this.countersEnabled = false;
+		this.bindSize=1;
 	}
 
 	public void setName(String value) {
@@ -246,6 +248,14 @@ public class SmppSessionConfiguration extends SmppConnectionConfiguration implem
 
 	public void setCountersEnabled(boolean countersEnabled) {
 		this.countersEnabled = countersEnabled;
+	}
+
+	public int getBindSize() {
+		return bindSize;
+	}
+
+	public void setBindSize(int bindSize) {
+		this.bindSize = bindSize;
 	}
 
 }
