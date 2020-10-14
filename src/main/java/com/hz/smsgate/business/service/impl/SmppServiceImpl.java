@@ -279,7 +279,7 @@ public class SmppServiceImpl implements SmppService {
 
         Calendar nowTime = Calendar.getInstance();
         nowTime.add(Calendar.MINUTE, -15);
-        example.createCriteria().andTimeGreaterThanOrEqualTo(nowTime.getTime()).andTypeEqualTo(0).andSystemidEqualTo(systemId);
+        example.createCriteria().andTimeGreaterThanOrEqualTo(nowTime.getTime()).andTypeEqualTo(0).andStatusEqualTo(1).andSystemidEqualTo(systemId);
         long size = bindRecordMapper.countByExample(example);
 
         return size > 10 ? false : true;

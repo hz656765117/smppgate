@@ -356,7 +356,7 @@ public class ClientInit implements CommandLineRunner {
         //真实channel回调线程
         ThreadPoolHelper.executeTask(realChannelCallBackThread);
 
-        for (int i = 0; i <= 7; i++) {
+        for (int i = 0; i <= 14; i++) {
             //CM 短信发送线程
             ThreadPoolHelper.executeTask(mtRedisCmConsumer);
         }
@@ -427,65 +427,6 @@ public class ClientInit implements CommandLineRunner {
     public static CircularList createClient(SmppSessionConfiguration config) {
         return createClient(config, false);
     }
-
-//    public static CircularList createClient(SmppSessionConfiguration config, boolean firstBind) {
-//        if (config == null) {
-//            return null;
-//        }
-//
-//
-//        boolean flag = SpringContextUtil.getBean(SmppService.class).needBindRecord(config.getSystemId());
-//        if (!flag) {
-//            CustomParam customParam = SpringContextUtil.getBean(CustomParam.class);
-//            SpringContextUtil.getBean(MailUtil.class).sendSimpleMail(customParam.getMails(), "运营商状态异常", config.getSystemId() + "运营商连接异常，请管理员尽快关闭该运营商并反馈至运营商");
-//        }
-//
-//
-//        ScheduledThreadPoolExecutor monitorExecutor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(1, new ThreadFactory() {
-//            private AtomicInteger sequence = new AtomicInteger(0);
-//
-//            @Override
-//            public Thread newThread(Runnable r) {
-//                Thread t = new Thread(r);
-//                t.setName("SmppClientSessionWindowMonitorPool-" + sequence.getAndIncrement());
-//                return t;
-//            }
-//        });
-//
-//        DefaultSmppClient clientBootstrap = new DefaultSmppClient(Executors.newCachedThreadPool(), 1, monitorExecutor);
-//        DefaultSmppSessionHandler sessionHandler = new Client1SmppSessionHandler();
-//
-//        SessionKey sessionKey = new SessionKey();
-//        sessionKey.setSenderId(config.getAddressRange().getAddress());
-//        sessionKey.setSystemId(config.getSystemId());
-//
-//        SmppSession session0 = null;
-//        BindRecord bindRecord = null;
-//        try {
-//            bindRecord = new BindRecord();
-//            bindRecord.setSystemid(config.getSystemId());
-//            bindRecord.setIp(config.getHost());
-//            bindRecord.setPort(config.getPort() + "");
-//            bindRecord.setType(0);
-//
-//            session0 = clientBootstrap.bind(config, sessionHandler);
-//            sessionHandler.setSmppSession(session0);
-//            logger.info("-----连接资源(systemid:{},host:{} port:{} sendId:{})成功------", config.getSystemId(), config.getHost(), config.getPort(), config.getAddressRange().getAddress());
-//
-//            bindRecord.setStatus(0);
-//
-//            sessionMap.put(sessionKey, session0);
-//        } catch (Exception e) {
-//            bindRecord.setStatus(1);
-//            logger.error("连接资源(systemid:{},host:{} port:{} sendId:{})失败", config.getSystemId(), config.getHost(), config.getPort(), config.getAddressRange().getAddress(), e);
-//        }
-//
-//        bindRecord.setTime(new Date());
-//        SpringContextUtil.getBean(BindRecordMapper.class).insert(bindRecord);
-//
-//        return session0;
-//    }
-
 
     public static CircularList createClient(SmppSessionConfiguration config, boolean firstBind) {
         if (config == null) {
@@ -559,7 +500,7 @@ public class ClientInit implements CommandLineRunner {
             }
         } catch (Exception e) {
             logger.error("运营商{},修改bind数量异常", config.getSystemId(), e);
-         }
+        }
 
     }
 
@@ -593,7 +534,7 @@ public class ClientInit implements CommandLineRunner {
                     sessionMap.put(sessionKey, existSystemId1s.get(key));
                     continue;
                 }
-
+                logger.info("{}运营商动态加载", entry.getValue().getSystemId());
                 CircularList client = createClient(entry.getValue());
                 existSystemId1s.put(key, client);
             }
@@ -604,7 +545,7 @@ public class ClientInit implements CommandLineRunner {
         while (it.hasNext()) {
             Map.Entry<String, CircularList> entry = it.next();
             if (!keys.contains(entry.getKey())) {
-
+                logger.info("{}运营商动态移除", entry.getValue().fetch().getConfiguration().getSystemId());
                 it.remove();// 使用迭代器的remove()方法删除元素
                 unbindBySmppSession(entry.getValue());
             }

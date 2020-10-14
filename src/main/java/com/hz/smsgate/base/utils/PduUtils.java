@@ -167,8 +167,6 @@ public class PduUtils {
     }
 
 
-
-
     /**
      * 重写下行对象
      *
@@ -221,8 +219,6 @@ public class PduUtils {
         sm.calculateAndSetCommandLength();
         return sm;
     }
-
-
 
 
     /**
@@ -295,18 +291,15 @@ public class PduUtils {
 //    }
 
 
-
-
-
     public static SmppSession getSmppSession(SubmitSm sm) {
         byte[] shortMessage = sm.getShortMessage();
         int type = 0;
         if (shortMessage[0] == 5 && shortMessage[1] == 0 && shortMessage[2] == 3) {
             type = 0;
-        }else {
+        } else {
             type = 1;
         }
-        return getSmppSession( sm, type);
+        return getSmppSession(sm, type);
     }
 
     /**
@@ -346,7 +339,16 @@ public class PduUtils {
                     sessionKey.setSenderId(key);
                     smppSessionConfiguration = ClientInit.configMap.get(sessionKey);
                 }
-                session0 = type == 0 ? ClientInit.createClient(smppSessionConfiguration).fetchOne().getSession() : ClientInit.createClient(smppSessionConfiguration).fetch().getSession();
+
+
+                if (sessionMap == null || sessionMap.size() <= 0) {
+                    LOGGER.error("获取不到运营商{}，重新绑定该运营商", sessionKey.getSystemId());
+                    session0 = type == 0 ? ClientInit.createClient(smppSessionConfiguration).fetchOne().getSession() : ClientInit.createClient(smppSessionConfiguration).fetch().getSession();
+                } else {
+                    LOGGER.error("获取不到运营商{}，随机再获取一次运营商", sessionKey.getSystemId());
+                    session0 = type == 0 ? sessionMap.get(sessionKey).fetchOne().getSession() : sessionMap.get(sessionKey).fetch().getSession();
+                }
+
                 if (session0 != null) {
                     return session0;
                 }
@@ -358,11 +360,6 @@ public class PduUtils {
 
         return session0;
     }
-
-
-
-
-
 
 
     public static String getKey(String systemId, String sendId) {

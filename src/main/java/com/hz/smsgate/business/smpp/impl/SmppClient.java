@@ -5,9 +5,12 @@ package com.hz.smsgate.business.smpp.impl;
 import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.exception.SmppChannelConnectException;
 import com.hz.smsgate.base.smpp.exception.SmppTimeoutException;
+import com.hz.smsgate.base.utils.MailUtil;
 import com.hz.smsgate.base.utils.SpringContextUtil;
 import com.hz.smsgate.business.mybatis.mapper.BindRecordMapper;
 import com.hz.smsgate.business.pojo.BindRecord;
+import com.hz.smsgate.business.pojo.CustomParam;
+import com.hz.smsgate.business.service.SmppService;
 import com.hz.smsgate.business.smpp.handler.DefaultSmppSessionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,6 +99,10 @@ public class SmppClient extends Client {
 	}
 
 	protected synchronized void reconnect(Integer connectionFailedTimes) {
+
+
+
+
 		if (shutdown) {
 			logger.warn("skipping reconnect for client {} due to shutdown", this);
 			return;
@@ -144,6 +151,22 @@ public class SmppClient extends Client {
 		}
 
 		bindRecordMapper.insert(bindRecord);
+
+		boolean flag = SpringContextUtil.getBean(SmppService.class).needBindRecord(config.getSystemId());
+		if (!flag) {
+			logger.error("-----近期连接次数太多,休眠5分钟，不去连接资源(systemid:{},host:{} port:{} sendId:{})------", config.getSystemId(), config.getHost(), config.getPort(), config.getAddressRange().getAddress());
+			CustomParam customParam = SpringContextUtil.getBean(CustomParam.class);
+			SpringContextUtil.getBean(MailUtil.class).sendSimpleMail(customParam.getMails(), "运营商状态异常", config.getSystemId() + "运营商连接异常，请管理员尽快关闭该运营商并反馈至运营商");
+			try {
+				Thread.sleep(300000);
+			} catch (Exception e) {
+				logger.error("休眠异常", e);
+			}
+
+			return;
+		}
+
+
 	}
 
 	public void scheduleReconnect() {
