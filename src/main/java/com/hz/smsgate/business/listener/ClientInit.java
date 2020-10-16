@@ -6,7 +6,6 @@ import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppBindType;
-import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.utils.CircularList;
 import com.hz.smsgate.base.utils.*;
 import com.hz.smsgate.business.listener.redis.*;
@@ -20,15 +19,11 @@ import com.hz.smsgate.business.listener.redis.tz.LongTzMtSplitRedisConsumer;
 import com.hz.smsgate.business.listener.redis.yx.LongLongYxMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.yx.LongYxMtMergeRedisConsumer;
 import com.hz.smsgate.business.listener.redis.yx.LongYxMtSplitRedisConsumer;
-import com.hz.smsgate.business.mybatis.mapper.BindRecordMapper;
-import com.hz.smsgate.business.pojo.BindRecord;
 import com.hz.smsgate.business.pojo.CustomParam;
 import com.hz.smsgate.business.pojo.OperatorVo;
 import com.hz.smsgate.business.pojo.SmppUserVo;
 import com.hz.smsgate.business.service.SmppService;
 import com.hz.smsgate.business.smpp.handler.Client1SmppSessionHandler;
-import com.hz.smsgate.business.smpp.handler.DefaultSmppSessionHandler;
-import com.hz.smsgate.business.smpp.impl.DefaultSmppClient;
 import com.hz.smsgate.business.smpp.impl.SmppClient;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -38,10 +33,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Auther: huangzhuo
@@ -198,6 +189,9 @@ public class ClientInit implements CommandLineRunner {
         CHANNL_REL = map;
     }
 
+
+
+
     public void initSpList() {
         List<SmppUserVo> allSmppUser = smppService.getCmAllSmppUser();
         if (allSmppUser == null || allSmppUser.size() <= 0) {
@@ -261,7 +255,6 @@ public class ClientInit implements CommandLineRunner {
                 CHANNEL_YX_LIST.add(ClientInit.CHANNL_REL.get(operatorVo.getChannel()));
             }
         }
-
 
     }
 
@@ -355,7 +348,7 @@ public class ClientInit implements CommandLineRunner {
         //真实channel回调线程
         ThreadPoolHelper.executeTask(realChannelCallBackThread);
 
-        for (int i = 0; i <= 14; i++) {
+        for (int i = 0; i <= 24; i++) {
             //CM 短信发送线程
             ThreadPoolHelper.executeTask(mtRedisCmConsumer);
         }

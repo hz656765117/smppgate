@@ -12,10 +12,7 @@ import com.hz.smsgate.base.smpp.utils.CircularList;
 import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
 import com.hz.smsgate.base.smpp.utils.PduUtil;
 import com.hz.smsgate.business.listener.ClientInit;
-import com.hz.smsgate.business.listener.SmppServerInit;
 import com.hz.smsgate.business.pojo.SmppUserVo;
-import com.hz.smsgate.business.smpp.handler.DefaultSmppSessionHandler;
-import com.hz.smsgate.business.smpp.impl.DefaultSmppClient;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppServer;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTimeZone;
@@ -24,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @Auther: huangzhuo
@@ -45,7 +41,7 @@ public class PduUtils {
         SessionKey sessionKey = new SessionKey(sm.getSystemId(), channel);
         SessionKey sessionKey1 = ClientInit.CHANNL_REL.get(StaticValue.CHANNEL_1);
         boolean flag = sessionKey1 != null ? channel.equals(ClientInit.CHANNL_REL.get(StaticValue.CHANNEL_1).getSenderId()) : false;
-        if (StaticValue.CHANNEL_JATIS_LIST.contains(sm.getSystemId()) || StaticValue.SYSTEMID_JATIS.equals(sm.getSystemId()) || flag || channel.equals(StaticValue.CHANNEL_1) || ClientInit.CHANNEL_MK_LIST.contains(sessionKey)) {
+        if ("NG-OTP-CMVN".equals(sm.getSystemId()) || StaticValue.CHANNEL_JATIS_LIST.contains(sm.getSystemId()) || StaticValue.SYSTEMID_JATIS.equals(sm.getSystemId()) || flag || channel.equals(StaticValue.CHANNEL_1) || ClientInit.CHANNEL_MK_LIST.contains(sessionKey)) {
             Address destAddress = sm.getDestAddress();
             if (destAddress.getAddress().startsWith("00")) {
                 String address = destAddress.getAddress().substring(2);
