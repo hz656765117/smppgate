@@ -310,54 +310,58 @@ public class PduUtils {
      * @return
      */
     public static SmppSession getSmppSession(SubmitSm sm, int type) {
-        String sendId = sm.getSourceAddress().getAddress();
-        String systemId = sm.getSystemId();
-
-
-        String key = getKey(systemId, sendId);
-
-        SessionKey sessionKey = new SessionKey();
-        sessionKey.setSystemId(systemId);
-        sessionKey.setSenderId(sendId);
-
-
         SmppSession session0 = null;
-        Map<SessionKey, CircularList> sessionMap = ClientInit.sessionMap;
-        if (sessionMap != null && sessionMap.size() > 0) {
-            session0 = type == 0 ? sessionMap.get(sessionKey).fetchOne().getSession() : sessionMap.get(sessionKey).fetch().getSession();
-            if (session0 == null) {
-                sessionKey.setSenderId(key);
+        try {
+            String sendId = sm.getSourceAddress().getAddress();
+            String systemId = sm.getSystemId();
+
+
+            String key = getKey(systemId, sendId);
+
+            SessionKey sessionKey = new SessionKey();
+            sessionKey.setSystemId(systemId);
+            sessionKey.setSenderId(sendId);
+
+            Map<SessionKey, CircularList> sessionMap = ClientInit.sessionMap;
+            if (sessionMap != null && sessionMap.size() > 0) {
                 session0 = type == 0 ? sessionMap.get(sessionKey).fetchOne().getSession() : sessionMap.get(sessionKey).fetch().getSession();
-            }
-        }
-
-        if (session0 == null) {
-            try {
-                sessionKey.setSenderId(sendId);
-                SmppSessionConfiguration smppSessionConfiguration = ClientInit.configMap.get(sessionKey);
-                if (smppSessionConfiguration == null) {
+                if (session0 == null) {
                     sessionKey.setSenderId(key);
-                    smppSessionConfiguration = ClientInit.configMap.get(sessionKey);
-                }
-
-
-                if (sessionMap == null || sessionMap.size() <= 0) {
-                    LOGGER.error("获取不到运营商{}，重新绑定该运营商", sessionKey.getSystemId());
-                    session0 = type == 0 ? ClientInit.createClient(smppSessionConfiguration).fetchOne().getSession() : ClientInit.createClient(smppSessionConfiguration).fetch().getSession();
-                } else {
-                    LOGGER.error("获取不到运营商{}，随机再获取一次运营商", sessionKey.getSystemId());
                     session0 = type == 0 ? sessionMap.get(sessionKey).fetchOne().getSession() : sessionMap.get(sessionKey).fetch().getSession();
                 }
-
-                if (session0 != null) {
-                    return session0;
-                }
-            } catch (Exception e) {
-                LOGGER.error("获取客户端连接异常", e);
             }
+
+            if (session0 == null) {
+                try {
+                    sessionKey.setSenderId(sendId);
+                    SmppSessionConfiguration smppSessionConfiguration = ClientInit.configMap.get(sessionKey);
+                    if (smppSessionConfiguration == null) {
+                        sessionKey.setSenderId(key);
+                        smppSessionConfiguration = ClientInit.configMap.get(sessionKey);
+                    }
+
+
+                    if (sessionMap == null || sessionMap.size() <= 0) {
+                        LOGGER.error("获取不到运营商{}，重新绑定该运营商", sessionKey.getSystemId());
+                        session0 = type == 0 ? ClientInit.createClient(smppSessionConfiguration).fetchOne().getSession() : ClientInit.createClient(smppSessionConfiguration).fetch().getSession();
+                    } else {
+                        LOGGER.error("获取不到运营商{}，随机再获取一次运营商", sessionKey.getSystemId());
+                        session0 = type == 0 ? sessionMap.get(sessionKey).fetchOne().getSession() : sessionMap.get(sessionKey).fetch().getSession();
+                    }
+
+                    if (session0 != null) {
+                        return session0;
+                    }
+                } catch (Exception e) {
+                    LOGGER.error("获取客户端连接异常", e);
+                }
+            }
+
+
+            return session0;
+        }catch (Exception e){
+            LOGGER.error("获取客户端连接异常1", e);
         }
-
-
         return session0;
     }
 

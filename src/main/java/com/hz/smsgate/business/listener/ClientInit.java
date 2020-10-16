@@ -160,7 +160,6 @@ public class ClientInit implements CommandLineRunner {
 
 
     public void initHttpSmppUser() {
-        HTTP_SMPP_USER.clear();
         HTTP_SMPP_USER = smppService.getHttpAllSmppUser();
     }
 
@@ -349,8 +348,8 @@ public class ClientInit implements CommandLineRunner {
 
 
         //同步下行信息到网关线程
-        ThreadPoolHelper.executeTask(syncSubmitConsumer);
 
+        ThreadPoolHelper.executeTask(syncSubmitConsumer);
 
         RealChannelCallBackThread realChannelCallBackThread = new RealChannelCallBackThread();
         //真实channel回调线程
@@ -490,12 +489,21 @@ public class ClientInit implements CommandLineRunner {
                 }
             } else {
                 int size = circularList.size() - config.getBindSize();
+                SmppClient smppClient;
                 for (int i = 0; i < size; i++) {
+                    smppClient = circularList.fetchAndRemoveMaxOne();
                     try {
-                        circularList.fetchAndRemoveMaxOne().getSession().unbind(10000);
+                        smppClient.getSession().unbind(10000);
                     } catch (Exception e) {
-                        logger.error("运营商{},移除多余的bind异常", config.getSystemId(), e);
+                        logger.error("运营商{},移除多余的bind异常1", config.getSystemId(), e);
                     }
+
+                    try {
+                        smppClient.shutdown();
+                    } catch (Exception e) {
+                        logger.error("运营商{},移除多余的bind异常2", config.getSystemId(), e);
+                    }
+
                 }
             }
         } catch (Exception e) {
