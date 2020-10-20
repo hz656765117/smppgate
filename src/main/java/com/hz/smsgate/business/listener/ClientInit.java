@@ -190,8 +190,6 @@ public class ClientInit implements CommandLineRunner {
     }
 
 
-
-
     public void initSpList() {
         List<SmppUserVo> allSmppUser = smppService.getCmAllSmppUser();
         if (allSmppUser == null || allSmppUser.size() <= 0) {
@@ -580,11 +578,19 @@ public class ClientInit implements CommandLineRunner {
     }
 
     public void unbindByCircularList(CircularList circularList) {
+        String systemId;
         for (SmppClient smppClient : circularList.getAll()) {
+            systemId = smppClient.getConfiguration().getSystemId();
             try {
                 smppClient.getSession().unbind(10000);
             } catch (Exception e) {
-                logger.error("{}运营商unbind，异常", smppClient.getConfiguration().getSystemId());
+                logger.error("{}运营商unbind，异常", systemId, e);
+            }
+
+            try {
+                smppClient.shutdown();
+            } catch (Exception e) {
+                logger.error("运营商{},关闭运营商连接异常2", systemId, e);
             }
 
         }
