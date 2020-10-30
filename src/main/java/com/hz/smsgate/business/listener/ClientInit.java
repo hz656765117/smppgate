@@ -386,7 +386,7 @@ public class ClientInit implements CommandLineRunner {
             ThreadPoolHelper.executeTask(longRealMtSendRedisConsumer);
         }
 
-        for (int i = 0; i <= 12; i++) {
+        for (int i = 0; i <= 22; i++) {
             //redis短短信下行线程
             ThreadPoolHelper.executeTask(mtRedisConsumer);
         }
